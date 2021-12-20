@@ -19,6 +19,7 @@ using CUE4Parse_Fortnite.Enums;
 using Newtonsoft.Json;
 using System.Collections.Concurrent;
 using System.Diagnostics;
+using System.Net.Http.Json;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -32,8 +33,14 @@ var provider = new DefaultFileProvider(
     new VersionContainer(EGame.GAME_UE5_0));
 provider.Initialize();
 
-// TODO: fetch latest keys from https://fortnite-api.com/v2/aes
-var aes = AesApiResponse.FromJson(File.ReadAllText("aes.json"));
+// get encryption keys from fortnite-api.com
+AesApiResponse? aes;
+
+using (var client = new HttpClient())
+{
+    aes = await client.GetFromJsonAsync<AesApiResponse>("https://fortnite-api.com/v2/aes");
+}
+
 if (aes == null)
     throw new ApplicationException("Bad aes.json");
 
@@ -241,7 +248,12 @@ foreach (var ni in namedItems)
     export.NamedItems.Add(ni.Key, ni.Value);
 }
 
-File.WriteAllText("assets.json", JsonConvert.SerializeObject(export, Formatting.Indented));
+using (var file = File.CreateText("assets.json"))
+{
+    var settings = new JsonSerializerSettings { Formatting = Formatting.Indented };
+    var serializer = JsonSerializer.CreateDefault(settings);
+    serializer.Serialize(file, export);
+}
 
 // done!
 return 0;

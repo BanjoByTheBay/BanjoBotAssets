@@ -14,10 +14,4 @@
     <ProjectReference Include="..\external\CUE4Parse\CUE4Parse\CUE4Parse.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <None Update="aes.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
 </Project>
