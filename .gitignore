@@ -1,4 +1,6 @@
 .hg*
+.vs
+*~
 aes.json
 bin
 obj
