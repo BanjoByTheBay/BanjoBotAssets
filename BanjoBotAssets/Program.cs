@@ -1,6 +1,7 @@
 ﻿using BanjoBotAssets;
 using CUE4Parse.Encryption.Aes;
 using CUE4Parse.FileProvider;
+using CUE4Parse.FN.Enums.FortniteGame;
 using CUE4Parse.FN.Exports.FortniteGame;
 using CUE4Parse.FN.Exports.FortniteGame.NoProperties;
 using CUE4Parse.FN.Structs.Engine;
@@ -1043,10 +1044,14 @@ async Task ExportObjects<T>(string type, IReadOnlyCollection<string> assetPaths,
             Description = description,
         };
 
-        if (uobject is UFortItemDefinition itemDef)
+        if (uobject.GetOrDefault<EFortItemTier>("Tier") is EFortItemTier tier && tier != default(EFortItemTier))
         {
-            namedItemData.Tier = (int)itemDef.Tier;
-            namedItemData.Rarity = itemDef.Rarity.GetNameText().Text;
+            namedItemData.Tier = (int)tier;
+        }
+
+        if (uobject.GetOrDefault<EFortRarity>("Rarity") is EFortRarity rarity && rarity != default(EFortRarity))
+        {
+            namedItemData.Rarity = rarity.GetNameText().Text;
         }
 
         if (exporter != null && await exporter(uobject, namedItemData) == false)
