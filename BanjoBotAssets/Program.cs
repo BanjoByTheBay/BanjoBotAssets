@@ -472,10 +472,8 @@ static string GetManagerJob(UFortWorkerType worker) =>
         var other => throw new ApplicationException("Unexpected manager synergy " + other),
     };
 
-static string MakeSurvivorDisplayName(EFortRarity rarity, UFortWorkerType worker) =>
-    worker.bIsManager
-        ? $"{rarity.GetNameText()} Lead {GetManagerJob(worker)}"
-        : $"{rarity.GetNameText()} Survivor";
+static string MakeSurvivorDisplayName(UFortWorkerType worker) =>
+    worker.bIsManager ? $"Lead {GetManagerJob(worker)}" : $"Survivor";
 
 async Task ExportSurvivors()
 {
@@ -544,7 +542,7 @@ async Task ExportSurvivors()
                 _ => EFortRarity.Uncommon,
             };
 
-            var displayName = survivor.DisplayName?.Text ?? MakeSurvivorDisplayName(rarity, survivor);
+            var displayName = survivor.DisplayName?.Text ?? MakeSurvivorDisplayName(survivor);
 
             namedItems.TryAdd(templateId, new NamedItemData
             {
