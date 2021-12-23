@@ -497,7 +497,7 @@ async Task ExportSurvivors()
         return (baseName: match.Groups[1].Value + match.Groups[3].Value, rarity: match.Groups[2].Value, tier: int.Parse(match.Groups[4].Value));
     }
 
-    string GetSurvivorTemplateID(string path) => $"Worker:{Path.GetFileNameWithoutExtension(path)}";
+    static string GetSurvivorTemplateID(string path) => $"Worker:{Path.GetFileNameWithoutExtension(path)}";
 
     var uniqueSurvivors = survivorAssets.ToLookup(path => ParseSurvivorAssetName(path)?.baseName);
     var numUniqueSurvivors = uniqueSurvivors.Count;
@@ -578,7 +578,7 @@ async Task ExportDefenders()
         return (baseName: match.Groups[1].Value, rarity: match.Groups[2].Value, tier: int.Parse(match.Groups[3].Value));
     }
 
-    string GetDefenderTemplateID(string path) => $"Defender:{Path.GetFileNameWithoutExtension(path)}";
+    static string GetDefenderTemplateID(string path) => $"Defender:{Path.GetFileNameWithoutExtension(path)}";
 
     var uniqueDefenders = defenderAssets.ToLookup(path => ParseDefenderAssetName(path)?.baseName);
     var numUniqueDefenders = uniqueDefenders.Count;
@@ -887,7 +887,7 @@ async Task ExportHeroes()
         return (baseName: match.Groups[1].Value, rarity: match.Groups[2].Value, tier: int.Parse(match.Groups[3].Value));
     }
 
-    string GetHeroTemplateID(string path) => $"Hero:{Path.GetFileNameWithoutExtension(path)}";
+    static string GetHeroTemplateID(string path) => $"Hero:{Path.GetFileNameWithoutExtension(path)}";
 
     var uniqueHeroes = heroAssets.ToLookup(path => ParseHeroAssetName(path)?.baseName);
     var numUniqueHeroes = uniqueHeroes.Count;
@@ -931,17 +931,19 @@ async Task ExportHeroes()
 
         var gameplayDefinition = hero.HeroGameplayDefinition;
 
-        var heroPerk = gameplayDefinition?.GetOrDefault<FStructFallback>("HeroPerk");
-        var heroPerkGrantedAbilityKit = heroPerk == null ? null : await heroPerk.GetOrDefault<FSoftObjectPath>("GrantedAbilityKit").LoadAsync(provider);
-        var heroPerkDisplayName = heroPerkGrantedAbilityKit?.GetOrDefault<FText>("DisplayName")?.Text ?? $"<{heroPerkGrantedAbilityKit?.Name ?? "<No granted ability>"}>";
-        var heroPerkDescription = await GetAbilityDescriptionAsync(heroPerkGrantedAbilityKit) ?? "<No description>";
+        async Task<(string displayName, string description)> GetPerkTextAsync(string perkProperty)
+        {
+            var perk = gameplayDefinition?.GetOrDefault<FStructFallback>(perkProperty);
+            var grantedAbilityKit = perk == null ? null : await perk.GetOrDefault<FSoftObjectPath>("GrantedAbilityKit").LoadAsync(provider);
+            var displayName = grantedAbilityKit?.GetOrDefault<FText>("DisplayName")?.Text ?? $"<{grantedAbilityKit?.Name ?? "<No granted ability>"}>";
+            var description = await GetAbilityDescriptionAsync(grantedAbilityKit) ?? "<No description>";
+            return (displayName, description);
+        }
 
-        var commanderPerk = gameplayDefinition?.GetOrDefault<FStructFallback>("CommanderPerk");
-        var commanderPerkGrantedAbilityKit = commanderPerk == null ? null : await commanderPerk.GetOrDefault<FSoftObjectPath>("GrantedAbilityKit").LoadAsync(provider);
-        var commanderPerkDisplayName = heroPerkGrantedAbilityKit?.GetOrDefault<FText>("DisplayName")?.Text ?? $"<{commanderPerkGrantedAbilityKit?.Name ?? "<No granted ability>"}>";
-        var commanderPerkDescription = await GetAbilityDescriptionAsync(commanderPerkGrantedAbilityKit) ?? "<No description>";
+        var heroPerk = await GetPerkTextAsync("HeroPerk");
+        var commanderPerk = await GetPerkTextAsync("CommanderPerk");
 
-        Console.WriteLine("{0} is {1} ({2}), granting {3} / {4}", baseName, hero.DisplayName, heroClass, heroPerkDisplayName, commanderPerkDisplayName);
+        Console.WriteLine("{0} is {1} ({2}), granting {3} / {4}", baseName, hero.DisplayName, heroClass, heroPerk.displayName, commanderPerk.displayName);
 
         foreach (var path in grouping)
         {
@@ -971,10 +973,10 @@ async Task ExportHeroes()
                 Type = "Hero",
                 Rarity = RarityUtil.GetNameText(rarity).Text,
                 Tier = parsed.Value.tier,
-                HeroPerk = heroPerkDisplayName,
-                HeroPerkDescription = heroPerkDescription,
-                CommanderPerk = commanderPerkDisplayName,
-                CommanderPerkDescription = commanderPerkDescription,
+                HeroPerk = heroPerk.displayName,
+                HeroPerkDescription = heroPerk.description,
+                CommanderPerk = commanderPerk.displayName,
+                CommanderPerkDescription = commanderPerk.description,
             });
         }
     });
