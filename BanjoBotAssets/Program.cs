@@ -25,7 +25,20 @@ using System.Text;
 using System.Text.RegularExpressions;
 
 // open PAK files
-const string gameDirectory = @"C:\Program Files\Epic Games\Fortnite\FortniteGame\Content\Paks";
+string[] gameDirectories =
+{
+    @"C:\Program Files\Epic Games\Fortnite\FortniteGame\Content\Paks",
+    @"D:\Program Files\Epic Games\Fortnite\FortniteGame\Content\Paks",
+    @"D:\Epic Games\Fortnite\FortniteGame\Content\Paks",
+};
+
+var gameDirectory = gameDirectories.FirstOrDefault(d => Directory.Exists(d));
+
+if (gameDirectory == null)
+{
+    Console.WriteLine("Couldn't find game directory. Add it to the list.");
+    return 1;
+}
 
 var provider = new DefaultFileProvider(
     gameDirectory,
