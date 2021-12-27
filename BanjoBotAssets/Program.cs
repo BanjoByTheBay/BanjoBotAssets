@@ -736,6 +736,7 @@ async Task ExportGadgets() => await ExportObjects<UFortGadgetItemDefinition>("Ga
             return false;
         }
 
+        Interlocked.Increment(ref assetsLoaded);
         var gameplayAbility = await gadget.GameplayAbility.LoadAsync(provider);
         exported.Description = await GetAbilityDescriptionAsync(gameplayAbility);
         return true;
@@ -869,16 +870,22 @@ ItemRatingTable EvaluateItemRatingCurve(UCurveTable curveTable, string prefix, b
 
 async Task ExportTeamPerks() => await ExportUObjects("TeamPerk", teamPerkAssets, async (teamPerk, exported) =>
 {
+    Interlocked.Increment(ref assetsLoaded);
     var grantedAbilityKit = await teamPerk.GetOrDefault<FSoftObjectPath>("GrantedAbilityKit").LoadAsync(provider);
     exported.Description = await GetAbilityDescriptionAsync(grantedAbilityKit) ?? "<No description>";
     return true;
 });
 
-static async Task<string?> GetAbilityDescriptionAsync(UObject? grantedAbilityKit)
+async Task<string?> GetAbilityDescriptionAsync(UObject? grantedAbilityKit)
 {
     var tooltip = grantedAbilityKit?.GetOrDefault<UBlueprintGeneratedClass>("Tooltip");
-    var cdo = tooltip == null ? null : await tooltip.ClassDefaultObject.LoadAsync();
-    return cdo?.GetOrDefault<FText>("Description")?.Text;
+    if (tooltip == null)
+    {
+        return null;
+    }
+    Interlocked.Increment(ref assetsLoaded);
+    var cdo = await tooltip.ClassDefaultObject.LoadAsync();
+    return cdo == null ? null : (await GetInheritedOrDefaultAsync<FText>(cdo, "Description"))?.Text;
 }
 
 /********************* HEROES *********************/
@@ -947,6 +954,7 @@ async Task ExportHeroes()
         async Task<(string displayName, string description)> GetPerkTextAsync(string perkProperty)
         {
             var perk = gameplayDefinition?.GetOrDefault<FStructFallback>(perkProperty);
+            Interlocked.Increment(ref assetsLoaded);
             var grantedAbilityKit = perk == null ? null : await perk.GetOrDefault<FSoftObjectPath>("GrantedAbilityKit").LoadAsync(provider);
             var displayName = grantedAbilityKit?.GetOrDefault<FText>("DisplayName")?.Text ?? $"<{grantedAbilityKit?.Name ?? "<No granted ability>"}>";
             var description = await GetAbilityDescriptionAsync(grantedAbilityKit) ?? "<No description>";
@@ -1101,6 +1109,7 @@ async Task ExportBlueprintObjects(string type, IReadOnlyCollection<string> asset
 
         var bpClassPath = bpClass.GetPathName();
 
+        Interlocked.Increment(ref assetsLoaded);
         var cdo = await bpClass.ClassDefaultObject.LoadAsync();
 
         var displayName = (await GetInheritedOrDefaultAsync<FText>(cdo, displayNameProperty))?.Text ?? $"<{bpClass.Name}>";
@@ -1124,13 +1133,14 @@ async Task ExportBlueprintObjects(string type, IReadOnlyCollection<string> asset
     });
 }
 
-static async Task<T?> GetInheritedOrDefaultAsync<T>(UObject obj, string name)
+async Task<T?> GetInheritedOrDefaultAsync<T>(UObject obj, string name)
 {
     if (obj.GetOrDefault<T>(name) is T ret && !ret.Equals(default(T)))
         return ret;
 
     if (obj.Template != null)
     {
+        Interlocked.Increment(ref assetsLoaded);
         var template = await obj.Template.LoadAsync();
 
         if (template != null)
