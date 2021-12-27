@@ -878,6 +878,12 @@ async Task ExportTeamPerks() => await ExportUObjects("TeamPerk", teamPerkAssets,
 
 async Task<string?> GetAbilityDescriptionAsync(UObject? grantedAbilityKit)
 {
+    var tooltipDescription = grantedAbilityKit?.GetOrDefault<FText>("TooltipDescription");
+    if (tooltipDescription != null)
+    {
+        // hi, Chaos Agent
+        return tooltipDescription.Text;
+    }
     var tooltip = grantedAbilityKit?.GetOrDefault<UBlueprintGeneratedClass>("Tooltip");
     if (tooltip == null)
     {
