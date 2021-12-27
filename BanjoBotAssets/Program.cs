@@ -103,13 +103,13 @@ var allAssetLists = new[] {
     ("survivor", survivorAssets),
     ("ingredient", ingredientAssets),
     ("schematic", schematicAssets),
+    ("alteration", alterationAssets),
 
     // WIP
     ("crafting recipes", craftingAssets),
 
     // TODO
     ("quest", questAssets),
-    ("alteration", alterationAssets),
 
     // NOT EXPORTED DIRECTLY
     ("weapon", weaponAssets),
