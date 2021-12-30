@@ -23,7 +23,7 @@ namespace BanjoBotAssets.Exporters
             return Task.FromResult(true);
         }
 
-        public override async Task ExportAssets(IProgress<ExportProgress> progress, ExportedAssets output)
+        public override async Task ExportAssetsAsync(IProgress<ExportProgress> progress, ExportedAssets output)
         {
             var numToProcess = assetPaths.Count;
             var processedSoFar = 0;

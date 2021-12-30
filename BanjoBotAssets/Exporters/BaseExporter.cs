@@ -21,10 +21,10 @@ namespace BanjoBotAssets.Exporters
             Interlocked.Increment(ref assetsLoaded);
         }
 
-        public abstract Task ExportAssets(IProgress<ExportProgress> progress, ExportedAssets output);
+        public abstract Task ExportAssetsAsync(IProgress<ExportProgress> progress, ExportedAssets output);
         protected abstract bool InterestedInAsset(string name);
 
-        public void ObserveAsset(string name)
+        public virtual void ObserveAsset(string name)
         {
             if (InterestedInAsset(name))
             {

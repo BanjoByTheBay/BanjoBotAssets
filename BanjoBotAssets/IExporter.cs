@@ -12,7 +12,7 @@
     {
         void ObserveAsset(string name);
 
-        Task ExportAssets(IProgress<ExportProgress> progress, ExportedAssets output);
+        Task ExportAssetsAsync(IProgress<ExportProgress> progress, ExportedAssets output);
 
         int AssetsLoaded { get; }
     }

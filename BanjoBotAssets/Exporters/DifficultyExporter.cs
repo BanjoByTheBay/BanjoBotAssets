@@ -8,7 +8,7 @@ namespace BanjoBotAssets.Exporters
     {
         public DifficultyExporter(DefaultFileProvider provider) : base(provider) { }
 
-        public override async Task ExportAssets(IProgress<ExportProgress> progress, ExportedAssets output)
+        public override async Task ExportAssetsAsync(IProgress<ExportProgress> progress, ExportedAssets output)
         {
             var growthBoundsPath = assetPaths.First(p => Path.GetFileNameWithoutExtension(p) == "GameDifficultyGrowthBounds");
 

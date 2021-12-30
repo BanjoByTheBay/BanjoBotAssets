@@ -1,33 +1,28 @@
 ﻿using CUE4Parse.FileProvider;
 using CUE4Parse.UE4.Assets.Exports.Engine;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BanjoBotAssets.Exporters
 {
-    internal class ItemRatingExporter : BaseExporter
+    internal sealed class ItemRatingExporter : BaseExporter
     {
         public ItemRatingExporter(DefaultFileProvider provider) : base(provider) { }
 
         protected override bool InterestedInAsset(string name) => name.EndsWith("ItemRating.uasset");
 
-        public override async Task ExportAssets(IProgress<ExportProgress> progress, ExportedAssets output)
+        public override async Task ExportAssetsAsync(IProgress<ExportProgress> progress, ExportedAssets output)
         {
             progress.Report(new ExportProgress { TotalSteps = 2, CompletedSteps = 0, AssetsLoaded = assetsLoaded, CurrentItem = "Exporting item ratings" });
 
-            await ExportDefaultItemRatings(output);
+            await ExportDefaultItemRatingsAsync(output);
 
             progress.Report(new ExportProgress { TotalSteps = 2, CompletedSteps = 1, AssetsLoaded = assetsLoaded, CurrentItem = "Exporting item ratings" });
 
-            await ExportSurvivorItemRatings(output);
+            await ExportSurvivorItemRatingsAsync(output);
 
             progress.Report(new ExportProgress { TotalSteps = 2, CompletedSteps = 2, AssetsLoaded = assetsLoaded, CurrentItem = "Exported item ratings" });
         }
 
-        async Task ExportDefaultItemRatings(ExportedAssets output)
+        async Task ExportDefaultItemRatingsAsync(ExportedAssets output)
         {
             var baseItemRatingPath = assetPaths.FirstOrDefault(p => Path.GetFileNameWithoutExtension(p) == "BaseItemRating");
 
@@ -51,7 +46,7 @@ namespace BanjoBotAssets.Exporters
             output.ItemRatings.Default = EvaluateItemRatingCurve(curveTable, "Default");
         }
 
-        async Task ExportSurvivorItemRatings(ExportedAssets output)
+        async Task ExportSurvivorItemRatingsAsync(ExportedAssets output)
         {
             var survivorItemRatingPath = assetPaths.FirstOrDefault(p => Path.GetFileNameWithoutExtension(p) == "SurvivorItemRating");
 
@@ -97,8 +92,6 @@ namespace BanjoBotAssets.Exporters
 
         ItemRatingTable EvaluateItemRatingCurve(UCurveTable curveTable, string prefix, bool skipUR = false)
         {
-
-
             var tiers = new Dictionary<string, ItemRatingTier>();
 
             foreach (var (rarity, maxTier) in rarityTiers)
@@ -142,7 +135,5 @@ namespace BanjoBotAssets.Exporters
 
             return new ItemRatingTable { Tiers = tiers };
         }
-
-
     }
 }

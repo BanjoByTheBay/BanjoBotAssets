@@ -2,19 +2,13 @@
 using BanjoBotAssets.Exporters;
 using CUE4Parse.Encryption.Aes;
 using CUE4Parse.FileProvider;
-using CUE4Parse.FN.Enums.FortniteGame;
 using CUE4Parse.FN.Exports.FortniteGame;
-using CUE4Parse.FN.Exports.FortniteGame.NoProperties;
 using CUE4Parse.FN.Structs.Engine;
 using CUE4Parse.FN.Structs.FortniteGame;
 using CUE4Parse.UE4.Assets;
-using CUE4Parse.UE4.Assets.Exports;
 using CUE4Parse.UE4.Assets.Exports.Engine;
-using CUE4Parse.UE4.Assets.Objects;
-using CUE4Parse.UE4.Objects.Core.i18N;
 using CUE4Parse.UE4.Objects.Core.Misc;
 using CUE4Parse.UE4.Objects.GameplayTags;
-using CUE4Parse.UE4.Objects.UObject;
 using CUE4Parse.UE4.Versions;
 using CUE4Parse_Fortnite.Enums;
 using Newtonsoft.Json;
@@ -82,41 +76,18 @@ var export = new ExportedAssets();
 
 var namedItems = new ConcurrentDictionary<string, NamedItemData>();
 
-//var heroAssets = new ConcurrentBag<string>();
-//var alterationAssets = new ConcurrentBag<string>();
 var schematicAssets = new ConcurrentBag<string>();
-//var teamPerkAssets = new ConcurrentBag<string>();
 var questAssets = new ConcurrentBag<string>();
-//var missionGenAssets = new ConcurrentBag<string>();
-//var zoneThemeAssets = new ConcurrentBag<string>();
 var gadgetAssets = new ConcurrentBag<string>();
-//var itemRatingAssets = new ConcurrentBag<string>();
-//var difficultyAssets = new ConcurrentBag<string>();
-var zoneRewardAssets = new ConcurrentBag<string>();
-//var accountResourceAssets = new ConcurrentBag<string>();
-var defenderAssets = new ConcurrentBag<string>();
 var survivorAssets = new ConcurrentBag<string>();
 var craftingAssets = new ConcurrentBag<string>();
-//var ingredientAssets = new ConcurrentBag<string>();
 
 var weaponAssets = new ConcurrentBag<string>();
 
 var allAssetLists = new[] {
     // DONE
-    //("hero", heroAssets),
-    //("team perk", teamPerkAssets),
-    //("item rating", itemRatingAssets),
-    //("gadget", gadgetAssets),
-    //("mission gen", missionGenAssets),
-    //("difficulty", difficultyAssets),
-    //("zone theme", zoneThemeAssets),
-    ("zone reward", zoneRewardAssets),
-    //("account resource", accountResourceAssets),
-    ("defender", defenderAssets),
     ("survivor", survivorAssets),
-    //("ingredient", ingredientAssets),
     ("schematic", schematicAssets),
-    //("alteration", alterationAssets),
 
     // WIP
     ("crafting recipes", craftingAssets),
@@ -130,17 +101,18 @@ var allAssetLists = new[] {
 
 IExporter[] exporters =
 {
-    new HeroExporter(provider),
-    new ZoneThemeExporter(provider),
-    new MissionGenExporter(provider),
     new AccountResourceExporter(provider),
     new AlterationExporter(provider),
+    new DefenderExporter(provider),
+    new DifficultyExporter(provider),
+    new GadgetExporter(provider),
+    new HeroExporter(provider),
     new IngredientExporter(provider),
+    new ItemRatingExporter(provider),
+    new MissionGenExporter(provider),
     new TeamPerkExporter(provider),
     new ZoneRewardExporter(provider),
-    new GadgetExporter(provider),
-    new ItemRatingExporter(provider),
-    new DifficultyExporter(provider),
+    new ZoneThemeExporter(provider),
 };
 
 // find interesting assets
@@ -159,11 +131,6 @@ foreach (var (name, file) in provider.Files)
     if (name.Contains("/Quests/"))
     {
         questAssets.Add(name);
-    }
-
-    if (name.Contains("Defenders/DID_"))
-    {
-        defenderAssets.Add(name);
     }
 
     if (name.Contains("Workers/Worker") || name.Contains("Managers/Manager"))
@@ -207,10 +174,9 @@ var stopwatch = new Stopwatch();
 stopwatch.Start();
 
 await Task.WhenAll(new[] {
-    ExportDefenders(),
     ExportSurvivors(),
     ExportSchematics(),
-}.Concat(exporters.Select(e => e.ExportAssets(progress, export))));
+}.Concat(exporters.Select(e => e.ExportAssetsAsync(progress, export))));
 
 stopwatch.Stop();
 
@@ -503,101 +469,6 @@ async Task ExportSurvivors()
                 Name = Path.GetFileNameWithoutExtension(path),
                 SubType = subType,
                 Type = "Worker",
-                Rarity = rarity.GetNameText().Text,
-                Tier = parsed.Value.tier,
-            });
-        }
-    });
-}
-
-/********************* DEFENDERS *********************/
-
-async Task ExportDefenders()
-{
-    Regex defenderAssetNameRegex = new(@".*/([^/]+)_(C|UC|R|VR|SR|UR)_T(\d+)(?:\..*)?$");
-
-    (string baseName, string rarity, int tier)? ParseDefenderAssetName(string path)
-    {
-        var match = defenderAssetNameRegex.Match(path);
-
-        if (!match.Success)
-        {
-            Console.WriteLine("WARNING: Can't parse defender name: {0}", path);
-            return null;
-        }
-
-        return (baseName: match.Groups[1].Value, rarity: match.Groups[2].Value, tier: int.Parse(match.Groups[3].Value));
-    }
-
-    static string GetDefenderTemplateID(string path) => $"Defender:{Path.GetFileNameWithoutExtension(path)}";
-
-    var uniqueDefenders = defenderAssets.ToLookup(path => ParseDefenderAssetName(path)?.baseName);
-    var numUniqueDefenders = uniqueDefenders.Count;
-    var defendersSoFar = 0;
-
-    await Parallel.ForEachAsync(uniqueDefenders, async (grouping, _cancellationToken) =>
-    {
-        var baseName = grouping.Key;
-        var file = provider[grouping.First()];
-
-        var num = Interlocked.Increment(ref defendersSoFar);
-        Console.WriteLine("Processing defender group {0} of {1}", num, numUniqueDefenders);
-
-        Console.WriteLine("Loading {0}", file.PathWithoutExtension);
-        Interlocked.Increment(ref assetsLoaded);
-        var defender = await provider.LoadObjectAsync<UFortHeroType>(file.PathWithoutExtension);
-
-        if (defender == null)
-        {
-            Console.WriteLine("Failed to load {0}", file.PathWithoutExtension);
-            return;
-        }
-
-        var category = defender.AttributeInitKey?.AttributeInitCategory.Text;
-        string? subType;
-
-        if (category != null)
-        {
-            var i = category.LastIndexOf('_');
-            var weapon = category[(i + 1)..];
-
-            subType = $"{weapon} Defender";
-        }
-        else
-        {
-            subType = null;
-        }
-
-        var description = defender.Description?.Text;
-
-        foreach (var path in grouping)
-        {
-            var templateId = GetDefenderTemplateID(path);
-            var parsed = ParseDefenderAssetName(path);
-
-            if (parsed == null)
-                continue;
-
-            var rarity = parsed.Value.rarity switch
-            {
-                "C" => EFortRarity.Common,
-                "R" => EFortRarity.Rare,
-                "VR" => EFortRarity.Epic,
-                "SR" => EFortRarity.Legendary,
-                "UR" => EFortRarity.Mythic,
-                _ => EFortRarity.Uncommon,
-            };
-
-            var displayName = defender.DisplayName?.Text ?? $"{rarity.GetNameText()} {subType ?? "Defender"}";
-
-            namedItems.TryAdd(templateId, new NamedItemData
-            {
-                AssetPath = provider.FixPath(Path.Combine(Path.GetDirectoryName(path)!, Path.GetFileNameWithoutExtension(path))),
-                Description = description,
-                DisplayName = displayName.Trim(),
-                Name = Path.GetFileNameWithoutExtension(path),
-                SubType = subType,
-                Type = "Defender",
                 Rarity = rarity.GetNameText().Text,
                 Tier = parsed.Value.tier,
             });

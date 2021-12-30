@@ -1,6 +1,5 @@
 ﻿using CUE4Parse.FileProvider;
 using CUE4Parse.FN.Exports.FortniteGame;
-using CUE4Parse.UE4.Assets.Exports;
 
 namespace BanjoBotAssets.Exporters
 {
