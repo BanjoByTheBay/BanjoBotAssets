@@ -1,4 +1,5 @@
 ﻿using BanjoBotAssets;
+using BanjoBotAssets.Exporters;
 using CUE4Parse.Encryption.Aes;
 using CUE4Parse.FileProvider;
 using CUE4Parse.FN.Enums.FortniteGame;
@@ -12,7 +13,6 @@ using CUE4Parse.UE4.Assets.Exports.Engine;
 using CUE4Parse.UE4.Assets.Objects;
 using CUE4Parse.UE4.Objects.Core.i18N;
 using CUE4Parse.UE4.Objects.Core.Misc;
-using CUE4Parse.UE4.Objects.Engine;
 using CUE4Parse.UE4.Objects.GameplayTags;
 using CUE4Parse.UE4.Objects.UObject;
 using CUE4Parse.UE4.Versions;
@@ -77,46 +77,46 @@ ObjectTypeRegistry.RegisterClass("FortDefenderItemDefinition", typeof(UFortHeroT
 ObjectTypeRegistry.RegisterClass("FortTrapItemDefinition", typeof(UFortItemDefinition));
 ObjectTypeRegistry.RegisterClass("FortAlterationItemDefinition", typeof(UFortItemDefinition));
 
-var export = new Export();
+var export = new ExportedAssets();
 //using var logFile = new StreamWriter("assets.log");
 
 var namedItems = new ConcurrentDictionary<string, NamedItemData>();
 
-var heroAssets = new ConcurrentBag<string>();
-var alterationAssets = new ConcurrentBag<string>();
+//var heroAssets = new ConcurrentBag<string>();
+//var alterationAssets = new ConcurrentBag<string>();
 var schematicAssets = new ConcurrentBag<string>();
-var teamPerkAssets = new ConcurrentBag<string>();
+//var teamPerkAssets = new ConcurrentBag<string>();
 var questAssets = new ConcurrentBag<string>();
-var missionGenAssets = new ConcurrentBag<string>();
-var zoneThemeAssets = new ConcurrentBag<string>();
+//var missionGenAssets = new ConcurrentBag<string>();
+//var zoneThemeAssets = new ConcurrentBag<string>();
 var gadgetAssets = new ConcurrentBag<string>();
-var itemRatingAssets = new ConcurrentBag<string>();
-var difficultyAssets = new ConcurrentBag<string>();
+//var itemRatingAssets = new ConcurrentBag<string>();
+//var difficultyAssets = new ConcurrentBag<string>();
 var zoneRewardAssets = new ConcurrentBag<string>();
-var accountResourceAssets = new ConcurrentBag<string>();
+//var accountResourceAssets = new ConcurrentBag<string>();
 var defenderAssets = new ConcurrentBag<string>();
 var survivorAssets = new ConcurrentBag<string>();
 var craftingAssets = new ConcurrentBag<string>();
-var ingredientAssets = new ConcurrentBag<string>();
+//var ingredientAssets = new ConcurrentBag<string>();
 
 var weaponAssets = new ConcurrentBag<string>();
 
 var allAssetLists = new[] {
     // DONE
-    ("hero", heroAssets),
-    ("team perk", teamPerkAssets),
-    ("item rating", itemRatingAssets),
-    ("gadget", gadgetAssets),
-    ("mission gen", missionGenAssets),
-    ("difficulty", difficultyAssets),
-    ("zone theme", zoneThemeAssets),
+    //("hero", heroAssets),
+    //("team perk", teamPerkAssets),
+    //("item rating", itemRatingAssets),
+    //("gadget", gadgetAssets),
+    //("mission gen", missionGenAssets),
+    //("difficulty", difficultyAssets),
+    //("zone theme", zoneThemeAssets),
     ("zone reward", zoneRewardAssets),
-    ("account resource", accountResourceAssets),
+    //("account resource", accountResourceAssets),
     ("defender", defenderAssets),
     ("survivor", survivorAssets),
-    ("ingredient", ingredientAssets),
+    //("ingredient", ingredientAssets),
     ("schematic", schematicAssets),
-    ("alteration", alterationAssets),
+    //("alteration", alterationAssets),
 
     // WIP
     ("crafting recipes", craftingAssets),
@@ -128,6 +128,21 @@ var allAssetLists = new[] {
     ("weapon", weaponAssets),
 };
 
+IExporter[] exporters =
+{
+    new HeroExporter(provider),
+    new ZoneThemeExporter(provider),
+    new MissionGenExporter(provider),
+    new AccountResourceExporter(provider),
+    new AlterationExporter(provider),
+    new IngredientExporter(provider),
+    new TeamPerkExporter(provider),
+    new ZoneRewardExporter(provider),
+    new GadgetExporter(provider),
+    new ItemRatingExporter(provider),
+    new DifficultyExporter(provider),
+};
+
 // find interesting assets
 foreach (var (name, file) in provider.Files)
 {
@@ -136,64 +151,14 @@ foreach (var (name, file) in provider.Files)
         continue;
     }
 
-    if (name.Contains("/HID_"))
-    {
-        heroAssets.Add(name);
-    }
-
-    if (name.Contains("/AID_") && (name.Contains("/Alteration_v2/") || name.Contains("/Defenders/")))
-    {
-        alterationAssets.Add(name);
-    }
-
     if (name.Contains("/SID_"))
     {
         schematicAssets.Add(name);
     }
 
-    if (name.Contains("/TPID_"))
-    {
-        teamPerkAssets.Add(name);
-    }
-
     if (name.Contains("/Quests/"))
     {
         questAssets.Add(name);
-    }
-
-    if (name.Contains("/MissionGens/") && name.Contains("/World/"))
-    {
-        missionGenAssets.Add(name);
-    }
-
-    if (name.Contains("/ZoneThemes/") && name.Contains("/BP_ZT_"))
-    {
-        zoneThemeAssets.Add(name);
-    }
-
-    if (name.Contains("/Gadgets/") && name.Contains("/G_"))
-    {
-        gadgetAssets.Add(name);
-    }
-
-    if (name.EndsWith("ItemRating.uasset"))
-    {
-        itemRatingAssets.Add(name);
-    }
-
-    if (name.EndsWith("GameDifficultyGrowthBounds.uasset"))
-    {
-        difficultyAssets.Add(name);
-    }
-
-    if (name.Contains("/ZCP_"))
-    {
-        zoneRewardAssets.Add(name);
-    }
-
-    if (name.Contains("/PersistentResources/"))
-    {
-        accountResourceAssets.Add(name);
     }
 
     if (name.Contains("Defenders/DID_"))
@@ -216,11 +181,12 @@ foreach (var (name, file) in provider.Files)
         weaponAssets.Add(name);
     }
 
-    if (name.Contains("Items/Ingredients/Ingredient_"))
+    foreach (var e in exporters)
     {
-        ingredientAssets.Add(name);
+        e.ObserveAsset(name);
     }
 }
+
 
 // log all asset names found to file
 //foreach (var (name, assets) in allAssetLists)
@@ -231,26 +197,20 @@ foreach (var (name, file) in provider.Files)
 //    }
 //}
 
+var progress = new Progress<ExportProgress>(prog =>
+{
+    // TODO: do something with progress reports
+});
+
 var assetsLoaded = 0;
 var stopwatch = new Stopwatch();
 stopwatch.Start();
 
 await Task.WhenAll(new[] {
-    ExportHeroes(),
-    ExportTeamPerks(),
-    ExportItemRatings(),
-    ExportGadgets(),
-    ExportMissionGens(),
-    ExportDifficulty(),
-    ExportZoneThemes(),
-    ExportZoneRewards(),
-    ExportAccountResources(),
     ExportDefenders(),
     ExportSurvivors(),
-    ExportIngredients(),
     ExportSchematics(),
-    ExportAlterations(),
-});
+}.Concat(exporters.Select(e => e.ExportAssets(progress, export))));
 
 stopwatch.Stop();
 
@@ -271,20 +231,6 @@ using (var file = File.CreateText("assets.json"))
 
 // done!
 return 0;
-
-/********************* ALTERATIONS *********************/
-
-async Task ExportAlterations() => await ExportObjects<UFortItemDefinition>("Alteration", alterationAssets,
-    (alteration, exported) =>
-    {
-        exported.DisplayName = alteration.Description.Text;
-        exported.Description = null;
-        return Task.FromResult(true);
-    });
-
-/********************* INGREDIENTS *********************/
-
-async Task ExportIngredients() => await ExportObjects<UFortIngredientItemDefinition>("Ingredient", ingredientAssets);
 
 /********************* SCHEMATICS *********************/
 
@@ -657,674 +603,4 @@ async Task ExportDefenders()
             });
         }
     });
-}
-
-/********************* ACCOUNT RESOURCES *********************/
-
-async Task ExportAccountResources() => await ExportUObjects("AccountResource", accountResourceAssets);
-
-/********************* ZONE REWARDS *********************/
-
-async Task ExportZoneRewards() => await ExportUObjects("CardPack", zoneRewardAssets);
-
-/********************* ZONE THEMES *********************/
-
-async Task ExportZoneThemes() => await ExportBlueprintObjects("ZoneTheme", zoneThemeAssets,
-    "ZoneName", "ZoneDescription");
-
-/********************* DIFFICULTY *********************/
-
-async Task ExportDifficulty()
-{
-    var growthBoundsPath = difficultyAssets.First(p => Path.GetFileNameWithoutExtension(p) == "GameDifficultyGrowthBounds");
-
-    if (growthBoundsPath == null)
-    {
-        Console.WriteLine("WARNING: GameDifficultyGrowthBounds not found");
-        return;
-    }
-
-    var file = provider[growthBoundsPath];
-
-    Interlocked.Increment(ref assetsLoaded);
-    var dataTable = await provider.LoadObjectAsync<UDataTable>(file.PathWithoutExtension);
-
-    if (dataTable == null)
-    {
-        Console.WriteLine("WARNING: Could not load {0}", growthBoundsPath);
-        return;
-    }
-
-    foreach (var (rowKey, data) in dataTable.RowMap)
-    {
-        var requiredRating = data.GetOrDefault<int>("RequiredRating");
-        var maximumRating = data.GetOrDefault<int>("MaximumRating");
-        var recommendedRating = data.GetOrDefault<int>("RecommendedRating");
-        var displayName = data.GetOrDefault<FText>("ThreatDisplayName")?.Text ?? $"<{recommendedRating}>";
-
-        export.DifficultyInfo.Add(rowKey.Text, new DifficultyInfo
-        {
-            RequiredRating = requiredRating,
-            MaximumRating = maximumRating,
-            RecommendedRating = recommendedRating,
-            DisplayName = displayName.Trim(),
-        });
-    }
-}
-
-/********************* MISSION GENS *********************/
-
-async Task ExportMissionGens() => await ExportBlueprintObjects("MissionGen", missionGenAssets,
-    "MissionName", "MissionDescription");
-
-/********************* GADGETS *********************/
-
-async Task ExportGadgets() => await ExportObjects<UFortGadgetItemDefinition>("Gadget", gadgetAssets,
-    async (gadget, exported) =>
-    {
-        if (gadget.GameplayAbility.AssetPathName.IsNone)
-        {
-            Console.WriteLine("Skipping gadget with no gameplay ability: {0}", gadget.Name);
-            return false;
-        }
-
-        Interlocked.Increment(ref assetsLoaded);
-        var gameplayAbility = await gadget.GameplayAbility.LoadAsync(provider);
-        exported.Description = await GetAbilityDescriptionAsync(gameplayAbility);
-        return true;
-    });
-
-/********************* ITEM RATINGS *********************/
-
-async Task ExportItemRatings()
-{
-    var defaultTask = ExportDefaultItemRatings();
-    var survivorTask = ExportSurvivorItemRatings();
-
-    await Task.WhenAll(defaultTask, survivorTask);
-}
-
-async Task ExportDefaultItemRatings()
-{
-    var baseItemRatingPath = itemRatingAssets.FirstOrDefault(p => Path.GetFileNameWithoutExtension(p) == "BaseItemRating");
-
-    if (baseItemRatingPath == null)
-    {
-        Console.WriteLine("WARNING: BaseItemRating not found");
-        return;
-    }
-
-    var file = provider[baseItemRatingPath];
-
-    Interlocked.Increment(ref assetsLoaded);
-    var curveTable = await provider.LoadObjectAsync<UCurveTable>(file.PathWithoutExtension);
-
-    if (curveTable == null)
-    {
-        Console.WriteLine("WARNING: Could not load {0}", baseItemRatingPath);
-        return;
-    }
-
-    export.ItemRatings.Default = EvaluateItemRatingCurve(curveTable, "Default");
-}
-
-async Task ExportSurvivorItemRatings()
-{
-    var survivorItemRatingPath = itemRatingAssets.FirstOrDefault(p => Path.GetFileNameWithoutExtension(p) == "SurvivorItemRating");
-
-    if (survivorItemRatingPath == null)
-    {
-        Console.WriteLine("WARNING: SurvivorItemRating not found");
-        return;
-    }
-
-    var file = provider[survivorItemRatingPath];
-
-    Interlocked.Increment(ref assetsLoaded);
-    var curveTable = await provider.LoadObjectAsync<UCurveTable>(file.PathWithoutExtension);
-
-    if (curveTable == null)
-    {
-        Console.WriteLine("WARNING: Could not load {0}", survivorItemRatingPath);
-        return;
-    }
-
-    export.ItemRatings.Survivor = EvaluateItemRatingCurve(curveTable, "Default");
-    export.ItemRatings.LeadSurvivor = EvaluateItemRatingCurve(curveTable, "Manager", true);
-}
-
-ItemRatingTable EvaluateItemRatingCurve(UCurveTable curveTable, string prefix, bool skipUR = false)
-{
-    (string rarity, int maxTier)[] rarityTiers =
-    {
-        ("C", 2),
-        ("UC", 3),
-        ("R", 4),
-        ("VR", 5),
-        ("SR", 5),
-        ("UR", 5),
-    };
-
-    (int tier, int minLevel, int maxLevel)[] tierLevels =
-    {
-        (1, 1, 10),
-        (2, 10, 20),
-        (3, 20, 30),
-        (4, 30, 40),
-        (5, 40, 60),    // tier 5 goes up to LV 60 with superchargers
-    };
-
-    var tiers = new Dictionary<string, ItemRatingTier>();
-
-    foreach (var (rarity, maxTier) in rarityTiers)
-    {
-        if (skipUR && rarity == "UR")
-            continue;
-
-        foreach (var (tier, minLevel, maxLevel) in tierLevels)
-        {
-            if (tier > maxTier)
-                break;
-
-            var rowNameStr = $"{prefix}_{rarity}_T{tier:00}";
-            var rowFName = curveTable.RowMap.Keys.FirstOrDefault(k => k.Text == rowNameStr);
-
-            if (rowFName.IsNone)
-            {
-                Console.WriteLine("WARNING: Curve table has no row {0}", rowNameStr);
-                continue;
-            }
-
-            var curve = curveTable.FindCurve(rowFName);
-
-            if (curve == null)
-            {
-                Console.WriteLine("WARNING: Could not find curve {0}", rowNameStr);
-                continue;
-            }
-
-            var values = new List<float>();
-            
-            for (int level = minLevel; level <= maxLevel; level++)
-            {
-                values.Add(curve.Eval(level));
-            }
-
-            tiers.Add($"{rarity}_T{tier:00}",
-                new ItemRatingTier { FirstLevel = minLevel, Ratings = values.ToArray() });
-        }
-    }
-
-    return new ItemRatingTable { Tiers = tiers };
-}
-
-/********************* TEAM PERKS *********************/
-
-async Task ExportTeamPerks() => await ExportUObjects("TeamPerk", teamPerkAssets, async (teamPerk, exported) =>
-{
-    Interlocked.Increment(ref assetsLoaded);
-    var grantedAbilityKit = await teamPerk.GetOrDefault<FSoftObjectPath>("GrantedAbilityKit").LoadAsync(provider);
-    exported.Description = await GetAbilityDescriptionAsync(grantedAbilityKit) ?? "<No description>";
-    return true;
-});
-
-async Task<string?> GetAbilityDescriptionAsync(UObject? grantedAbilityKit)
-{
-    var (markup, cdo) = await GetMarkupAsync();
-
-    if (markup == null)
-        return null;
-
-    var tokens = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-
-    if (cdo != null)
-        await GetTokensAsync(cdo, tokens);
-
-    return FormatMarkup(markup, tokens);
-
-    async Task<(string? markup, UObject? tooltip)> GetMarkupAsync()
-    {
-        var tooltipDescription = grantedAbilityKit?.GetOrDefault<FText>("TooltipDescription");
-        if (tooltipDescription != null)
-        {
-            // hi, Chaos Agent
-            return (tooltipDescription.Text, null);
-        }
-        var tooltip = grantedAbilityKit?.GetOrDefault<UBlueprintGeneratedClass>("Tooltip");
-        if (tooltip == null)
-        {
-            return (null, null);
-        }
-        Interlocked.Increment(ref assetsLoaded);
-        var cdo = await tooltip.ClassDefaultObject.LoadAsync();
-        return (cdo == null ? null : (await GetInheritedOrDefaultAsync<FText>(cdo, "Description"))?.Text, cdo);
-    }
-
-    async Task GetTokensAsync(UObject cdo, Dictionary<string, string> tokens)
-    {
-        var style = cdo.GetOrDefault("dataRows_conversionStyle", new UScriptMap());
-
-        //const string LEVEL = "F_Level_8_E09B5737400C3B2BE4EB12A65A011266";
-        const string ROW = "Row_4_BFED534C47DE4BA0FAD849A5DFCFFEA2";
-        const string RETURN_FORMATTING = "ReturnFormating_5_537D683042CBD7E588B26ABF9AC9ABE6";
-        const string SHOULD_MODIFY_VALUE = "ShouldModifyValue_25_8A6AE4A84CC50870C881B987E540F003";
-        //const string MODIFY_LEVEL = "F_ModifyLevel_19_9F27BA314EA57935BE8DF7AAE57CDC1E";
-        const string MODIFY_ROW = "ModfifyRow_20_FB710B884BD580129A762F82C8CE1C03";
-        const string MODIFY_OPERATION = "ModifyOperation_21_A19E46F44E5371B3E69778A2D93B9AE9";
-
-        IEnumerable<KeyValuePair<FPropertyTagType?, FPropertyTagType?>>? props = style.Properties;
-
-        // some tokens might only be defined in the parent...
-        if (cdo.Template.Name.Text != "Default__TTT_Perks_C")
-        {
-            Interlocked.Increment(ref assetsLoaded);
-            var parent = await cdo.Template.LoadAsync();
-            var parentProps = parent?.GetOrDefault("dataRows_conversionStyle", new UScriptMap()).Properties;
-            if (parentProps != null)
-                props = parentProps.Concat(props);
-        }
-
-        foreach (var p in props)
-        {
-            if (p.Key == null || p.Value == null)
-                continue;
-
-            const string prefix = "Tooltip.Token.";
-
-            var tagName = (p.Key.GetValue(typeof(FStructFallback)) as FStructFallback)?.GetOrDefault<FName>("TagName");
-            if (tagName?.Text.StartsWith(prefix) != true)
-                continue;
-
-            var tokenName = tagName.Value.Text[prefix.Length..];
-
-            if (p.Value.GetValue(typeof(FStructFallback)) is not FStructFallback tokenDef)
-                continue;
-
-            // get the value from the curve table
-            float? GetValueFromCurveTable(string property)
-            {
-                var row = tokenDef.Get<FStructFallback>(property);
-
-                var multiplier = row.Get<float>("Value");
-                var curveTableRow = row.Get<FCurveTableRowHandle>("Curve");
-
-                // find the right FName to use, what a pain
-                var rowNameStr = curveTableRow.RowName.Text;
-                var curveName = curveTableRow.CurveTable.RowMap.Keys.FirstOrDefault(k => k.Text == rowNameStr);
-
-                if (curveName.IsNone)
-                {
-                    Console.WriteLine("WARNING: Curve table has no row {0}", rowNameStr);
-                    return null;
-                }
-
-                var curve = curveTableRow.CurveTable.FindCurve(curveName);
-                return curve?.Eval(1) * multiplier;
-            }
-
-            var maybeValue = GetValueFromCurveTable(ROW);
-            if (maybeValue == null)
-                continue;
-            var value = maybeValue.Value;
-
-            // modify the value?
-            var shouldModifyValue = tokenDef.Get<bool>(SHOULD_MODIFY_VALUE);
-            if (shouldModifyValue)
-            {
-                var maybeModValue = GetValueFromCurveTable(MODIFY_ROW);
-                if (maybeModValue == null)
-                    continue;
-                var modValue = maybeModValue.Value;
-
-                switch (tokenDef.Get<FName>(MODIFY_OPERATION).Text)
-                {
-                    case "TTT_ModifierOperation::NewEnumerator0":
-                        // Add
-                        value += modValue;
-                        break;
-                    case "TTT_ModifierOperation::NewEnumerator1":
-                        // Multiply
-                        value *= modValue;
-                        break;
-                    case "TTT_ModifierOperation::NewEnumerator2":
-                        // Divide
-                        value /= modValue;
-                        break;
-                    case "TTT_ModifierOperation::NewEnumerator4":
-                        // Override
-                        value = modValue;
-                        break;
-                    case "TTT_ModifierOperation::NewEnumerator6":
-                        // Add (Percentage)
-                        value += modValue - 1;
-                        break;
-                    default:
-                        Console.WriteLine("WARNING: Ignoring unknown modify operation {0}", tokenDef.Get<FName>(MODIFY_OPERATION).Text);
-                        break;
-                }
-            }
-
-            // format the value
-            var formatting = tokenDef.Get<FName>(RETURN_FORMATTING);
-            string formattedValue;
-
-            switch (formatting.Text)
-            {
-                case "TTT_List::NewEnumerator0":
-                    // To Percentage
-                    // NOTE: the input value might be less than 1.0, in which case it's a straight percentage: 0.375 = 37.5%
-                    // or it might be 1.0 or greater, in which case it's a multiplier for additive percentage: 1.13 = 13%
-                    formattedValue = ((value > 1 ? value - 1 : value) * 100).ToString("0.#");
-                    break;
-                case "TTT_List::NewEnumerator1":
-                    // Negative to Positive
-                    formattedValue = (-value).ToString("0");
-                    break;
-                case "TTT_List::NewEnumerator2":
-                    // No Formatting
-                    formattedValue = value.ToString("0.#");
-                    break;
-                case "TTT_List::NewEnumerator4":
-                    // Subtract From 1
-                    formattedValue = ((1 - value) * 100).ToString("0.#");
-                    break;
-                case "TTT_List::NewEnumerator5":
-                    // Distance to Tiles
-                    formattedValue = (value / 512).ToString("0.###");
-                    break;
-                case "TTT_List::NewEnumerator6":
-                    // To Percentage (No Subtract)
-                    formattedValue = (value * 100).ToString("0.#");
-                    break;
-                case "TTT_List::NewEnumerator7":
-                    // To Percentage (Divisor)
-                    formattedValue = (100 / value).ToString("0.#");
-                    break;
-                case "TTT_List::NewEnumerator8":
-                    // Override Percentage
-                    formattedValue = "???";
-                    Console.WriteLine("WARNING: I don't know how to Override Percentage");
-                    break;
-                default:
-                    formattedValue = "???";
-                    Console.WriteLine("WARNING: Unknown formatting style {0}", formatting.Text);
-                    break;
-            }
-
-            tokens[tokenName] = formattedValue;
-        }
-    }
-
-    string FormatMarkup(string markup, Dictionary<string, string> tokens)
-    {
-        var tokenRegex = new Regex(@"\[(Ability\.Line\d+)\]", RegexOptions.IgnoreCase);
-
-        markup = tokenRegex.Replace(markup, match => tokens.GetValueOrDefault(match.Groups[1].Value, match.Value));
-
-        var tagRegex = new Regex(@"<(?:\w+)>([^<]*)</>");
-
-        return tagRegex.Replace(markup, match => match.Groups[1].Value);
-    }
-}
-
-/********************* HEROES *********************/
-
-async Task ExportHeroes()
-{
-    Regex heroAssetNameRegex = new(@".*/([^/]+)_(C|UC|R|VR|SR|UR)_T(\d+)(?:\..*)?$");
-
-    (string baseName, string rarity, int tier)? ParseHeroAssetName(string path)
-    {
-        var match = heroAssetNameRegex.Match(path);
-
-        if (!match.Success)
-        {
-            Console.WriteLine("WARNING: Can't parse hero name: {0}", path);
-            return null;
-        }
-
-        return (baseName: match.Groups[1].Value, rarity: match.Groups[2].Value, tier: int.Parse(match.Groups[3].Value));
-    }
-
-    static string GetHeroTemplateID(string path) => $"Hero:{Path.GetFileNameWithoutExtension(path)}";
-
-    var uniqueHeroes = heroAssets.ToLookup(path => ParseHeroAssetName(path)?.baseName);
-    var numUniqueHeroes = uniqueHeroes.Count;
-    var heroesSoFar = 0;
-
-    await Parallel.ForEachAsync(uniqueHeroes, async (grouping, _cancellationToken) =>
-    {
-        var baseName = grouping.Key;
-        // load the SR version if available so we can know if it's a mythic hero
-        var firstSRAssetPath =
-                grouping.FirstOrDefault(p => ParseHeroAssetName(p)?.rarity == "SR") ??
-                grouping.First();
-        var file = provider[firstSRAssetPath];
-
-        var num = Interlocked.Increment(ref heroesSoFar);
-        Console.WriteLine("Processing hero group {0} of {1}", num, numUniqueHeroes);
-
-        //var exportFileName = file.NameWithoutExtension + ".json";
-
-        Console.WriteLine("Loading {0}", file.PathWithoutExtension);
-        Interlocked.Increment(ref assetsLoaded);
-        var hero = await provider.LoadObjectAsync<UFortHeroType>(file.PathWithoutExtension);
-
-        if (hero == null)
-        {
-            Console.WriteLine("Failed to load {0}", file.PathWithoutExtension);
-            return;
-        }
-
-        if (hero.AttributeInitKey?.AttributeInitCategory.PlainText == "AthenaHero")
-        {
-            Console.WriteLine("Skipping Athena hero: {0}", file.PathWithoutExtension);
-            return;
-        }
-
-        var displayName = hero.DisplayName?.Text ?? $"<{baseName}>";
-        var description = hero.Description?.Text;
-
-        var heroClass = GetHeroClass(hero.GameplayTags);
-        var isMythic = hero.Rarity == EFortRarity.Mythic;
-
-        var gameplayDefinition = hero.HeroGameplayDefinition;
-
-        async Task<(string displayName, string description)> GetPerkTextAsync(string perkProperty)
-        {
-            var perk = gameplayDefinition?.GetOrDefault<FStructFallback>(perkProperty);
-            Interlocked.Increment(ref assetsLoaded);
-            var grantedAbilityKit = perk == null ? null : await perk.GetOrDefault<FSoftObjectPath>("GrantedAbilityKit").LoadAsync(provider);
-            var displayName = grantedAbilityKit?.GetOrDefault<FText>("DisplayName")?.Text ?? $"<{grantedAbilityKit?.Name ?? "<No granted ability>"}>";
-            var description = await GetAbilityDescriptionAsync(grantedAbilityKit) ?? "<No description>";
-            return (displayName, description);
-        }
-
-        var heroPerk = await GetPerkTextAsync("HeroPerk");
-        var commanderPerk = await GetPerkTextAsync("CommanderPerk");
-
-        Console.WriteLine("{0} is {1} ({2}), granting {3} / {4}", baseName, hero.DisplayName, heroClass, heroPerk.displayName, commanderPerk.displayName);
-
-        foreach (var path in grouping)
-        {
-            var templateId = GetHeroTemplateID(path);
-            var parsed = ParseHeroAssetName(path);
-
-            if (parsed == null)
-                continue;
-
-            // SR heroes can be Legendary or Mythic
-            var rarity = parsed.Value.rarity switch
-            {
-                "C" => EFortRarity.Common,
-                "R" => EFortRarity.Rare,
-                "VR" => EFortRarity.Epic,
-                "SR" => isMythic ? EFortRarity.Mythic : EFortRarity.Legendary,
-                _ => EFortRarity.Uncommon,
-            };
-
-            namedItems.TryAdd(templateId, new HeroItemData
-            {
-                AssetPath = provider.FixPath(Path.Combine(Path.GetDirectoryName(path)!, Path.GetFileNameWithoutExtension(path))),
-                Description = description,
-                DisplayName = displayName.Trim(),
-                Name = Path.GetFileNameWithoutExtension(path),
-                SubType = heroClass,
-                Type = "Hero",
-                Rarity = RarityUtil.GetNameText(rarity).Text,
-                Tier = parsed.Value.tier,
-                HeroPerk = heroPerk.displayName,
-                HeroPerkDescription = heroPerk.description,
-                CommanderPerk = commanderPerk.displayName,
-                CommanderPerkDescription = commanderPerk.description,
-            });
-        }
-    });
-
-    static string GetHeroClass(FGameplayTagContainer gameplayTags)
-    {
-        foreach (var tag in gameplayTags)
-        {
-            var text = tag.Text;
-            if (text.Contains("IsCommando"))
-                return "Soldier";
-            if (text.Contains("IsNinja"))
-                return "Ninja";
-            if (text.Contains("IsOutlander"))
-                return "Outlander";
-            if (text.Contains("IsConstructor"))
-                return "Constructor";
-        }
-
-        return "Unknown";
-    }
-}
-
-/********************* GENERIC EXPORTERS *********************/
-
-async Task ExportUObjects(string type, IReadOnlyCollection<string> assetPaths,
-    Func<UObject, NamedItemData, Task<bool>>? exporter = null) =>
-    await ExportObjects(type, assetPaths, exporter);
-
-async Task ExportObjects<T>(string type, IReadOnlyCollection<string> assetPaths,
-    Func<T, NamedItemData, Task<bool>>? exporter = null)
-    where T : UObject
-{
-    var numToProcess = assetPaths.Count;
-    var processedSoFar = 0;
-
-    await Parallel.ForEachAsync(assetPaths, async (path, _cancellationToken) =>
-    {
-        var file = provider![path];
-
-        var num = Interlocked.Increment(ref processedSoFar);
-        Console.WriteLine("Processing {0} {1} of {2}", type, num, numToProcess);
-
-        Console.WriteLine("Loading {0}", file.PathWithoutExtension);
-        Interlocked.Increment(ref assetsLoaded);
-
-        var uobject = await provider.LoadObjectAsync<T>(file.PathWithoutExtension);
-
-        if (uobject == null)
-        {
-            Console.WriteLine("Failed to load {0}", file.PathWithoutExtension);
-            return;
-        }
-
-        var templateId = $"{type}:{uobject.Name}";
-        var displayName = uobject.GetOrDefault<FText>("DisplayName")?.Text ?? $"<{uobject.Name}>";
-        var description = uobject.GetOrDefault<FText>("Description")?.Text;
-
-        var namedItemData = new NamedItemData
-        {
-            AssetPath = provider.FixPath(path),
-            Name = uobject.Name,
-            Type = type,
-            DisplayName = displayName.Trim(),
-            Description = description,
-        };
-
-        if (uobject.GetOrDefault<EFortItemTier>("Tier") is EFortItemTier tier && tier != default(EFortItemTier))
-        {
-            namedItemData.Tier = (int)tier;
-        }
-
-        if (uobject.GetOrDefault<EFortRarity>("Rarity") is EFortRarity rarity && rarity != default(EFortRarity))
-        {
-            namedItemData.Rarity = rarity.GetNameText().Text;
-        }
-
-        if (exporter != null && await exporter(uobject, namedItemData) == false)
-        {
-            return;
-        }
-
-        namedItems!.TryAdd(templateId, namedItemData);
-    });
-}
-
-async Task ExportBlueprintObjects(string type, IReadOnlyCollection<string> assetPaths, string displayNameProperty,
-    string? descriptionProperty, Func<UBlueprintGeneratedClass, UObject, NamedItemData, Task<bool>>? exporter = null)
-{
-    var numToProcess = assetPaths.Count;
-    var processedSoFar = 0;
-
-    await Parallel.ForEachAsync(assetPaths, async (path, _cancellationToken) =>
-    {
-        var file = provider![path];
-
-        var num = Interlocked.Increment(ref processedSoFar);
-        Console.WriteLine("Processing {0} {1} of {2}", type, num, numToProcess);
-
-        Console.WriteLine("Loading {0}", file.PathWithoutExtension);
-        Interlocked.Increment(ref assetsLoaded);
-        var pkg = await provider.LoadPackageAsync(file.PathWithoutExtension);
-
-        if (pkg.GetExports().First() is not UBlueprintGeneratedClass bpClass)
-        {
-            Console.WriteLine("Failed to load {0}", file.PathWithoutExtension);
-            return;
-        }
-
-        var bpClassPath = bpClass.GetPathName();
-
-        Interlocked.Increment(ref assetsLoaded);
-        var cdo = await bpClass.ClassDefaultObject.LoadAsync();
-
-        var displayName = (await GetInheritedOrDefaultAsync<FText>(cdo, displayNameProperty))?.Text ?? $"<{bpClass.Name}>";
-        var description = descriptionProperty == null ? null : (await GetInheritedOrDefaultAsync<FText>(cdo, descriptionProperty))?.Text;
-
-        var namedItemData = new NamedItemData
-        {
-            AssetPath = file.PathWithoutExtension,
-            Description = description,
-            DisplayName = displayName.Trim(),
-            Name = bpClass.Name,
-            Type = type,
-        };
-
-        if (exporter != null && await exporter(bpClass, cdo, namedItemData) == false)
-        {
-            return;
-        }
-
-        namedItems!.TryAdd(bpClassPath, namedItemData);
-    });
-}
-
-async Task<T?> GetInheritedOrDefaultAsync<T>(UObject obj, string name)
-{
-    if (obj.GetOrDefault<T>(name) is T ret && !ret.Equals(default(T)))
-        return ret;
-
-    if (obj.Template != null)
-    {
-        Interlocked.Increment(ref assetsLoaded);
-        var template = await obj.Template.LoadAsync();
-
-        if (template != null)
-            return await GetInheritedOrDefaultAsync<T>(template, name);
-    }
-
-    return default(T);
 }

@@ -3,7 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace BanjoBotAssets
 {
-    class Export
+    class ExportedAssets
     {
         public DateTime ExportedAt { get; set; } = DateTime.Now;
 
