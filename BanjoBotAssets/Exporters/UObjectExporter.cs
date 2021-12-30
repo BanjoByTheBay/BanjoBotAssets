@@ -1,10 +1,4 @@
-﻿using CUE4Parse.FileProvider;
-using CUE4Parse.FN.Enums.FortniteGame;
-using CUE4Parse.UE4.Assets.Exports;
-using CUE4Parse.UE4.Objects.Core.i18N;
-using CUE4Parse_Fortnite.Enums;
-
-namespace BanjoBotAssets.Exporters
+﻿namespace BanjoBotAssets.Exporters
 {
     internal abstract class UObjectExporter : UObjectExporter<UObject>
     {
@@ -23,7 +17,7 @@ namespace BanjoBotAssets.Exporters
             return Task.FromResult(true);
         }
 
-        public override async Task ExportAssetsAsync(IProgress<ExportProgress> progress, ExportedAssets output)
+        public override async Task ExportAssetsAsync(IProgress<ExportProgress> progress, IAssetOutput output)
         {
             var numToProcess = assetPaths.Count;
             var processedSoFar = 0;
@@ -74,7 +68,7 @@ namespace BanjoBotAssets.Exporters
                     return;
                 }
 
-                output.NamedItems.TryAdd(templateId, namedItemData);
+                output.AddNamedItem(templateId, namedItemData);
             });
         }
     }

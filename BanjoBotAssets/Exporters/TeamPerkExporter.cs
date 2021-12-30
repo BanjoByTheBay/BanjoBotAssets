@@ -1,10 +1,8 @@
-﻿using CUE4Parse.FileProvider;
-using CUE4Parse.FN.Exports.FortniteGame.NoProperties;
-using CUE4Parse.UE4.Objects.UObject;
+﻿using CUE4Parse.FN.Exports.FortniteGame.NoProperties;
 
 namespace BanjoBotAssets.Exporters
 {
-    internal sealed class TeamPerkExporter : UObjectExporter<UFortIngredientItemDefinition>
+    internal sealed class TeamPerkExporter : UObjectExporter
     {
         public TeamPerkExporter(DefaultFileProvider provider) : base(provider) { }
 
@@ -12,7 +10,7 @@ namespace BanjoBotAssets.Exporters
 
         protected override bool InterestedInAsset(string name) => name.Contains("/TPID_");
 
-        protected override async Task<bool> ExportAssetAsync(UFortIngredientItemDefinition asset, NamedItemData namedItemData)
+        protected override async Task<bool> ExportAssetAsync(UObject asset, NamedItemData namedItemData)
         {
             Interlocked.Increment(ref assetsLoaded);
             var grantedAbilityKit = await asset.GetOrDefault<FSoftObjectPath>("GrantedAbilityKit").LoadAsync(provider);

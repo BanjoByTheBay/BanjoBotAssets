@@ -1,22 +1,28 @@
-﻿using BanjoBotAssets;
+﻿global using CUE4Parse.FileProvider;
+global using CUE4Parse.FN.Enums.FortniteGame;
+global using CUE4Parse.FN.Exports.FortniteGame;
+global using CUE4Parse.FN.Structs.Engine;
+global using CUE4Parse.FN.Structs.FortniteGame;
+global using CUE4Parse.UE4.Assets.Exports.Engine;
+global using CUE4Parse.UE4.Assets.Exports;
+global using CUE4Parse.UE4.Assets.Objects;
+global using CUE4Parse.UE4.Objects.Core.i18N;
+global using CUE4Parse.UE4.Objects.UObject;
+global using CUE4Parse_Fortnite.Enums;
+global using System.Text.RegularExpressions;
+
+using BanjoBotAssets;
 using BanjoBotAssets.Exporters;
 using CUE4Parse.Encryption.Aes;
-using CUE4Parse.FileProvider;
-using CUE4Parse.FN.Exports.FortniteGame;
-using CUE4Parse.FN.Structs.Engine;
-using CUE4Parse.FN.Structs.FortniteGame;
 using CUE4Parse.UE4.Assets;
-using CUE4Parse.UE4.Assets.Exports.Engine;
 using CUE4Parse.UE4.Objects.Core.Misc;
 using CUE4Parse.UE4.Objects.GameplayTags;
 using CUE4Parse.UE4.Versions;
-using CUE4Parse_Fortnite.Enums;
 using Newtonsoft.Json;
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Net.Http.Json;
 using System.Text;
-using System.Text.RegularExpressions;
 
 // open PAK files
 string[] gameDirectories =
@@ -74,21 +80,13 @@ ObjectTypeRegistry.RegisterClass("FortAlterationItemDefinition", typeof(UFortIte
 var export = new ExportedAssets();
 //using var logFile = new StreamWriter("assets.log");
 
-var namedItems = new ConcurrentDictionary<string, NamedItemData>();
-
 var schematicAssets = new ConcurrentBag<string>();
 var questAssets = new ConcurrentBag<string>();
-var gadgetAssets = new ConcurrentBag<string>();
-var survivorAssets = new ConcurrentBag<string>();
 var craftingAssets = new ConcurrentBag<string>();
 
 var weaponAssets = new ConcurrentBag<string>();
 
 var allAssetLists = new[] {
-    // DONE
-    ("survivor", survivorAssets),
-    ("schematic", schematicAssets),
-
     // WIP
     ("crafting recipes", craftingAssets),
 
@@ -110,6 +108,8 @@ IExporter[] exporters =
     new IngredientExporter(provider),
     new ItemRatingExporter(provider),
     new MissionGenExporter(provider),
+    new SchematicExporter(provider),
+    new SurvivorExporter(provider),
     new TeamPerkExporter(provider),
     new ZoneRewardExporter(provider),
     new ZoneThemeExporter(provider),
@@ -123,29 +123,9 @@ foreach (var (name, file) in provider.Files)
         continue;
     }
 
-    if (name.Contains("/SID_"))
-    {
-        schematicAssets.Add(name);
-    }
-
     if (name.Contains("/Quests/"))
     {
         questAssets.Add(name);
-    }
-
-    if (name.Contains("Workers/Worker") || name.Contains("Managers/Manager"))
-    {
-        survivorAssets.Add(name);
-    }
-
-    if (name.Contains("/CraftingRecipes_New"))
-    {
-        craftingAssets.Add(name);
-    }
-
-    if (name.Contains("/WID_") || name.Contains("/TID_"))
-    {
-        weaponAssets.Add(name);
     }
 
     foreach (var e in exporters)
@@ -173,20 +153,28 @@ var assetsLoaded = 0;
 var stopwatch = new Stopwatch();
 stopwatch.Start();
 
-await Task.WhenAll(new[] {
-    ExportSurvivors(),
-    ExportSchematics(),
-}.Concat(exporters.Select(e => e.ExportAssetsAsync(progress, export))));
+var allPrivateExports = new List<IAssetOutput>();
+
+await Task.WhenAll(exporters.Select(e =>
+{
+    // give the exporter its own output object to use,
+    // then combine the results when the task completes
+    var privateExport = new AssetOutput();
+    allPrivateExports.Add(privateExport);
+    return e.ExportAssetsAsync(progress, privateExport);
+}));
 
 stopwatch.Stop();
 
-Console.WriteLine("Loaded {0} assets in {1} ({2} ms per asset)", assetsLoaded, stopwatch.Elapsed, stopwatch.ElapsedMilliseconds / assetsLoaded);
+assetsLoaded = exporters.Sum(e => e.AssetsLoaded);
+
+Console.WriteLine("Loaded {0} assets in {1} ({2} ms per asset)", assetsLoaded, stopwatch.Elapsed, stopwatch.ElapsedMilliseconds / Math.Max(assetsLoaded, 1));
 
 // export
-foreach (var ni in namedItems)
-{
-    export.NamedItems.Add(ni.Key, ni.Value);
-}
+foreach (var privateExport in allPrivateExports)
+    privateExport.CopyTo(export);
+
+allPrivateExports.Clear();
 
 using (var file = File.CreateText("assets.json"))
 {
@@ -197,281 +185,3 @@ using (var file = File.CreateText("assets.json"))
 
 // done!
 return 0;
-
-/********************* SCHEMATICS *********************/
-
-async Task ExportSchematics()
-{
-    // load crafting recipes table asset
-    var craftingFile = provider[craftingAssets.Single()];
-    var craftingTable = await provider.LoadObjectAsync<UDataTable>(craftingFile.PathWithoutExtension);
-
-    if (craftingTable == null)
-    {
-        Console.WriteLine("WARNING: Can't load crafting recipes");
-        return;
-    }
-
-    // index weapon asset paths
-    var weaponPaths = weaponAssets.ToDictionary(
-        path => Path.GetFileNameWithoutExtension(path),
-        StringComparer.OrdinalIgnoreCase);
-
-    // load schematic assets
-    Regex schematicAssetNameRegex = new(@".*/([^/]+?)(?:_(C|UC|R|VR|SR|UR))?(?:_(Ore|Crystal))?(?:_?T(\d+))?(?:\..*)?$", RegexOptions.IgnoreCase);
-
-    (string baseName, string rarity, string evoType, int? tier)? ParseSchematicAssetName(string path)
-    {
-        var match = schematicAssetNameRegex.Match(path);
-
-        if (!match.Success)
-        {
-            Console.WriteLine("WARNING: Can't parse schematic name: {0}", path);
-            return null;
-        }
-
-        return (baseName: match.Groups[1].Value,
-            rarity: match.Groups[2].Value,
-            evoType: match.Groups[3].Value,
-            tier: match.Groups[4].Success ? int.Parse(match.Groups[4].Value) : null);
-    }
-
-    async Task<UFortItemDefinition?> LoadWeaponDefinitionAsync(FDataTableRowHandle craftingRowHandle)
-    {
-        if (!craftingTable.TryGetDataTableRow(craftingRowHandle.RowName.Text,
-            StringComparison.OrdinalIgnoreCase, out var craftingRow))
-        {
-            Console.WriteLine("WARNING: Can't find crafting row {0}", craftingRowHandle.RowName);
-            return null;
-        }
-
-        var recipeResults = craftingRow.GetOrDefault<FFortItemQuantityPair[]>("RecipeResults");
-        var assetName = recipeResults[0].ItemPrimaryAssetId.PrimaryAssetName.Text;
-        if (!weaponPaths.TryGetValue(assetName, out var widPath))
-        {
-            Console.WriteLine("WARNING: No weapon path indexed for {0}", assetName);
-            return null;
-        }
-        var widFile = provider[widPath];
-        return await provider.LoadObjectAsync<UFortItemDefinition>(widFile.PathWithoutExtension);
-    }
-
-    Regex schematicSubTypeRegex = new(@"^(?:Weapon\.(?:Ranged|Melee\.(?:Edged|Blunt|Piercing))|Trap(?=\.(?:Ceiling|Floor|Wall)))\.([^.]+)", RegexOptions.IgnoreCase);
-
-    string SubTypeFromTags(FGameplayTagContainer tags)
-    {
-        foreach (var tag in tags.GameplayTags)
-        {
-            var match = schematicSubTypeRegex.Match(tag.Text);
-
-            if (match.Success)
-            {
-                switch (match.Groups[1].Value.ToLower())
-                {
-                    case "hammer":
-                        return "Hardware";
-
-                    case "heavy":
-                        return "Launcher";
-
-                    case "improvised":
-                        return "Club";
-
-                    case "smg":
-                        return "SMG";
-
-                    default:
-                        var sb = new StringBuilder(match.Groups[1].Value);
-
-                        sb[0] = char.ToUpper(sb[0]);
-
-                        for (int i = 1; i < sb.Length; i++)
-                            sb[i] = char.ToLower(sb[i]);
-
-                        return sb.ToString();
-                }
-            }
-        }
-
-        return "Unknown";
-    }
-
-    string GetSchematicTemplateID(string path) => $"Schematic:{Path.GetFileNameWithoutExtension(path)}";
-
-    var uniqueSchematics = schematicAssets.ToLookup(path => ParseSchematicAssetName(path)?.baseName);
-    var numUniqueSchematics = uniqueSchematics.Count;
-    var schematicsSoFar = 0;
-
-    await Parallel.ForEachAsync(uniqueSchematics, async (grouping, _cancellationToken) =>
-    {
-        var baseName = grouping.Key;
-        var file = provider[grouping.First()];
-
-        var num = Interlocked.Increment(ref schematicsSoFar);
-        Console.WriteLine("Processing schematic group {0} of {1}", num, numUniqueSchematics);
-
-        Console.WriteLine("Loading {0}", file.PathWithoutExtension);
-        Interlocked.Increment(ref assetsLoaded);
-        var schematic = await provider.LoadObjectAsync(file.PathWithoutExtension);
-
-        if (schematic == null)
-        {
-            Console.WriteLine("Failed to load {0}", file.PathWithoutExtension);
-            return;
-        }
-
-        var craftingRow = schematic.GetOrDefault<FDataTableRowHandle>("CraftingRecipe");
-        if (craftingRow == null)
-        {
-            Console.WriteLine("WARNING: No crafting row listed for schematic {0}", schematic.Name);
-            return;
-        }
-
-        var weaponDef = await LoadWeaponDefinitionAsync(craftingRow);
-
-        if (weaponDef == null)
-        {
-            Console.WriteLine("WARNING: No weapon definition for crafting row {0}", craftingRow.RowName);
-            return;
-        }
-
-        var displayName = weaponDef.DisplayName?.Text ?? $"<{baseName}>";
-        var description = weaponDef.Description?.Text;
-        var subType = SubTypeFromTags(weaponDef.GameplayTags);
-
-        foreach (var path in grouping)
-        {
-            var templateId = GetSchematicTemplateID(path);
-            var parsed = ParseSchematicAssetName(path);
-
-            if (parsed == null)
-                continue;
-
-            var rarity = parsed.Value.rarity.ToUpper() switch
-            {
-                "C" => EFortRarity.Common,
-                "R" => EFortRarity.Rare,
-                "VR" => EFortRarity.Epic,
-                "SR" => EFortRarity.Legendary,
-                "UR" => EFortRarity.Mythic,
-                _ => EFortRarity.Uncommon,
-            };
-
-            namedItems.TryAdd(templateId, new NamedItemData
-            {
-                AssetPath = provider.FixPath(Path.Combine(Path.GetDirectoryName(path)!, Path.GetFileNameWithoutExtension(path))),
-                Description = description,
-                DisplayName = displayName.Trim(),
-                Name = Path.GetFileNameWithoutExtension(path),
-                SubType = subType,
-                Type = "Schematic",
-                Rarity = rarity.GetNameText().Text,
-                Tier = parsed.Value.tier,
-            });
-        }
-    });
-}
-
-/********************* SURVIVORS *********************/
-
-static string GetManagerJob(UFortWorkerType worker) =>
-    worker.ManagerSynergyTag.First().Text switch
-    {
-        _ when !worker.bIsManager => throw new ApplicationException("Not a manager"),
-        "Homebase.Manager.IsDoctor" => "Doctor",
-        "Homebase.Manager.IsEngineer" => "Engineer",
-        "Homebase.Manager.IsExplorer" => "Explorer",
-        "Homebase.Manager.IsGadgeteer" => "Gadgeteer",
-        "Homebase.Manager.IsInventor" => "Inventor",
-        "Homebase.Manager.IsMartialArtist" => "Martial Artist",
-        "Homebase.Manager.IsSoldier" => "Marksman",
-        "Homebase.Manager.IsTrainer" => "Trainer",
-        var other => throw new ApplicationException("Unexpected manager synergy " + other),
-    };
-
-static string MakeSurvivorDisplayName(UFortWorkerType worker) =>
-    worker.bIsManager ? $"Lead {GetManagerJob(worker)}" : $"Survivor";
-
-async Task ExportSurvivors()
-{
-    // regular survivor:    WorkerBasic_SR_T02
-    // special survivor:    Worker_Leprechaun_VR_T01
-    // mythic survivor:     Worker_Karoline_UR_T02
-    // lead:                ManagerEngineer_R_T04
-    // mythic lead:         ManagerMartialArtist_SR_samurai_T03
-    Regex survivorAssetNameRegex = new(@".*/([^/]+)_(C|UC|R|VR|SR|UR)_([a-z]+_)?T(\d+)(?:\..*)?$");
-
-    (string baseName, string rarity, int tier)? ParseSurvivorAssetName(string path)
-    {
-        var match = survivorAssetNameRegex.Match(path);
-
-        if (!match.Success)
-        {
-            Console.WriteLine("WARNING: Can't parse survivor name: {0}", path);
-            return null;
-        }
-
-        return (baseName: match.Groups[1].Value + match.Groups[3].Value, rarity: match.Groups[2].Value, tier: int.Parse(match.Groups[4].Value));
-    }
-
-    static string GetSurvivorTemplateID(string path) => $"Worker:{Path.GetFileNameWithoutExtension(path)}";
-
-    var uniqueSurvivors = survivorAssets.ToLookup(path => ParseSurvivorAssetName(path)?.baseName);
-    var numUniqueSurvivors = uniqueSurvivors.Count;
-    var survivorsSoFar = 0;
-
-    await Parallel.ForEachAsync(uniqueSurvivors, async (grouping, _cancellationToken) =>
-    {
-        var baseName = grouping.Key;
-        var file = provider[grouping.First()];
-
-        var num = Interlocked.Increment(ref survivorsSoFar);
-        Console.WriteLine("Processing worker group {0} of {1}", num, numUniqueSurvivors);
-
-        Console.WriteLine("Loading {0}", file.PathWithoutExtension);
-        Interlocked.Increment(ref assetsLoaded);
-        var survivor = await provider.LoadObjectAsync<UFortWorkerType>(file.PathWithoutExtension);
-
-        if (survivor == null)
-        {
-            Console.WriteLine("Failed to load {0}", file.PathWithoutExtension);
-            return;
-        }
-
-        var subType = survivor.bIsManager ? GetManagerJob(survivor) : null;
-        var description = survivor.Description?.Text;
-
-        foreach (var path in grouping)
-        {
-            var templateId = GetSurvivorTemplateID(path);
-            var parsed = ParseSurvivorAssetName(path);
-
-            if (parsed == null)
-                continue;
-
-            var rarity = parsed.Value.rarity switch
-            {
-                "C" => EFortRarity.Common,
-                "R" => EFortRarity.Rare,
-                "VR" => EFortRarity.Epic,
-                "SR" => EFortRarity.Legendary,
-                "UR" => EFortRarity.Mythic,
-                _ => EFortRarity.Uncommon,
-            };
-
-            var displayName = survivor.DisplayName?.Text ?? MakeSurvivorDisplayName(survivor);
-
-            namedItems.TryAdd(templateId, new NamedItemData
-            {
-                AssetPath = provider.FixPath(Path.Combine(Path.GetDirectoryName(path)!, Path.GetFileNameWithoutExtension(path))),
-                Description = description,
-                DisplayName = displayName.Trim(),
-                Name = Path.GetFileNameWithoutExtension(path),
-                SubType = subType,
-                Type = "Worker",
-                Rarity = rarity.GetNameText().Text,
-                Tier = parsed.Value.tier,
-            });
-        }
-    });
-}

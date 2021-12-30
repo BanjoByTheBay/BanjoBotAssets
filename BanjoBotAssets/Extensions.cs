@@ -1,6 +1,4 @@
-﻿using CUE4Parse.UE4.Assets.Exports;
-
-namespace BanjoBotAssets
+﻿namespace BanjoBotAssets
 {
     internal static class Extensions
     {

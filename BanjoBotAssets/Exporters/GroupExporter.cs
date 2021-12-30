@@ -1,8 +1,4 @@
-﻿using CUE4Parse.FileProvider;
-using CUE4Parse.FN.Exports.FortniteGame;
-using CUE4Parse_Fortnite.Enums;
-
-namespace BanjoBotAssets.Exporters
+﻿namespace BanjoBotAssets.Exporters
 {
     internal record BaseParsedItemName(string BaseName, string Rarity, int Tier);
 
@@ -12,7 +8,7 @@ namespace BanjoBotAssets.Exporters
     }
 
     internal abstract class GroupExporter<TAsset, TParsedName, TFields, TItemData> : BaseExporter
-        where TAsset : UFortItemDefinition
+        where TAsset : UObject
         where TParsedName : BaseParsedItemName
         where TFields : BaseItemGroupFields, new()
         where TItemData : NamedItemData, new()
@@ -35,7 +31,7 @@ namespace BanjoBotAssets.Exporters
             });
         }
 
-        public override async Task ExportAssetsAsync(IProgress<ExportProgress> progress, ExportedAssets output)
+        public override async Task ExportAssetsAsync(IProgress<ExportProgress> progress, IAssetOutput output)
         {
             var uniqueAssets = assetPaths.ToLookup(path => ParseAssetName(path)?.BaseName);
             numToProcess = uniqueAssets.Count;
@@ -83,23 +79,31 @@ namespace BanjoBotAssets.Exporters
                     if (parsed == null)
                         continue;
 
-                    var itemData = new TItemData();
-                    ExportAsset(parsed, asset, fields, path, itemData);
-                    output.NamedItems.TryAdd(templateId, itemData);
+                    var itemData = new TItemData
+                    {
+                        AssetPath = provider.FixPath(Path.Combine(Path.GetDirectoryName(path)!, Path.GetFileNameWithoutExtension(path))),
+                        Description = GetDescription(parsed, asset, fields),
+                        DisplayName = GetDisplayName(parsed, asset, fields).Trim(),
+                        Name = Path.GetFileNameWithoutExtension(path),
+                        SubType = fields.SubType,
+                        Type = Type,
+                        Rarity = GetRarity(parsed, asset, fields).GetNameText().Text,
+                        Tier = parsed.Tier,
+                    };
+
+                    if (await ExportAssetAsync(parsed, asset, fields, path, itemData) == false)
+                    {
+                        return;
+                    }
+
+                    output.AddNamedItem(templateId, itemData);
                 }
             });
         }
 
-        private void ExportAsset(TParsedName parsed, TAsset asset, TFields fields, string path, TItemData itemData)
+        protected virtual Task<bool> ExportAssetAsync(TParsedName parsed, TAsset asset, TFields fields, string path, TItemData itemData)
         {
-            itemData.AssetPath = provider.FixPath(Path.Combine(Path.GetDirectoryName(path)!, Path.GetFileNameWithoutExtension(path)));
-            itemData.Description = GetDescription(parsed, asset, fields);
-            itemData.DisplayName = GetDisplayName(parsed, asset, fields);
-            itemData.Name = Path.GetFileNameWithoutExtension(path);
-            itemData.SubType = fields.SubType;
-            itemData.Type = Type;
-            itemData.Rarity = GetRarity(parsed, asset, fields).GetNameText().Text;
-            itemData.Tier = parsed.Tier;
+            return Task.FromResult(true);
         }
 
         protected virtual string SelectPrimaryAsset(IGrouping<string?, string> assetGroup)
@@ -116,8 +120,8 @@ namespace BanjoBotAssets.Exporters
         {
             return Task.FromResult(new TFields() with
             {
-                Description = asset.Description?.Text,
-                DisplayName = asset.DisplayName?.Text ?? $"<{grouping.Key}>",
+                Description = asset.GetOrDefault<FText>("Description")?.Text,
+                DisplayName = asset.GetOrDefault<FText>("DisplayName")?.Text ?? $"<{grouping.Key}>",
                 SubType = null,
             });
         }
@@ -144,17 +148,10 @@ namespace BanjoBotAssets.Exporters
     }
 
     internal abstract class GroupExporter<TAsset> : GroupExporter<TAsset, BaseParsedItemName, BaseItemGroupFields, NamedItemData>
-        where TAsset : UFortItemDefinition
+        where TAsset : UObject
     {
         public GroupExporter(DefaultFileProvider provider) : base(provider)
         {
         }
-    }
-
-    internal record HeroItemGroupFields(string DisplayName, string? Description, string? SubType,
-        string HeroPerk, string HeroPerkDescription, string CommanderPerk, string CommanderPerkDescription)
-        : BaseItemGroupFields(DisplayName, Description, SubType)
-    {
-        public HeroItemGroupFields() : this("", null, null, "", "", "", "") { }
     }
 }

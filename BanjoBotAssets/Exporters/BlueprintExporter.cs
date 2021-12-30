@@ -1,7 +1,4 @@
-﻿using CUE4Parse.FileProvider;
-using CUE4Parse.UE4.Assets.Exports;
-using CUE4Parse.UE4.Objects.Core.i18N;
-using CUE4Parse.UE4.Objects.Engine;
+﻿using CUE4Parse.UE4.Objects.Engine;
 
 namespace BanjoBotAssets.Exporters
 {
@@ -21,7 +18,7 @@ namespace BanjoBotAssets.Exporters
             return Task.FromResult(true);
         }
 
-        public override async Task ExportAssetsAsync(IProgress<ExportProgress> progress, ExportedAssets output)
+        public override async Task ExportAssetsAsync(IProgress<ExportProgress> progress, IAssetOutput output)
         {
             numToProcess = assetPaths.Count;
 
@@ -64,7 +61,7 @@ namespace BanjoBotAssets.Exporters
                     return;
                 }
 
-                output.NamedItems.TryAdd(bpClassPath, namedItemData);
+                output.AddNamedItem(bpClassPath, namedItemData);
             });
         }
 

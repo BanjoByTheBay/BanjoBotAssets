@@ -1,14 +1,10 @@
-﻿using CUE4Parse.FileProvider;
-using CUE4Parse.UE4.Assets.Exports.Engine;
-using CUE4Parse.UE4.Objects.Core.i18N;
-
-namespace BanjoBotAssets.Exporters
+﻿namespace BanjoBotAssets.Exporters
 {
     internal sealed class DifficultyExporter : BaseExporter
     {
         public DifficultyExporter(DefaultFileProvider provider) : base(provider) { }
 
-        public override async Task ExportAssetsAsync(IProgress<ExportProgress> progress, ExportedAssets output)
+        public override async Task ExportAssetsAsync(IProgress<ExportProgress> progress, IAssetOutput output)
         {
             var growthBoundsPath = assetPaths.First(p => Path.GetFileNameWithoutExtension(p) == "GameDifficultyGrowthBounds");
 
@@ -36,7 +32,7 @@ namespace BanjoBotAssets.Exporters
                 var recommendedRating = data.GetOrDefault<int>("RecommendedRating");
                 var displayName = data.GetOrDefault<FText>("ThreatDisplayName")?.Text ?? $"<{recommendedRating}>";
 
-                output.DifficultyInfo.Add(rowKey.Text, new DifficultyInfo
+                output.AddDifficultyInfo(rowKey.Text, new DifficultyInfo
                 {
                     RequiredRating = requiredRating,
                     MaximumRating = maximumRating,

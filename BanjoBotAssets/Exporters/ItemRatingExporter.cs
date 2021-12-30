@@ -1,7 +1,4 @@
-﻿using CUE4Parse.FileProvider;
-using CUE4Parse.UE4.Assets.Exports.Engine;
-
-namespace BanjoBotAssets.Exporters
+﻿namespace BanjoBotAssets.Exporters
 {
     internal sealed class ItemRatingExporter : BaseExporter
     {
@@ -9,7 +6,7 @@ namespace BanjoBotAssets.Exporters
 
         protected override bool InterestedInAsset(string name) => name.EndsWith("ItemRating.uasset");
 
-        public override async Task ExportAssetsAsync(IProgress<ExportProgress> progress, ExportedAssets output)
+        public override async Task ExportAssetsAsync(IProgress<ExportProgress> progress, IAssetOutput output)
         {
             progress.Report(new ExportProgress { TotalSteps = 2, CompletedSteps = 0, AssetsLoaded = assetsLoaded, CurrentItem = "Exporting item ratings" });
 
@@ -22,7 +19,7 @@ namespace BanjoBotAssets.Exporters
             progress.Report(new ExportProgress { TotalSteps = 2, CompletedSteps = 2, AssetsLoaded = assetsLoaded, CurrentItem = "Exported item ratings" });
         }
 
-        async Task ExportDefaultItemRatingsAsync(ExportedAssets output)
+        async Task ExportDefaultItemRatingsAsync(IAssetOutput output)
         {
             var baseItemRatingPath = assetPaths.FirstOrDefault(p => Path.GetFileNameWithoutExtension(p) == "BaseItemRating");
 
@@ -43,10 +40,10 @@ namespace BanjoBotAssets.Exporters
                 return;
             }
 
-            output.ItemRatings.Default = EvaluateItemRatingCurve(curveTable, "Default");
+            output.AddDefaultItemRatings(EvaluateItemRatingCurve(curveTable, "Default"));
         }
 
-        async Task ExportSurvivorItemRatingsAsync(ExportedAssets output)
+        async Task ExportSurvivorItemRatingsAsync(IAssetOutput output)
         {
             var survivorItemRatingPath = assetPaths.FirstOrDefault(p => Path.GetFileNameWithoutExtension(p) == "SurvivorItemRating");
 
@@ -67,8 +64,8 @@ namespace BanjoBotAssets.Exporters
                 return;
             }
 
-            output.ItemRatings.Survivor = EvaluateItemRatingCurve(curveTable, "Default");
-            output.ItemRatings.LeadSurvivor = EvaluateItemRatingCurve(curveTable, "Manager", true);
+            output.AddSurvivorItemRatings(EvaluateItemRatingCurve(curveTable, "Default"));
+            output.AddLeadSurvivorItemRatings(EvaluateItemRatingCurve(curveTable, "Manager", true));
         }
 
         static readonly (string rarity, int maxTier)[] rarityTiers =

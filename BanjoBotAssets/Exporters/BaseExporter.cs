@@ -1,6 +1,4 @@
-﻿using CUE4Parse.FileProvider;
-
-namespace BanjoBotAssets.Exporters
+﻿namespace BanjoBotAssets.Exporters
 {
     internal abstract class BaseExporter : IExporter
     {
@@ -21,10 +19,10 @@ namespace BanjoBotAssets.Exporters
             Interlocked.Increment(ref assetsLoaded);
         }
 
-        public abstract Task ExportAssetsAsync(IProgress<ExportProgress> progress, ExportedAssets output);
+        public abstract Task ExportAssetsAsync(IProgress<ExportProgress> progress, IAssetOutput output);
         protected abstract bool InterestedInAsset(string name);
 
-        public virtual void ObserveAsset(string name)
+        public void ObserveAsset(string name)
         {
             if (InterestedInAsset(name))
             {

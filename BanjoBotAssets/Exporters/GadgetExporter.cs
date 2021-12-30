@@ -1,7 +1,4 @@
-﻿using CUE4Parse.FileProvider;
-using CUE4Parse.FN.Exports.FortniteGame;
-
-namespace BanjoBotAssets.Exporters
+﻿namespace BanjoBotAssets.Exporters
 {
     internal sealed class GadgetExporter : UObjectExporter<UFortGadgetItemDefinition>
     {

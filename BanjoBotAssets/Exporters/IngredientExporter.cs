@@ -1,5 +1,4 @@
-﻿using CUE4Parse.FileProvider;
-using CUE4Parse.FN.Exports.FortniteGame.NoProperties;
+﻿using CUE4Parse.FN.Exports.FortniteGame.NoProperties;
 
 namespace BanjoBotAssets.Exporters
 {

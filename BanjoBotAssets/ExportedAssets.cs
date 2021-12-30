@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
 
 namespace BanjoBotAssets
@@ -43,6 +44,11 @@ namespace BanjoBotAssets
         public string? CommanderPerkDescription { get; set; }
     }
 
+    class SchematicItemData : NamedItemData
+    {
+        public string? EvoType { get; set; }
+    }
+
     class ItemRatingTables
     {
         [DisallowNull]
@@ -51,6 +57,13 @@ namespace BanjoBotAssets
         public ItemRatingTable? LeadSurvivor { get; set; }
         [DisallowNull]
         public ItemRatingTable? Default { get; set; }
+
+        public void Update(ItemRatingTables other)
+        {
+            Survivor ??= other.Survivor;
+            LeadSurvivor ??= other.LeadSurvivor;
+            Default ??= other.Default;
+        }
     }
 
     class ItemRatingTable
@@ -73,5 +86,57 @@ namespace BanjoBotAssets
         public int RecommendedRating { get; set; }
         [DisallowNull]
         public string? DisplayName { get; set; }
+    }
+
+    internal class AssetOutput : IAssetOutput
+    {
+        private ItemRatingTable? defaultItemRatings, survivorItemRatings, leadSurvivorItemRatings;
+        private readonly ConcurrentDictionary<string, NamedItemData> namedItems = new();
+        private readonly ConcurrentDictionary<string, DifficultyInfo> difficultyInfo = new();
+
+        public void AddDefaultItemRatings(ItemRatingTable itemRatings)
+        {
+            defaultItemRatings = itemRatings;
+        }
+
+        public void AddDifficultyInfo(string name, DifficultyInfo difficultyInfo)
+        {
+            this.difficultyInfo.TryAdd(name, difficultyInfo);
+        }
+
+        public void AddLeadSurvivorItemRatings(ItemRatingTable itemRatings)
+        {
+            leadSurvivorItemRatings = itemRatings;
+        }
+
+        public void AddNamedItem(string name, NamedItemData itemData)
+        {
+            namedItems.TryAdd(name, itemData);
+        }
+
+        public void AddSurvivorItemRatings(ItemRatingTable itemRatings)
+        {
+            survivorItemRatings = itemRatings;
+        }
+
+        public void CopyTo(ExportedAssets export)
+        {
+            foreach (var (k, v) in namedItems)
+            {
+                export.NamedItems.TryAdd(k, v);
+            }
+
+            foreach (var (k, v) in difficultyInfo)
+            {
+                export.DifficultyInfo.TryAdd(k, v);
+            }
+
+            if (defaultItemRatings != null)
+                export.ItemRatings.Default = defaultItemRatings;
+            if (survivorItemRatings != null)
+                export.ItemRatings.Survivor = survivorItemRatings;
+            if (leadSurvivorItemRatings != null)
+                export.ItemRatings.LeadSurvivor = leadSurvivorItemRatings;
+        }
     }
 }

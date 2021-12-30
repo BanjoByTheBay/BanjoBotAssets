@@ -1,14 +1,14 @@
-﻿using CUE4Parse.FileProvider;
-using CUE4Parse.FN.Exports.FortniteGame;
-using CUE4Parse.UE4.Assets.Exports;
-using CUE4Parse.UE4.Assets.Objects;
-using CUE4Parse.UE4.Objects.Core.i18N;
-using CUE4Parse.UE4.Objects.UObject;
-using CUE4Parse_Fortnite.Enums;
-using System.Text.RegularExpressions;
+﻿using CUE4Parse.UE4.Objects.GameplayTags;
 
 namespace BanjoBotAssets.Exporters
 {
+    internal record HeroItemGroupFields(string DisplayName, string? Description, string? SubType,
+        string HeroPerk, string HeroPerkDescription, string CommanderPerk, string CommanderPerkDescription)
+        : BaseItemGroupFields(DisplayName, Description, SubType)
+    {
+        public HeroItemGroupFields() : this("", null, null, "", "", "", "") { }
+    }
+
     internal sealed class HeroExporter : GroupExporter<UFortHeroType, BaseParsedItemName, HeroItemGroupFields, HeroItemData>
     {
         public HeroExporter(DefaultFileProvider provider) : base(provider)
@@ -59,6 +59,7 @@ namespace BanjoBotAssets.Exporters
                 HeroPerkDescription = heroPerk.description,
                 CommanderPerk = commanderPerk.displayName,
                 CommanderPerkDescription = commanderPerk.description,
+                SubType = GetHeroClass(asset.GameplayTags),
             };
         }
 
@@ -79,6 +80,40 @@ namespace BanjoBotAssets.Exporters
             var displayName = grantedAbilityKit?.GetOrDefault<FText>("DisplayName")?.Text ?? $"<{grantedAbilityKit?.Name ?? "<No granted ability>"}>";
             var description = await AbilityDescription.GetAsync(grantedAbilityKit, this) ?? "<No description>";
             return (displayName, description);
+        }
+
+        protected override void LogAssetName(string baseName, HeroItemGroupFields fields)
+        {
+            Console.WriteLine("{0} is {1} ({2}), granting {3} / {4}",
+                baseName, fields.DisplayName, fields.SubType, fields.HeroPerk, fields.CommanderPerk);
+        }
+
+        protected override Task<bool> ExportAssetAsync(BaseParsedItemName parsed, UFortHeroType asset, HeroItemGroupFields fields, string path, HeroItemData itemData)
+        {
+            itemData.HeroPerk = fields.HeroPerk;
+            itemData.HeroPerkDescription = fields.HeroPerkDescription;
+            itemData.CommanderPerk = fields.CommanderPerk;
+            itemData.CommanderPerkDescription = fields.CommanderPerkDescription;
+
+            return Task.FromResult(true);
+        }
+
+        private static string GetHeroClass(FGameplayTagContainer gameplayTags)
+        {
+            foreach (var tag in gameplayTags)
+            {
+                var text = tag.Text;
+                if (text.Contains("IsCommando"))
+                    return "Soldier";
+                if (text.Contains("IsNinja"))
+                    return "Ninja";
+                if (text.Contains("IsOutlander"))
+                    return "Outlander";
+                if (text.Contains("IsConstructor"))
+                    return "Constructor";
+            }
+
+            return "Unknown";
         }
     }
 }

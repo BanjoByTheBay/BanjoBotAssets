@@ -1,6 +1,4 @@
-﻿using CUE4Parse.FileProvider;
-
-namespace BanjoBotAssets.Exporters
+﻿namespace BanjoBotAssets.Exporters
 {
     internal sealed class ZoneRewardExporter : UObjectExporter
     {
