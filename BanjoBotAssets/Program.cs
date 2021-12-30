@@ -16,13 +16,11 @@ using BanjoBotAssets.Exporters;
 using CUE4Parse.Encryption.Aes;
 using CUE4Parse.UE4.Assets;
 using CUE4Parse.UE4.Objects.Core.Misc;
-using CUE4Parse.UE4.Objects.GameplayTags;
 using CUE4Parse.UE4.Versions;
 using Newtonsoft.Json;
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Net.Http.Json;
-using System.Text;
 
 // open PAK files
 string[] gameDirectories =

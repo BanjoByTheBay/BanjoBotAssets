@@ -2,8 +2,6 @@
 {
     internal sealed class MissionGenExporter : BlueprintExporter
     {
-        private readonly List<string> missionGenAssets = new();
-
         public MissionGenExporter(DefaultFileProvider provider) : base(provider) { }
 
         protected override string Type => "MissionGen";

@@ -38,7 +38,7 @@
 
             Report(progress, "Exporting " + Type);
 
-            await Parallel.ForEachAsync<IGrouping<string, string>>(uniqueAssets, async (grouping, _cancellationToken) =>
+            await Parallel.ForEachAsync(uniqueAssets, async (grouping, _cancellationToken) =>
             {
                 var baseName = grouping.Key;
 
@@ -48,7 +48,7 @@
                 var primaryAssetPath = SelectPrimaryAsset(grouping);
                 var file = provider[primaryAssetPath];
 
-                var num = Interlocked.Increment(ref numToProcess);
+                var num = Interlocked.Increment(ref processedSoFar);
                 Console.WriteLine("Processing {0} group {1} of {2}", Type, num, numToProcess);
 
                 Console.WriteLine("Loading {0}", file.PathWithoutExtension);

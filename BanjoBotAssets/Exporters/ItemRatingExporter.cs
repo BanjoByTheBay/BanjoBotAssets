@@ -87,7 +87,7 @@
             (5, 40, 60),    // tier 5 goes up to LV 60 with superchargers
         };
 
-        ItemRatingTable EvaluateItemRatingCurve(UCurveTable curveTable, string prefix, bool skipUR = false)
+        static ItemRatingTable EvaluateItemRatingCurve(UCurveTable curveTable, string prefix, bool skipUR = false)
         {
             var tiers = new Dictionary<string, ItemRatingTier>();
 

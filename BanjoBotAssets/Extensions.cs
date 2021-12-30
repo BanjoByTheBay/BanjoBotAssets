@@ -1,4 +1,6 @@
-﻿namespace BanjoBotAssets
+﻿using System.Text;
+
+namespace BanjoBotAssets
 {
     internal static class Extensions
     {
@@ -18,8 +20,19 @@
                 }
             }
 
-            return default(T);
+            return default;
         }
 
+        public static string CapitalizeFirst(this string str)
+        {
+            var sb = new StringBuilder(str);
+
+            sb[0] = char.ToUpper(sb[0]);
+
+            for (int i = 1; i < sb.Length; i++)
+                sb[i] = char.ToLower(sb[i]);
+
+            return sb.ToString();
+        }
     }
 }

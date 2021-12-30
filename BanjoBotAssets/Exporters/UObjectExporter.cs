@@ -53,12 +53,12 @@
                     Description = description,
                 };
 
-                if (uobject.GetOrDefault<EFortItemTier>("Tier") is EFortItemTier tier && tier != default(EFortItemTier))
+                if (uobject.GetOrDefault<EFortItemTier>("Tier") is EFortItemTier tier && tier != default)
                 {
                     namedItemData.Tier = (int)tier;
                 }
 
-                if (uobject.GetOrDefault<EFortRarity>("Rarity") is EFortRarity rarity && rarity != default(EFortRarity))
+                if (uobject.GetOrDefault<EFortRarity>("Rarity") is EFortRarity rarity && rarity != default)
                 {
                     namedItemData.Rarity = rarity.GetNameText().Text;
                 }

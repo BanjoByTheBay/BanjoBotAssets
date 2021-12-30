@@ -1,6 +1,4 @@
-﻿using CUE4Parse.FN.Exports.FortniteGame.NoProperties;
-
-namespace BanjoBotAssets.Exporters
+﻿namespace BanjoBotAssets.Exporters
 {
     internal sealed class TeamPerkExporter : UObjectExporter
     {

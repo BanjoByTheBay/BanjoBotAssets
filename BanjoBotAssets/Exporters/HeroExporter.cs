@@ -50,15 +50,15 @@ namespace BanjoBotAssets.Exporters
             var result = await base.ExtractCommonFieldsAsync(asset, grouping);
 
             var hgd = asset.HeroGameplayDefinition;
-            var heroPerk = await GetPerkTextAsync(hgd, "HeroPerk");
-            var commanderPerk = await GetPerkTextAsync(hgd, "CommanderPerk");
+            var (heroPerk, heroPerkDesc) = await GetPerkTextAsync(hgd, "HeroPerk");
+            var (commanderPerk, commanderPerkDesc) = await GetPerkTextAsync(hgd, "CommanderPerk");
 
             return result with
             {
-                HeroPerk = heroPerk.displayName,
-                HeroPerkDescription = heroPerk.description,
-                CommanderPerk = commanderPerk.displayName,
-                CommanderPerkDescription = commanderPerk.description,
+                HeroPerk = heroPerk,
+                HeroPerkDescription = heroPerkDesc,
+                CommanderPerk = commanderPerk,
+                CommanderPerkDescription = commanderPerkDesc,
                 SubType = GetHeroClass(asset.GameplayTags),
             };
         }

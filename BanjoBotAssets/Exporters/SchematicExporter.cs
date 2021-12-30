@@ -1,15 +1,16 @@
 ﻿using CUE4Parse.UE4.Objects.GameplayTags;
-using System.Text;
 
 // TODO: support traps
 // TODO: export alteration possibilities
+// TODO: export crafting recipes
+// TODO: export weapon/trap stats
 
 namespace BanjoBotAssets.Exporters
 {
     internal record ParsedSchematicName(string BaseName, string Rarity, int Tier, string EvoType)
         : BaseParsedItemName(BaseName, Rarity, Tier);
     
-    internal class SchematicExporter : GroupExporter<UObject, ParsedSchematicName, BaseItemGroupFields, NamedItemData>
+    internal class SchematicExporter : GroupExporter<UObject, ParsedSchematicName, BaseItemGroupFields, SchematicItemData>
     {
         private readonly Dictionary<string, string> weaponPaths = new(StringComparer.OrdinalIgnoreCase);
         private string? craftingPath;
@@ -135,34 +136,25 @@ namespace BanjoBotAssets.Exporters
 
                 if (match.Success)
                 {
-                    switch (match.Groups[1].Value.ToLower())
+                    return match.Groups[1].Value.ToLower() switch
                     {
-                        case "hammer":
-                            return "Hardware";
-
-                        case "heavy":
-                            return "Launcher";
-
-                        case "improvised":
-                            return "Club";
-
-                        case "smg":
-                            return "SMG";
-
-                        default:
-                            var sb = new StringBuilder(match.Groups[1].Value);
-
-                            sb[0] = char.ToUpper(sb[0]);
-
-                            for (int i = 1; i < sb.Length; i++)
-                                sb[i] = char.ToLower(sb[i]);
-
-                            return sb.ToString();
-                    }
+                        "hammer" => "Hardware",
+                        "heavy" => "Launcher",
+                        "improvised" => "Club",
+                        "smg" => "SMG",
+                        _ => match.Groups[1].Value.CapitalizeFirst(),
+                    };
                 }
             }
 
             return "Unknown";
+        }
+
+        protected override Task<bool> ExportAssetAsync(ParsedSchematicName parsed, UObject asset, BaseItemGroupFields fields, string path, SchematicItemData itemData)
+        {
+            itemData.EvoType = parsed.EvoType;
+
+            return Task.FromResult(true);
         }
     }
 }

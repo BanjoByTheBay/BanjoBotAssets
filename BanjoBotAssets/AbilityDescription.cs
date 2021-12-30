@@ -4,16 +4,6 @@ namespace BanjoBotAssets
 {
     internal static class AbilityDescription
     {
-        private sealed class NullAssetCounter : IAssetCounter
-        {
-            public void CountAssetLoaded()
-            {
-                // nada
-            }
-
-            public static readonly NullAssetCounter Instance = new NullAssetCounter();
-        }
-
         public static async Task<string?> GetAsync(UObject? grantedAbilityKit, IAssetCounter assetCounter)
         {
             var (markup, cdo) = await GetMarkupAsync(grantedAbilityKit, assetCounter);
