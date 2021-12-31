@@ -31,6 +31,9 @@
         void AddDefaultItemRatings(ItemRatingTable itemRatings);
         void AddSurvivorItemRatings(ItemRatingTable itemRatings);
         void AddLeadSurvivorItemRatings(ItemRatingTable itemRatings);
-        void CopyTo(ExportedAssets export);
+
+        void CopyTo(ExportedAssets exportedAssets, IList<ExportedRecipe> exportedRecipes);
+
+        void AddCraftingRecipe(string name, IReadOnlyDictionary<string, int> ingredients);
     }
 }

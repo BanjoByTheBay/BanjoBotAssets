@@ -25,6 +25,9 @@ namespace BanjoBotAssets
 
         public static string CapitalizeFirst(this string str)
         {
+            if (string.IsNullOrEmpty(str))
+                return str;
+
             var sb = new StringBuilder(str);
 
             sb[0] = char.ToUpper(sb[0]);

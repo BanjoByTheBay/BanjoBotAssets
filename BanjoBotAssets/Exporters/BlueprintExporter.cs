@@ -29,13 +29,13 @@ namespace BanjoBotAssets.Exporters
                 var num = Interlocked.Increment(ref processedSoFar);
                 Console.WriteLine("Processing {0} {1} of {2}", Type, num, numToProcess);
 
-                Console.WriteLine("Loading {0}", file.PathWithoutExtension);
+                //Console.WriteLine("Loading {0}", file.PathWithoutExtension);
                 Interlocked.Increment(ref assetsLoaded);
                 var pkg = await provider.LoadPackageAsync(file.PathWithoutExtension);
 
                 if (pkg.GetExports().First() is not UBlueprintGeneratedClass bpClass)
                 {
-                    Console.WriteLine("Failed to load {0}", file.PathWithoutExtension);
+                    Console.WriteLine("WARNING: Failed to load {0}", file.PathWithoutExtension);
                     return;
                 }
 

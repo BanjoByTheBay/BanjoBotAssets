@@ -74,39 +74,33 @@ ObjectTypeRegistry.RegisterEngine(typeof(UFortItemDefinition).Assembly);
 ObjectTypeRegistry.RegisterClass("FortDefenderItemDefinition", typeof(UFortHeroType));
 ObjectTypeRegistry.RegisterClass("FortTrapItemDefinition", typeof(UFortItemDefinition));
 ObjectTypeRegistry.RegisterClass("FortAlterationItemDefinition", typeof(UFortItemDefinition));
+ObjectTypeRegistry.RegisterClass("FortResourceItemDefinition", typeof(UFortWorldItemDefinition));
 
-var export = new ExportedAssets();
+var exportedAssets = new ExportedAssets();
+var exportedRecipes = new List<ExportedRecipe>();
 //using var logFile = new StreamWriter("assets.log");
 
-var schematicAssets = new ConcurrentBag<string>();
 var questAssets = new ConcurrentBag<string>();
-var craftingAssets = new ConcurrentBag<string>();
-
-var weaponAssets = new ConcurrentBag<string>();
 
 var allAssetLists = new[] {
-    // WIP
-    ("crafting recipes", craftingAssets),
-
     // TODO
     ("quest", questAssets),
-
-    // NOT EXPORTED DIRECTLY
-    ("weapon", weaponAssets),
 };
 
 IExporter[] exporters =
 {
-    new AccountResourceExporter(provider),
+    new SchematicExporter(provider),
+    new IngredientExporter(provider),
+    new WorldItemExporter(provider),
+    new CraftingRecipeExporter(provider),
     new AlterationExporter(provider),
+    new AccountResourceExporter(provider),
     new DefenderExporter(provider),
     new DifficultyExporter(provider),
     new GadgetExporter(provider),
     new HeroExporter(provider),
-    new IngredientExporter(provider),
     new ItemRatingExporter(provider),
     new MissionGenExporter(provider),
-    new SchematicExporter(provider),
     new SurvivorExporter(provider),
     new TeamPerkExporter(provider),
     new ZoneRewardExporter(provider),
@@ -168,9 +162,9 @@ assetsLoaded = exporters.Sum(e => e.AssetsLoaded);
 
 Console.WriteLine("Loaded {0} assets in {1} ({2} ms per asset)", assetsLoaded, stopwatch.Elapsed, stopwatch.ElapsedMilliseconds / Math.Max(assetsLoaded, 1));
 
-// export
+// export assets.json
 foreach (var privateExport in allPrivateExports)
-    privateExport.CopyTo(export);
+    privateExport.CopyTo(exportedAssets, exportedRecipes);
 
 allPrivateExports.Clear();
 
@@ -178,7 +172,48 @@ using (var file = File.CreateText("assets.json"))
 {
     var settings = new JsonSerializerSettings { Formatting = Formatting.Indented };
     var serializer = JsonSerializer.CreateDefault(settings);
-    serializer.Serialize(file, export);
+    serializer.Serialize(file, exportedAssets);
+}
+
+// export schematics.json
+foreach (var recipe in exportedRecipes)
+{
+    if (recipe.ItemName == null)
+        continue;
+
+    // change schematic ID to display name and fill in other fields
+    if (!exportedAssets.NamedItems.TryGetValue(recipe.ItemName, out var schematic))
+    {
+        Console.WriteLine("WARNING: Crafting recipe with no matching schematic: {0}", recipe.ItemName);
+        continue;
+    }
+
+    recipe.ItemName = schematic.DisplayName ?? "";
+    recipe.Type = schematic.Type ?? "";
+    recipe.Subtype = schematic.SubType ?? "";
+    recipe.Rarity = schematic.Rarity ?? "";
+    recipe.Tier = schematic.Tier ?? 0;
+
+    if (schematic is SchematicItemData { EvoType: string evoType })
+        recipe.Material = evoType.CapitalizeFirst();
+
+    // change ingredient IDs to display names
+    recipe.Ingredient1 = exportedAssets.NamedItems.GetValueOrDefault(recipe.Ingredient1!)?.DisplayName ?? "";
+    if (recipe.Ingredient2 != null)
+        recipe.Ingredient2 = exportedAssets.NamedItems.GetValueOrDefault(recipe.Ingredient2!)?.DisplayName;
+    if (recipe.Ingredient3 != null)
+        recipe.Ingredient3 = exportedAssets.NamedItems.GetValueOrDefault(recipe.Ingredient3!)?.DisplayName;
+    if (recipe.Ingredient4 != null)
+        recipe.Ingredient4 = exportedAssets.NamedItems.GetValueOrDefault(recipe.Ingredient4!)?.DisplayName;
+    if (recipe.Ingredient5 != null)
+        recipe.Ingredient5 = exportedAssets.NamedItems.GetValueOrDefault(recipe.Ingredient5!)?.DisplayName;
+}
+
+using (var file = File.CreateText("schematics.json"))
+{
+    var settings = new JsonSerializerSettings { ContractResolver = NullToEmptyStringResolver.Instance, Formatting = Formatting.Indented };
+    var serializer = JsonSerializer.CreateDefault(settings);
+    serializer.Serialize(file, exportedRecipes);
 }
 
 // done!

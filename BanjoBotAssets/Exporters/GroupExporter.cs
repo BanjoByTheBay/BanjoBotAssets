@@ -33,7 +33,7 @@
 
         public override async Task ExportAssetsAsync(IProgress<ExportProgress> progress, IAssetOutput output)
         {
-            var uniqueAssets = assetPaths.ToLookup(path => ParseAssetName(path)?.BaseName);
+            var uniqueAssets = assetPaths.ToLookup(path => ParseAssetName(path)?.BaseName, StringComparer.OrdinalIgnoreCase);
             numToProcess = uniqueAssets.Count;
 
             Report(progress, "Exporting " + Type);
@@ -43,7 +43,10 @@
                 var baseName = grouping.Key;
 
                 if (baseName == null)
+                {
+                    Console.WriteLine("Skipping null {0} group containing {1} items.", Type, grouping.Count());
                     return;
+                }
 
                 var primaryAssetPath = SelectPrimaryAsset(grouping);
                 var file = provider[primaryAssetPath];
@@ -51,7 +54,7 @@
                 var num = Interlocked.Increment(ref processedSoFar);
                 Console.WriteLine("Processing {0} group {1} of {2}", Type, num, numToProcess);
 
-                Console.WriteLine("Loading {0}", file.PathWithoutExtension);
+                //Console.WriteLine("Loading {0}", file.PathWithoutExtension);
                 Interlocked.Increment(ref assetsLoaded);
 
                 Report(progress, file.PathWithoutExtension);
@@ -60,12 +63,15 @@
 
                 if (asset == null)
                 {
-                    Console.WriteLine("Failed to load {0}", file.PathWithoutExtension);
+                    Console.WriteLine("WARNING: Failed to load {0}", file.PathWithoutExtension);
                     return;
                 }
 
                 if (WantThisAsset(asset) == false)
+                {
+                    Console.WriteLine("Skipping {0} early as instructed.", file.PathWithoutExtension);
                     return;
+                }
 
                 var fields = await ExtractCommonFieldsAsync(asset, grouping);
 
@@ -77,7 +83,10 @@
                     var parsed = ParseAssetName(path);
 
                     if (parsed == null)
+                    {
+                        Console.WriteLine("Skipping group member that failed to parse: {0} ({1})", templateId, path);
                         continue;
+                    }
 
                     var itemData = new TItemData
                     {
@@ -93,6 +102,7 @@
 
                     if (await ExportAssetAsync(parsed, asset, fields, path, itemData) == false)
                     {
+                        Console.WriteLine("Skipping {0} late as instructed.", templateId);
                         return;
                     }
 
@@ -128,7 +138,7 @@
 
         protected virtual void LogAssetName(string baseName, TFields fields)
         {
-            Console.WriteLine("{0} is {1}", baseName, fields.DisplayName);
+            //Console.WriteLine("{0} is {1}", baseName, fields.DisplayName);
         }
 
         protected virtual EFortRarity GetRarity(TParsedName parsedName, TAsset primaryAsset, TFields fields) =>

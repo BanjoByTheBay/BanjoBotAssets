@@ -8,11 +8,11 @@ namespace BanjoBotAssets
     {
         public DateTime ExportedAt { get; set; } = DateTime.Now;
 
-        public Dictionary<string, NamedItemData> NamedItems = new();
+        public Dictionary<string, NamedItemData> NamedItems { get; } = new(StringComparer.OrdinalIgnoreCase);
 
-        public ItemRatingTables ItemRatings = new();
+        public ItemRatingTables ItemRatings { get; } = new();
 
-        public Dictionary<string, DifficultyInfo> DifficultyInfo = new();
+        public Dictionary<string, DifficultyInfo> DifficultyInfo { get; } = new(StringComparer.OrdinalIgnoreCase);
     }
 
     [JsonObject(ItemNullValueHandling = NullValueHandling.Ignore)]
@@ -69,7 +69,7 @@ namespace BanjoBotAssets
     class ItemRatingTable
     {
         // key: $"{rarity}_T{tier:00}", e.g. "SR_T05"
-        public Dictionary<string, ItemRatingTier> Tiers { get; set; } = new();
+        public Dictionary<string, ItemRatingTier> Tiers { get; set; } = new(StringComparer.OrdinalIgnoreCase);
     }
 
     class ItemRatingTier
@@ -91,8 +91,10 @@ namespace BanjoBotAssets
     internal class AssetOutput : IAssetOutput
     {
         private ItemRatingTable? defaultItemRatings, survivorItemRatings, leadSurvivorItemRatings;
-        private readonly ConcurrentDictionary<string, NamedItemData> namedItems = new();
-        private readonly ConcurrentDictionary<string, DifficultyInfo> difficultyInfo = new();
+        private readonly ConcurrentDictionary<string, NamedItemData> namedItems = new(StringComparer.OrdinalIgnoreCase);
+        private readonly ConcurrentDictionary<string, DifficultyInfo> difficultyInfo = new(StringComparer.OrdinalIgnoreCase);
+
+        private readonly ConcurrentDictionary<string, IReadOnlyDictionary<string, int>> craftingRecipes = new(StringComparer.OrdinalIgnoreCase);
 
         public void AddDefaultItemRatings(ItemRatingTable itemRatings)
         {
@@ -119,24 +121,94 @@ namespace BanjoBotAssets
             survivorItemRatings = itemRatings;
         }
 
-        public void CopyTo(ExportedAssets export)
+        public void CopyTo(ExportedAssets exportedAssets, IList<ExportedRecipe> exportedRecipes)
         {
             foreach (var (k, v) in namedItems)
             {
-                export.NamedItems.TryAdd(k, v);
+                exportedAssets.NamedItems.TryAdd(k, v);
             }
 
             foreach (var (k, v) in difficultyInfo)
             {
-                export.DifficultyInfo.TryAdd(k, v);
+                exportedAssets.DifficultyInfo.TryAdd(k, v);
             }
 
             if (defaultItemRatings != null)
-                export.ItemRatings.Default = defaultItemRatings;
+                exportedAssets.ItemRatings.Default = defaultItemRatings;
             if (survivorItemRatings != null)
-                export.ItemRatings.Survivor = survivorItemRatings;
+                exportedAssets.ItemRatings.Survivor = survivorItemRatings;
             if (leadSurvivorItemRatings != null)
-                export.ItemRatings.LeadSurvivor = leadSurvivorItemRatings;
+                exportedAssets.ItemRatings.LeadSurvivor = leadSurvivorItemRatings;
+
+            foreach (var (templateId, recipe) in craftingRecipes)
+            {
+                var ingredients = new Queue<KeyValuePair<string, int>>(recipe);
+
+                var exportedRecipe = new ExportedRecipe { ItemName = templateId };
+
+                if (ingredients.TryDequeue(out var pair))
+                    (exportedRecipe.Ingredient1, exportedRecipe.Quantity1!) = pair;
+                if (ingredients.TryDequeue(out pair))
+                    (exportedRecipe.Ingredient2, exportedRecipe.Quantity2!) = pair;
+                if (ingredients.TryDequeue(out pair))
+                    (exportedRecipe.Ingredient3, exportedRecipe.Quantity3!) = pair;
+                if (ingredients.TryDequeue(out pair))
+                    (exportedRecipe.Ingredient4, exportedRecipe.Quantity4!) = pair;
+                if (ingredients.TryDequeue(out pair))
+                    (exportedRecipe.Ingredient5, exportedRecipe.Quantity5!) = pair;
+
+                exportedRecipes.Add(exportedRecipe);
+            }
         }
+
+        public void AddCraftingRecipe(string name, IReadOnlyDictionary<string, int> ingredients)
+        {
+            craftingRecipes.TryAdd(name, ingredients);
+        }
+    }
+
+    enum RecipeMaterial
+    {
+        Ore,
+        Crystal,
+    }
+
+    class ExportedRecipe
+    {
+        [DisallowNull]
+        public string? ItemName { get; set; }
+        /// <summary>
+        /// "Ranged", "Melee", or "Trap"
+        /// </summary>
+        [DisallowNull]
+        public string? Type { get; set; }
+        /// <summary>
+        /// "Assault Rifle", "Axe", "Ceiling", "Club", "Explosive", "Floor", "Hardware",
+        /// "Pistol", "Scythe", "Shotgun", "SMG", "Sniper", "Spear", "Sword", or "Wall"
+        /// </summary>
+        [DisallowNull]
+        public string? Subtype { get; set; }
+        public int Tier { get; set; }
+        /// <summary>
+        /// "Ore", "Crystal", or ""
+        /// </summary>
+        public string? Material { get; set; }
+        /// <summary>
+        /// "Common", "Uncommon", "Rare", "Epic", "Legendary", or "Mythic"
+        /// </summary>
+        [DisallowNull]
+        public string? Rarity { get; set; }
+        [DisallowNull]
+        public string? Ingredient1 { get; set; }
+        [DisallowNull]
+        public object? Quantity1 { get; set; }
+        public string? Ingredient2 { get; set; }
+        public object? Quantity2 { get; set; }
+        public string? Ingredient3 { get; set; }
+        public object? Quantity3 { get; set; }
+        public string? Ingredient4 { get; set; }
+        public object? Quantity4 { get; set; }
+        public string? Ingredient5 { get; set; }
+        public object? Quantity5 { get; set; }
     }
 }

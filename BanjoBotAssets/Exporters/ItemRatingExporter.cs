@@ -89,7 +89,7 @@
 
         static ItemRatingTable EvaluateItemRatingCurve(UCurveTable curveTable, string prefix, bool skipUR = false)
         {
-            var tiers = new Dictionary<string, ItemRatingTier>();
+            var tiers = new Dictionary<string, ItemRatingTier>(StringComparer.OrdinalIgnoreCase);
 
             foreach (var (rarity, maxTier) in rarityTiers)
             {

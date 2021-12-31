@@ -84,8 +84,8 @@ namespace BanjoBotAssets.Exporters
 
         protected override void LogAssetName(string baseName, HeroItemGroupFields fields)
         {
-            Console.WriteLine("{0} is {1} ({2}), granting {3} / {4}",
-                baseName, fields.DisplayName, fields.SubType, fields.HeroPerk, fields.CommanderPerk);
+            //Console.WriteLine("{0} is {1} ({2}), granting {3} / {4}",
+            //    baseName, fields.DisplayName, fields.SubType, fields.HeroPerk, fields.CommanderPerk);
         }
 
         protected override Task<bool> ExportAssetAsync(BaseParsedItemName parsed, UFortHeroType asset, HeroItemGroupFields fields, string path, HeroItemData itemData)

@@ -33,7 +33,7 @@ namespace BanjoBotAssets.Exporters
             if (name.Contains("/CraftingRecipes_New"))
                 craftingPath = name;
 
-            return name.Contains("/SID_");
+            return name.Contains("/SID_") || name.Contains("Schematics/Ammo/Ammo_");
         }
 
         public override async Task ExportAssetsAsync(IProgress<ExportProgress> progress, IAssetOutput output)
@@ -94,8 +94,6 @@ namespace BanjoBotAssets.Exporters
             return await provider.LoadObjectAsync<UFortItemDefinition>(widFile.PathWithoutExtension);
         }
 
-        private static readonly Regex schematicSubTypeRegex = new(@"^(?:Weapon\.(?:Ranged|Melee\.(?:Edged|Blunt|Piercing))|Trap(?=\.(?:Ceiling|Floor|Wall)))\.([^.]+)", RegexOptions.IgnoreCase);
-
         protected override async Task<BaseItemGroupFields> ExtractCommonFieldsAsync(UObject asset, IGrouping<string?, string> grouping)
         {
             var result = await base.ExtractCommonFieldsAsync(asset, grouping);
@@ -107,7 +105,6 @@ namespace BanjoBotAssets.Exporters
                 return result;
             }
 
-            Interlocked.Increment(ref assetsLoaded);
             var weaponDef = await LoadWeaponDefinitionAsync(craftingRow);
 
             if (weaponDef == null)
@@ -127,6 +124,8 @@ namespace BanjoBotAssets.Exporters
                 SubType = subType,
             };
         }
+
+        private static readonly Regex schematicSubTypeRegex = new(@"^(?:Weapon\.(?:Ranged|Melee\.(?:Edged|Blunt|Piercing))|Trap(?=\.(?:Ceiling|Floor|Wall)))\.([^.]+)", RegexOptions.IgnoreCase);
 
         private static string SubTypeFromTags(FGameplayTagContainer tags)
         {
