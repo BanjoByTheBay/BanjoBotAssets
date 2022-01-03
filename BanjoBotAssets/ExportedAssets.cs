@@ -198,9 +198,7 @@ namespace BanjoBotAssets
         /// </summary>
         [DisallowNull]
         public string? Rarity { get; set; }
-        [DisallowNull]
         public string? Ingredient1 { get; set; }
-        [DisallowNull]
         public object? Quantity1 { get; set; }
         public string? Ingredient2 { get; set; }
         public object? Quantity2 { get; set; }

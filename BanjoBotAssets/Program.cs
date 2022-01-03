@@ -176,15 +176,23 @@ using (var file = File.CreateText("assets.json"))
 }
 
 // export schematics.json
-foreach (var recipe in exportedRecipes)
+var recipesToExclude = new Stack<int>();
+
+for (int i = 0; i < exportedRecipes.Count; i++)
 {
+    var recipe = exportedRecipes[i];
+
     if (recipe.ItemName == null)
+    {
+        recipesToExclude.Push(i);
         continue;
+    }
 
     // change schematic ID to display name and fill in other fields
     if (!exportedAssets.NamedItems.TryGetValue(recipe.ItemName, out var schematic))
     {
         Console.WriteLine("WARNING: Crafting recipe with no matching schematic: {0}", recipe.ItemName);
+        recipesToExclude.Push(i);
         continue;
     }
 
@@ -198,16 +206,20 @@ foreach (var recipe in exportedRecipes)
         recipe.Material = evoType.CapitalizeFirst();
 
     // change ingredient IDs to display names
-    recipe.Ingredient1 = exportedAssets.NamedItems.GetValueOrDefault(recipe.Ingredient1!)?.DisplayName ?? "";
+    if (recipe.Ingredient1 != null)
+        recipe.Ingredient1 = exportedAssets.NamedItems.GetValueOrDefault(recipe.Ingredient1)?.DisplayName; ;
     if (recipe.Ingredient2 != null)
-        recipe.Ingredient2 = exportedAssets.NamedItems.GetValueOrDefault(recipe.Ingredient2!)?.DisplayName;
+        recipe.Ingredient2 = exportedAssets.NamedItems.GetValueOrDefault(recipe.Ingredient2)?.DisplayName;
     if (recipe.Ingredient3 != null)
-        recipe.Ingredient3 = exportedAssets.NamedItems.GetValueOrDefault(recipe.Ingredient3!)?.DisplayName;
+        recipe.Ingredient3 = exportedAssets.NamedItems.GetValueOrDefault(recipe.Ingredient3)?.DisplayName;
     if (recipe.Ingredient4 != null)
-        recipe.Ingredient4 = exportedAssets.NamedItems.GetValueOrDefault(recipe.Ingredient4!)?.DisplayName;
+        recipe.Ingredient4 = exportedAssets.NamedItems.GetValueOrDefault(recipe.Ingredient4)?.DisplayName;
     if (recipe.Ingredient5 != null)
-        recipe.Ingredient5 = exportedAssets.NamedItems.GetValueOrDefault(recipe.Ingredient5!)?.DisplayName;
+        recipe.Ingredient5 = exportedAssets.NamedItems.GetValueOrDefault(recipe.Ingredient5)?.DisplayName;
 }
+
+while (recipesToExclude.Count > 0)
+    exportedRecipes.RemoveAt(recipesToExclude.Pop());
 
 using (var file = File.CreateText("schematics.json"))
 {
