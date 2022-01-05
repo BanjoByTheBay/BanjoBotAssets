@@ -1,5 +1,7 @@
 ﻿using CUE4Parse.UE4.Objects.GameplayTags;
 
+// TODO: export team perks each hero grants? FortniteGame/Plugins/GameFeatures/SaveTheWorld/Content/Quests/ItemToQuestTable.uasset
+
 namespace BanjoBotAssets.Exporters
 {
     internal record HeroItemGroupFields(string DisplayName, string? Description, string? SubType,

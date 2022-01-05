@@ -18,7 +18,6 @@ using CUE4Parse.UE4.Assets;
 using CUE4Parse.UE4.Objects.Core.Misc;
 using CUE4Parse.UE4.Versions;
 using Newtonsoft.Json;
-using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Net.Http.Json;
 
@@ -80,13 +79,6 @@ var exportedAssets = new ExportedAssets();
 var exportedRecipes = new List<ExportedRecipe>();
 //using var logFile = new StreamWriter("assets.log");
 
-var questAssets = new ConcurrentBag<string>();
-
-var allAssetLists = new[] {
-    // TODO
-    ("quest", questAssets),
-};
-
 IExporter[] exporters =
 {
     new SchematicExporter(provider),
@@ -105,6 +97,7 @@ IExporter[] exporters =
     new TeamPerkExporter(provider),
     new ZoneRewardExporter(provider),
     new ZoneThemeExporter(provider),
+    new QuestExporter(provider),
 };
 
 // find interesting assets
@@ -113,11 +106,6 @@ foreach (var (name, file) in provider.Files)
     if (name.Contains("/Athena/"))
     {
         continue;
-    }
-
-    if (name.Contains("/Quests/"))
-    {
-        questAssets.Add(name);
     }
 
     foreach (var e in exporters)
@@ -207,7 +195,7 @@ for (int i = 0; i < exportedRecipes.Count; i++)
 
     // change ingredient IDs to display names
     if (recipe.Ingredient1 != null)
-        recipe.Ingredient1 = exportedAssets.NamedItems.GetValueOrDefault(recipe.Ingredient1)?.DisplayName; ;
+        recipe.Ingredient1 = exportedAssets.NamedItems.GetValueOrDefault(recipe.Ingredient1)?.DisplayName;
     if (recipe.Ingredient2 != null)
         recipe.Ingredient2 = exportedAssets.NamedItems.GetValueOrDefault(recipe.Ingredient2)?.DisplayName;
     if (recipe.Ingredient3 != null)

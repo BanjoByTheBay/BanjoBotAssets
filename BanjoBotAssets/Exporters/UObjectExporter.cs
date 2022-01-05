@@ -5,14 +5,25 @@
         public UObjectExporter(DefaultFileProvider provider) : base(provider) { }
     }
 
-    internal abstract class UObjectExporter<T> : BaseExporter
-        where T : UObject
+    internal abstract class UObjectExporter<TAsset> : UObjectExporter<TAsset, NamedItemData>
+        where TAsset : UObject
+    {
+        public UObjectExporter(DefaultFileProvider provider) : base(provider)
+        {
+        }
+    }
+
+    internal abstract class UObjectExporter<TAsset, TItemData> : BaseExporter
+        where TAsset : UObject
+        where TItemData : NamedItemData, new()
     {
         public UObjectExporter(DefaultFileProvider provider) : base(provider) { }
 
         protected abstract string Type { get; }
 
-        protected virtual Task<bool> ExportAssetAsync(T asset, NamedItemData namedItemData)
+        protected virtual bool IgnoreLoadFailures => false;
+
+        protected virtual Task<bool> ExportAssetAsync(TAsset asset, TItemData itemData)
         {
             return Task.FromResult(true);
         }
@@ -32,7 +43,23 @@
                 //Console.WriteLine("Loading {0}", file.PathWithoutExtension);
                 Interlocked.Increment(ref assetsLoaded);
 
-                var uobject = await provider.LoadObjectAsync<T>(file.PathWithoutExtension);
+                TAsset uobject;
+                if (IgnoreLoadFailures)
+                {
+                    if (await provider.TryLoadObjectAsync(file.PathWithoutExtension) is TAsset asset)
+                    {
+                        uobject = asset;
+                    }
+                    else
+                    {
+                        // ignore
+                        return;
+                    }
+                }
+                else
+                {
+                    uobject = await provider.LoadObjectAsync<TAsset>(file.PathWithoutExtension);
+                }
 
                 if (uobject == null)
                 {
@@ -44,7 +71,7 @@
                 var displayName = uobject.GetOrDefault<FText>("DisplayName")?.Text ?? $"<{uobject.Name}>";
                 var description = uobject.GetOrDefault<FText>("Description")?.Text;
 
-                var namedItemData = new NamedItemData
+                var itemData = new TItemData
                 {
                     AssetPath = provider.FixPath(path),
                     Name = uobject.Name,
@@ -55,20 +82,20 @@
 
                 if (uobject.GetOrDefault<EFortItemTier>("Tier") is EFortItemTier tier && tier != default)
                 {
-                    namedItemData.Tier = (int)tier;
+                    itemData.Tier = (int)tier;
                 }
 
                 if (uobject.GetOrDefault<EFortRarity>("Rarity") is EFortRarity rarity && rarity != default)
                 {
-                    namedItemData.Rarity = rarity.GetNameText().Text;
+                    itemData.Rarity = rarity.GetNameText().Text;
                 }
 
-                if (await ExportAssetAsync(uobject, namedItemData) == false)
+                if (await ExportAssetAsync(uobject, itemData) == false)
                 {
                     return;
                 }
 
-                output.AddNamedItem(templateId, namedItemData);
+                output.AddNamedItem(templateId, itemData);
             });
         }
     }

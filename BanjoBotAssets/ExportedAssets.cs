@@ -49,6 +49,23 @@ namespace BanjoBotAssets
         public string? EvoType { get; set; }
     }
 
+    class QuestItemData : NamedItemData
+    {
+        [DisallowNull]
+        public QuestObjective[]? Objectives { get; set; }
+    }
+
+    class QuestObjective
+    {
+        [DisallowNull]
+        public string? BackendName { get; set; }
+        [DisallowNull]
+        public string? Description { get; set; }
+        [DisallowNull]
+        public string? HudShortDescription { get; set; }
+        public int Count { get; set; }
+    }
+
     class ItemRatingTables
     {
         [DisallowNull]
