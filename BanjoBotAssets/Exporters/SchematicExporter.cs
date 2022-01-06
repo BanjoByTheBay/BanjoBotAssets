@@ -1,6 +1,5 @@
 ﻿using CUE4Parse.UE4.Objects.GameplayTags;
 
-// TODO: support traps
 // TODO: export weapon/trap stats
 
 namespace BanjoBotAssets.Exporters
@@ -16,7 +15,7 @@ namespace BanjoBotAssets.Exporters
     
     internal class SchematicExporter : GroupExporter<UObject, ParsedSchematicName, SchematicItemGroupFields, SchematicItemData>
     {
-        private readonly Dictionary<string, string> weaponPaths = new(StringComparer.OrdinalIgnoreCase);
+        private readonly Dictionary<string, string> weaponOrTrapPaths = new(StringComparer.OrdinalIgnoreCase);
         private string? craftingPath, alterationGroupPath, slotDefsPath, slotLoadoutsPath;
         private UDataTable? craftingTable, alterationGroupTable, slotDefsTable, slotLoadoutsTable;
 
@@ -36,7 +35,7 @@ namespace BanjoBotAssets.Exporters
             //   SlotLoadouts
 
             if (name.Contains("/WID_") || name.Contains("/TID_"))
-                weaponPaths.Add(Path.GetFileNameWithoutExtension(name), name);
+                weaponOrTrapPaths.Add(Path.GetFileNameWithoutExtension(name), name);
 
             if (name.Contains("/CraftingRecipes_New"))
                 craftingPath = name;
@@ -92,7 +91,7 @@ namespace BanjoBotAssets.Exporters
                 EvoType: match.Groups[3].Value);
         }
 
-        private async Task<UFortItemDefinition?> LoadWeaponDefinitionAsync(FDataTableRowHandle craftingRowHandle)
+        private async Task<UFortItemDefinition?> LoadWeaponOrTrapDefinitionAsync(FDataTableRowHandle craftingRowHandle)
         {
             if (craftingTable == null)
             {
@@ -109,14 +108,14 @@ namespace BanjoBotAssets.Exporters
 
             var recipeResults = craftingRow.GetOrDefault<FFortItemQuantityPair[]>("RecipeResults");
             var assetName = recipeResults[0].ItemPrimaryAssetId.PrimaryAssetName.Text;
-            if (!weaponPaths.TryGetValue(assetName, out var widPath))
+            if (!weaponOrTrapPaths.TryGetValue(assetName, out var widOrTidPath))
             {
-                Console.WriteLine("WARNING: No weapon path indexed for {0}", assetName);
+                Console.WriteLine("WARNING: No weapon/trap path indexed for {0}", assetName);
                 return null;
             }
-            var widFile = provider[widPath];
+            var widOrTidFile = provider[widOrTidPath];
             Interlocked.Increment(ref assetsLoaded);
-            return await provider.LoadObjectAsync<UFortItemDefinition>(widFile.PathWithoutExtension);
+            return await provider.LoadObjectAsync<UFortItemDefinition>(widOrTidFile.PathWithoutExtension);
         }
 
         protected override async Task<SchematicItemGroupFields> ExtractCommonFieldsAsync(UObject asset, IGrouping<string?, string> grouping)
@@ -130,18 +129,18 @@ namespace BanjoBotAssets.Exporters
                 return result;
             }
 
-            var weaponDef = await LoadWeaponDefinitionAsync(craftingRow);
+            var weaponOrTrapDef = await LoadWeaponOrTrapDefinitionAsync(craftingRow);
 
-            if (weaponDef == null)
+            if (weaponOrTrapDef == null)
             {
-                Console.WriteLine("WARNING: No weapon definition for crafting row {0}", craftingRow.RowName);
+                Console.WriteLine("WARNING: No weapon/trap definition for crafting row {0}", craftingRow.RowName);
                 return result;
             }
 
-            var displayName = weaponDef.DisplayName?.Text ?? $"<{grouping.Key}>";
-            var description = weaponDef.Description?.Text;
-            var subType = SubTypeFromTags(weaponDef.GameplayTags);
-            var alterationSlotsLoadoutRow = weaponDef.GetOrDefault<FName>("AlterationSlotsLoadoutRow").Text;
+            var displayName = weaponOrTrapDef.DisplayName?.Text ?? $"<{grouping.Key}>";
+            var description = weaponOrTrapDef.Description?.Text;
+            var subType = SubTypeFromTags(weaponOrTrapDef.GameplayTags);
+            var alterationSlotsLoadoutRow = weaponOrTrapDef.GetOrDefault<FName>("AlterationSlotsLoadoutRow").Text;
 
             return result with
             {
