@@ -47,6 +47,15 @@ namespace BanjoBotAssets
     class SchematicItemData : NamedItemData
     {
         public string? EvoType { get; set; }
+        [DisallowNull]
+        public AlterationSlot[]? AlterationSlots { get; set; }
+    }
+
+    class AlterationSlot
+    {
+        public int RequiredLevel { get; set; }
+        [DisallowNull]
+        public string[][]? Alterations { get; set; }
     }
 
     class QuestItemData : NamedItemData

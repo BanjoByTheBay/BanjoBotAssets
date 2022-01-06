@@ -111,7 +111,7 @@
             });
         }
 
-        protected virtual Task<bool> ExportAssetAsync(TParsedName parsed, TAsset asset, TFields fields, string path, TItemData itemData)
+        protected virtual Task<bool> ExportAssetAsync(TParsedName parsed, TAsset primaryAsset, TFields fields, string path, TItemData itemData)
         {
             return Task.FromResult(true);
         }

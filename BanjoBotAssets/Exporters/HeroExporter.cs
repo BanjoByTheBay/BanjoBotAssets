@@ -90,7 +90,7 @@ namespace BanjoBotAssets.Exporters
             //    baseName, fields.DisplayName, fields.SubType, fields.HeroPerk, fields.CommanderPerk);
         }
 
-        protected override Task<bool> ExportAssetAsync(BaseParsedItemName parsed, UFortHeroType asset, HeroItemGroupFields fields, string path, HeroItemData itemData)
+        protected override Task<bool> ExportAssetAsync(BaseParsedItemName parsed, UFortHeroType primaryAsset, HeroItemGroupFields fields, string path, HeroItemData itemData)
         {
             itemData.HeroPerk = fields.HeroPerk;
             itemData.HeroPerkDescription = fields.HeroPerkDescription;
