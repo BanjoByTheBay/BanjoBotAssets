@@ -164,7 +164,7 @@ namespace BanjoBotAssets.Exporters
                     return match.Groups[1].Value.ToLower() switch
                     {
                         "hammer" => "Hardware",
-                        "heavy" => "Launcher",
+                        "heavy" => "Explosive",
                         "improvised" => "Club",
                         "smg" => "SMG",
                         _ => match.Groups[1].Value.CapitalizeFirst(),

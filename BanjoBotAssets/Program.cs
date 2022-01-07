@@ -185,7 +185,13 @@ for (int i = 0; i < exportedRecipes.Count; i++)
     }
 
     recipe.ItemName = schematic.DisplayName ?? "";
-    recipe.Type = schematic.Type ?? "";
+    recipe.Type = schematic.SubType switch
+    {
+        "Ceiling" or "Floor" or "Wall" => "Trap",
+        "Axe" or "Club" or "Hardware" or "Scythe" or "Spear" or "Sword" => "Melee",
+        "Assault" or "Explosive" or "Pistol" or "Shotgun" or "SMG" or "Sniper" => "Ranged",
+        _ => "",
+    };
     recipe.Subtype = schematic.SubType ?? "";
     recipe.Rarity = schematic.Rarity ?? "";
     recipe.Tier = schematic.Tier ?? 0;

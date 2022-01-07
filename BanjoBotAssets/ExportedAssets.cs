@@ -209,7 +209,7 @@ namespace BanjoBotAssets
         [DisallowNull]
         public string? Type { get; set; }
         /// <summary>
-        /// "Assault Rifle", "Axe", "Ceiling", "Club", "Explosive", "Floor", "Hardware",
+        /// "Assault", "Axe", "Ceiling", "Club", "Explosive", "Floor", "Hardware",
         /// "Pistol", "Scythe", "Shotgun", "SMG", "Sniper", "Spear", "Sword", or "Wall"
         /// </summary>
         [DisallowNull]
