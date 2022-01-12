@@ -43,10 +43,11 @@
                 //Console.WriteLine("Loading {0}", file.PathWithoutExtension);
                 Interlocked.Increment(ref assetsLoaded);
 
-                TAsset uobject;
+                TAsset? uobject;
                 if (IgnoreLoadFailures)
                 {
-                    if (await provider.TryLoadObjectAsync(file.PathWithoutExtension) is TAsset asset)
+                    var pkg = await provider.TryLoadPackageAsync(file);
+                    if (pkg?.GetExport(0) is TAsset asset)
                     {
                         uobject = asset;
                     }
@@ -58,7 +59,8 @@
                 }
                 else
                 {
-                    uobject = await provider.LoadObjectAsync<TAsset>(file.PathWithoutExtension);
+                    var pkg = await provider.LoadPackageAsync(file);
+                    uobject = pkg.GetExport(0) as TAsset;
                 }
 
                 if (uobject == null)
