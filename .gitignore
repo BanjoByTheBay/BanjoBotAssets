@@ -4,3 +4,4 @@
 aes.json
 bin
 obj
+*.dll

@@ -1,0 +1,20 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="BanjoBotAssets" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="GameDirectories" Type="System.Collections.Specialized.StringCollection" Scope="User">
+      <Value Profile="(Default)">&lt;?xml version="1.0" encoding="utf-16"?&gt;
+&lt;ArrayOfString xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"&gt;
+  &lt;string&gt;C:\Program Files\Epic Games\Fortnite\FortniteGame\Content\Paks&lt;/string&gt;
+  &lt;string&gt;D:\Program Files\Epic Games\Fortnite\FortniteGame\Content\Paks&lt;/string&gt;
+  &lt;string&gt;D:\Epic Games\Fortnite\FortniteGame\Content\Paks&lt;/string&gt;
+&lt;/ArrayOfString&gt;</Value>
+    </Setting>
+    <Setting Name="ELanguage" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="AesApiUri" Type="(Web Service URL)" Scope="User">
+      <Value Profile="(Default)">https://fortnite-api.com/v2/aes</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

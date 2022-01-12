@@ -17,7 +17,7 @@
             var numToProcess = craftingTable.RowMap.Count;
             var processedSoFar = 0;
 
-            progress.Report(new ExportProgress { AssetsLoaded = assetsLoaded, CompletedSteps = 0, TotalSteps = numToProcess, CurrentItem = "Exporting recipes" });
+            progress.Report(new ExportProgress { AssetsLoaded = assetsLoaded, CompletedSteps = 0, TotalSteps = numToProcess, CurrentItem = Resources.Status_ExportingRecipes });
 
             foreach (var (key, recipe) in craftingTable.RowMap)
             {
@@ -44,7 +44,7 @@
                 output.AddCraftingRecipe(templateId, ingredients);
             }
 
-            progress.Report(new ExportProgress { AssetsLoaded = assetsLoaded, CompletedSteps = processedSoFar, TotalSteps = numToProcess, CurrentItem = "Exported recipes" });
+            progress.Report(new ExportProgress { AssetsLoaded = assetsLoaded, CompletedSteps = processedSoFar, TotalSteps = numToProcess, CurrentItem = Resources.Status_ExportedRecipes });
         }
 
         protected override bool InterestedInAsset(string name) => name.Contains("/CraftingRecipes_New");

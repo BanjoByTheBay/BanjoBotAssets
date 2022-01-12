@@ -10,7 +10,7 @@
 
             if (growthBoundsPath == null)
             {
-                Console.WriteLine("WARNING: GameDifficultyGrowthBounds not found");
+                Console.WriteLine(Resources.Warning_SpecificAssetNotFound, "GameDifficultyGrowthBounds");
                 return;
             }
 
@@ -21,7 +21,7 @@
 
             if (dataTable == null)
             {
-                Console.WriteLine("WARNING: Could not load {0}", growthBoundsPath);
+                Console.WriteLine(Resources.Warning_CouldNotLoadAsset, growthBoundsPath);
                 return;
             }
 
@@ -43,6 +43,6 @@
 
         }
 
-        protected override bool InterestedInAsset(string name) => name.EndsWith("GameDifficultyGrowthBounds.uasset");
+        protected override bool InterestedInAsset(string name) => name.EndsWith("GameDifficultyGrowthBounds.uasset", StringComparison.OrdinalIgnoreCase);
     }
 }

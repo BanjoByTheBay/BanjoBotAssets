@@ -69,7 +69,7 @@ namespace BanjoBotAssets
                 const string prefix = "Tooltip.Token.";
 
                 var tagName = (p.Key.GetValue(typeof(FStructFallback)) as FStructFallback)?.GetOrDefault<FName>("TagName");
-                if (tagName?.Text.StartsWith(prefix) != true)
+                if (tagName?.Text.StartsWith(prefix, StringComparison.InvariantCultureIgnoreCase) != true)
                     continue;
 
                 var tokenName = tagName.Value.Text[prefix.Length..];
@@ -117,7 +117,7 @@ namespace BanjoBotAssets
 
             if (curveName.IsNone)
             {
-                Console.WriteLine("WARNING: Curve table has no row {0}", rowNameStr);
+                Console.WriteLine(Resources.Warning_MissingCurveTableRow, rowNameStr);
                 return null;
             }
 
@@ -133,31 +133,31 @@ namespace BanjoBotAssets
                     // To Percentage
                     // NOTE: the input value might be less than 1.0, in which case it's a straight percentage: 0.375 = 37.5%
                     // or it might be 1.0 or greater, in which case it's a multiplier for additive percentage: 1.13 = 13%
-                    return ((value > 1 ? value - 1 : value) * 100).ToString("0.#");
+                    return ((value > 1 ? value - 1 : value) * 100).ToString("0.#", CultureInfo.CurrentCulture);
                 case "TTT_List::NewEnumerator1":
                     // Negative to Positive
-                    return (-value).ToString("0");
+                    return (-value).ToString("0", CultureInfo.CurrentCulture);
                 case "TTT_List::NewEnumerator2":
                     // No Formatting
-                    return value.ToString("0.#");
+                    return value.ToString("0.#", CultureInfo.CurrentCulture);
                 case "TTT_List::NewEnumerator4":
                     // Subtract From 1
-                    return ((1 - value) * 100).ToString("0.#");
+                    return ((1 - value) * 100).ToString("0.#", CultureInfo.CurrentCulture);
                 case "TTT_List::NewEnumerator5":
                     // Distance to Tiles
-                    return (value / 512).ToString("0.###");
+                    return (value / 512).ToString("0.###", CultureInfo.CurrentCulture);
                 case "TTT_List::NewEnumerator6":
                     // To Percentage (No Subtract)
-                    return (value * 100).ToString("0.#");
+                    return (value * 100).ToString("0.#", CultureInfo.CurrentCulture);
                 case "TTT_List::NewEnumerator7":
                     // To Percentage (Divisor)
-                    return (100 / value).ToString("0.#");
+                    return (100 / value).ToString("0.#", CultureInfo.CurrentCulture);
                 case "TTT_List::NewEnumerator8":
                     // Override Percentage
-                    Console.WriteLine("WARNING: I don't know how to Override Percentage");
+                    Console.WriteLine(Resources.Warning_OverridePercentageNotImplemented);
                     return "???";
                 default:
-                    Console.WriteLine("WARNING: Unknown formatting style {0}", formatting.Text);
+                    Console.WriteLine(Resources.Warning_UnknownFormattingStyle, formatting.Text);
                     return "???";
             }
         }
@@ -187,7 +187,7 @@ namespace BanjoBotAssets
                     value += modValue - 1;
                     break;
                 default:
-                    Console.WriteLine("WARNING: Ignoring unknown modify operation {0}", modifyOp.Text);
+                    Console.WriteLine(Resources.Warning_IgnoringUnknownModifyOperation, modifyOp.Text);
                     break;
             }
 

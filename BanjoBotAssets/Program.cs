@@ -9,6 +9,7 @@ global using CUE4Parse.UE4.Assets.Objects;
 global using CUE4Parse.UE4.Objects.Core.i18N;
 global using CUE4Parse.UE4.Objects.UObject;
 global using CUE4Parse_Fortnite.Enums;
+global using System.Globalization;
 global using System.Text.RegularExpressions;
 
 using BanjoBotAssets;
@@ -22,18 +23,13 @@ using System.Diagnostics;
 using System.Net.Http.Json;
 
 // open PAK files
-string[] gameDirectories =
-{
-    @"C:\Program Files\Epic Games\Fortnite\FortniteGame\Content\Paks",
-    @"D:\Program Files\Epic Games\Fortnite\FortniteGame\Content\Paks",
-    @"D:\Epic Games\Fortnite\FortniteGame\Content\Paks",
-};
+var gameDirectories = Settings.Default.GameDirectories.Cast<string>();
 
 var gameDirectory = gameDirectories.FirstOrDefault(d => Directory.Exists(d));
 
 if (gameDirectory == null)
 {
-    Console.WriteLine("Couldn't find game directory. Add it to the list.");
+    Console.WriteLine(Resources.Error_GameNotFound);
     return 1;
 }
 
@@ -49,26 +45,30 @@ AesApiResponse? aes;
 
 using (var client = new HttpClient())
 {
-    aes = await client.GetFromJsonAsync<AesApiResponse>("https://fortnite-api.com/v2/aes");
+    aes = await client.GetFromJsonAsync<AesApiResponse>(Settings.Default.AesApiUri);
 }
 
 if (aes == null)
-    throw new ApplicationException("Bad aes.json");
+{
+    Console.WriteLine(Resources.Error_AesFetchFailed);
+    return 2;
+}
 
-Console.WriteLine("Submitting main key");
+Console.WriteLine(Resources.Status_SubmittingMainKey);
 provider.SubmitKey(new FGuid(), new FAesKey(aes.Data.MainKey));
 
 foreach (var dk in aes.Data.DynamicKeys)
 {
-    Console.WriteLine("Submitting key for {0}", dk.PakFilename);
+    Console.WriteLine(Resources.Status_SubmittingDynamicKey, dk.PakFilename);
     provider.SubmitKey(new FGuid(dk.PakGuid), new FAesKey(dk.Key));
 }
 
-Console.WriteLine("Loading mappings");
+Console.WriteLine(Resources.Status_LoadingMappings);
 provider.LoadMappings();
-provider.LoadLocalization();
+Console.WriteLine(Resources.Status_LoadingLocalization);
+provider.LoadLocalization(GetLocalizationLanguage());
 
-Console.WriteLine("Registering export types");
+Console.WriteLine(Resources.Status_RegisteringExportTypes);
 ObjectTypeRegistry.RegisterEngine(typeof(UFortItemDefinition).Assembly);
 ObjectTypeRegistry.RegisterClass("FortDefenderItemDefinition", typeof(UFortHeroType));
 ObjectTypeRegistry.RegisterClass("FortTrapItemDefinition", typeof(UFortItemDefinition));
@@ -148,7 +148,7 @@ stopwatch.Stop();
 
 assetsLoaded = exporters.Sum(e => e.AssetsLoaded);
 
-Console.WriteLine("Loaded {0} assets in {1} ({2} ms per asset)", assetsLoaded, stopwatch.Elapsed, stopwatch.ElapsedMilliseconds / Math.Max(assetsLoaded, 1));
+Console.WriteLine(Resources.Status_LoadedAssets, assetsLoaded, stopwatch.Elapsed, stopwatch.ElapsedMilliseconds / Math.Max(assetsLoaded, 1));
 
 // export assets.json
 foreach (var privateExport in allPrivateExports)
@@ -156,7 +156,7 @@ foreach (var privateExport in allPrivateExports)
 
 allPrivateExports.Clear();
 
-using (var file = File.CreateText("assets.json"))
+using (var file = File.CreateText(Resources.File_assets_json))
 {
     var settings = new JsonSerializerSettings { Formatting = Formatting.Indented };
     var serializer = JsonSerializer.CreateDefault(settings);
@@ -165,6 +165,27 @@ using (var file = File.CreateText("assets.json"))
 
 // export schematics.json
 var recipesToExclude = new Stack<int>();
+
+var schematicSubTypeToRecipeType = new Dictionary<string, string>
+{
+    [Resources.Field_Schematic_Ceiling] = Resources.Field_Recipe_Trap,
+    [Resources.Field_Schematic_Floor] = Resources.Field_Recipe_Trap,
+    [Resources.Field_Schematic_Wall] = Resources.Field_Recipe_Trap,
+
+    [Resources.Field_Schematic_Axe] = Resources.Field_Recipe_Melee,
+    [Resources.Field_Schematic_Club] = Resources.Field_Recipe_Melee,
+    [Resources.Field_Schematic_Hardware] = Resources.Field_Recipe_Melee,
+    [Resources.Field_Schematic_Scythe] = Resources.Field_Recipe_Melee,
+    [Resources.Field_Schematic_Spear] = Resources.Field_Recipe_Melee,
+    [Resources.Field_Schematic_Sword] = Resources.Field_Schematic_Sword,
+
+    [Resources.Field_Schematic_Assault] = Resources.Field_Recipe_Ranged,
+    [Resources.Field_Schematic_Explosive] = Resources.Field_Recipe_Ranged,
+    [Resources.Field_Schematic_Pistol] = Resources.Field_Recipe_Ranged,
+    [Resources.Field_Schematic_Shotgun] = Resources.Field_Recipe_Ranged,
+    [Resources.Field_Schematic_SMG] = Resources.Field_Recipe_Ranged,
+    [Resources.Field_Schematic_Sniper] = Resources.Field_Recipe_Ranged,
+};
 
 for (int i = 0; i < exportedRecipes.Count; i++)
 {
@@ -179,25 +200,24 @@ for (int i = 0; i < exportedRecipes.Count; i++)
     // change schematic ID to display name and fill in other fields
     if (!exportedAssets.NamedItems.TryGetValue(recipe.ItemName, out var schematic))
     {
-        Console.WriteLine("WARNING: Crafting recipe with no matching schematic: {0}", recipe.ItemName);
+        Console.WriteLine(Resources.Warning_UnmatchedCraftingRecipe, recipe.ItemName);
         recipesToExclude.Push(i);
         continue;
     }
 
     recipe.ItemName = schematic.DisplayName ?? "";
-    recipe.Type = schematic.SubType switch
-    {
-        "Ceiling" or "Floor" or "Wall" => "Trap",
-        "Axe" or "Club" or "Hardware" or "Scythe" or "Spear" or "Sword" => "Melee",
-        "Assault" or "Explosive" or "Pistol" or "Shotgun" or "SMG" or "Sniper" => "Ranged",
-        _ => "",
-    };
+    recipe.Type = schematic.SubType != null ? schematicSubTypeToRecipeType.GetValueOrDefault(schematic.SubType, "") : "";
     recipe.Subtype = schematic.SubType ?? "";
     recipe.Rarity = schematic.Rarity ?? "";
     recipe.Tier = schematic.Tier ?? 0;
 
     if (schematic is SchematicItemData { EvoType: string evoType })
-        recipe.Material = evoType.CapitalizeFirst();
+        recipe.Material = evoType.ToLower(CultureInfo.InvariantCulture) switch
+        {
+            "ore" => Resources.Field_Schematic_Ore,
+            "crystal" => Resources.Field_Schematic_Crystal,
+            _ => $"<{evoType}>",
+        };
 
     // change ingredient IDs to display names
     if (recipe.Ingredient1 != null)
@@ -215,7 +235,7 @@ for (int i = 0; i < exportedRecipes.Count; i++)
 while (recipesToExclude.Count > 0)
     exportedRecipes.RemoveAt(recipesToExclude.Pop());
 
-using (var file = File.CreateText("schematics.json"))
+using (var file = File.CreateText(Resources.File_schematics_json))
 {
     var settings = new JsonSerializerSettings { ContractResolver = NullToEmptyStringResolver.Instance, Formatting = Formatting.Indented };
     var serializer = JsonSerializer.CreateDefault(settings);
@@ -224,3 +244,11 @@ using (var file = File.CreateText("schematics.json"))
 
 // done!
 return 0;
+
+static ELanguage GetLocalizationLanguage()
+{
+    if (!string.IsNullOrEmpty(Settings.Default.ELanguage) && Enum.TryParse<ELanguage>(Settings.Default.ELanguage, out var result))
+        return result;
+
+    return Enum.Parse<ELanguage>(Resources.ELanguage);
+}

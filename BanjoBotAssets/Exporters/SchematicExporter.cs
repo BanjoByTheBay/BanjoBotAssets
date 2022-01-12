@@ -80,14 +80,14 @@ namespace BanjoBotAssets.Exporters
 
             if (!match.Success)
             {
-                Console.WriteLine("WARNING: Can't parse schematic name: {0}", name);
+                Console.WriteLine(Resources.Warning_CannotParseSchematicName, name);
                 return null;
             }
 
             return new ParsedSchematicName(
                 BaseName: match.Groups[1].Value,
                 Rarity: match.Groups[2].Value,
-                Tier: match.Groups[4].Success ? int.Parse(match.Groups[4].Value) : 0,
+                Tier: match.Groups[4].Success ? int.Parse(match.Groups[4].Value, CultureInfo.InvariantCulture) : 0,
                 EvoType: match.Groups[3].Value);
         }
 
@@ -95,14 +95,14 @@ namespace BanjoBotAssets.Exporters
         {
             if (craftingTable == null)
             {
-                Console.WriteLine("WARNING: No crafting table");
+                Console.WriteLine(Resources.Warning_SpecificAssetNotFound, "CraftingRecipes_New");
                 return null;
             }
 
             if (!craftingTable.TryGetDataTableRow(craftingRowHandle.RowName.Text,
                 StringComparison.OrdinalIgnoreCase, out var craftingRow))
             {
-                Console.WriteLine("WARNING: Can't find crafting row {0}", craftingRowHandle.RowName);
+                Console.WriteLine(Resources.Warning_MissingCraftingTableRow, craftingRowHandle.RowName);
                 return null;
             }
 
@@ -110,7 +110,7 @@ namespace BanjoBotAssets.Exporters
             var assetName = recipeResults[0].ItemPrimaryAssetId.PrimaryAssetName.Text;
             if (!weaponOrTrapPaths.TryGetValue(assetName, out var widOrTidPath))
             {
-                Console.WriteLine("WARNING: No weapon/trap path indexed for {0}", assetName);
+                Console.WriteLine(Resources.Warning_UnindexedWeaponTrapPath, assetName);
                 return null;
             }
             var widOrTidFile = provider[widOrTidPath];
@@ -125,7 +125,7 @@ namespace BanjoBotAssets.Exporters
             var craftingRow = asset.GetOrDefault<FDataTableRowHandle>("CraftingRecipe");
             if (craftingRow == null)
             {
-                Console.WriteLine("WARNING: No crafting row listed for schematic {0}", asset.Name);
+                Console.WriteLine(Resources.Warning_NoCraftingRowForSchematic, asset.Name);
                 return result;
             }
 
@@ -133,7 +133,7 @@ namespace BanjoBotAssets.Exporters
 
             if (weaponOrTrapDef == null)
             {
-                Console.WriteLine("WARNING: No weapon/trap definition for crafting row {0}", craftingRow.RowName);
+                Console.WriteLine(Resources.Warning_NoWeaponTrapDefinitionForCraftingRow, craftingRow.RowName);
                 return result;
             }
 
@@ -161,18 +161,29 @@ namespace BanjoBotAssets.Exporters
 
                 if (match.Success)
                 {
-                    return match.Groups[1].Value.ToLower() switch
+                    return match.Groups[1].Value.ToLower(CultureInfo.InvariantCulture) switch
                     {
-                        "hammer" => "Hardware",
-                        "heavy" => "Explosive",
-                        "improvised" => "Club",
-                        "smg" => "SMG",
-                        _ => match.Groups[1].Value.CapitalizeFirst(),
+                        "hammer" => Resources.Field_Schematic_Hardware,
+                        "heavy" => Resources.Field_Schematic_Explosive,
+                        "improvised" => Resources.Field_Schematic_Club,
+                        "smg" => Resources.Field_Schematic_SMG,
+                        "assault" => Resources.Field_Schematic_Assault,
+                        "axe" => Resources.Field_Schematic_Axe,
+                        "ceiling" => Resources.Field_Schematic_Ceiling,
+                        "floor" => Resources.Field_Schematic_Floor,
+                        "pistol" => Resources.Field_Schematic_Pistol,
+                        "scythe" => Resources.Field_Schematic_Scythe,
+                        "shotgun" => Resources.Field_Schematic_Shotgun,
+                        "sniper" => Resources.Field_Schematic_Sniper,
+                        "spear" => Resources.Field_Schematic_Spear,
+                        "sword" => Resources.Field_Schematic_Sword,
+                        "wall" => Resources.Field_Schematic_Wall,
+                        _ => Resources.Field_Schematic_Unknown,
                     };
                 }
             }
 
-            return "Unknown";
+            return Resources.Field_Schematic_Unknown;
         }
 
         protected override Task<bool> ExportAssetAsync(ParsedSchematicName parsed, UObject primaryAsset, SchematicItemGroupFields fields, string path, SchematicItemData itemData)

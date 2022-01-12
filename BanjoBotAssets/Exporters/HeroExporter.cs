@@ -40,11 +40,11 @@ namespace BanjoBotAssets.Exporters
 
             if (!match.Success)
             {
-                Console.WriteLine("WARNING: Can't parse hero name: {0}", name);
+                Console.WriteLine(Resources.Warning_CannotParseHeroName, name);
                 return null;
             }
 
-            return new BaseParsedItemName(BaseName: match.Groups[1].Value, Rarity: match.Groups[2].Value, Tier: int.Parse(match.Groups[3].Value));
+            return new BaseParsedItemName(BaseName: match.Groups[1].Value, Rarity: match.Groups[2].Value, Tier: int.Parse(match.Groups[3].Value, CultureInfo.InvariantCulture));
         }
 
         protected override async Task<HeroItemGroupFields> ExtractCommonFieldsAsync(UFortHeroType asset, IGrouping<string?, string> grouping)
@@ -79,8 +79,8 @@ namespace BanjoBotAssets.Exporters
             var perk = gameplayDefinition?.GetOrDefault<FStructFallback>(perkProperty);
             Interlocked.Increment(ref assetsLoaded);
             var grantedAbilityKit = perk == null ? null : await perk.GetOrDefault<FSoftObjectPath>("GrantedAbilityKit").LoadAsync(provider);
-            var displayName = grantedAbilityKit?.GetOrDefault<FText>("DisplayName")?.Text ?? $"<{grantedAbilityKit?.Name ?? "<No granted ability>"}>";
-            var description = await AbilityDescription.GetAsync(grantedAbilityKit, this) ?? "<No description>";
+            var displayName = grantedAbilityKit?.GetOrDefault<FText>("DisplayName")?.Text ?? $"<{grantedAbilityKit?.Name ?? Resources.Field_Hero_NoGrantedAbility}>";
+            var description = await AbilityDescription.GetAsync(grantedAbilityKit, this) ?? $"<{Resources.Field_NoDescription}>";
             return (displayName, description);
         }
 
@@ -106,16 +106,16 @@ namespace BanjoBotAssets.Exporters
             {
                 var text = tag.Text;
                 if (text.Contains("IsCommando"))
-                    return "Soldier";
+                    return Resources.Field_Hero_Soldier;
                 if (text.Contains("IsNinja"))
-                    return "Ninja";
+                    return Resources.Field_Hero_Ninja;
                 if (text.Contains("IsOutlander"))
-                    return "Outlander";
+                    return Resources.Field_Hero_Outlander;
                 if (text.Contains("IsConstructor"))
-                    return "Constructor";
+                    return Resources.Field_Hero_Constructor;
             }
 
-            return "Unknown";
+            return Resources.Field_Hero_Unknown;
         }
     }
 }

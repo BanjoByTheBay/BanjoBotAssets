@@ -1,0 +1,399 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="ELanguage" xml:space="preserve">
+    <value>English</value>
+    <comment>ELanguage enum value used to load localized game resources</comment>
+  </data>
+  <data name="Error_AesFetchFailed" xml:space="preserve">
+    <value>Couldn't load AES keys.</value>
+  </data>
+  <data name="Error_GameNotFound" xml:space="preserve">
+    <value>Couldn't find game directory. Add it to the GameDirectories setting.</value>
+  </data>
+  <data name="Error_NotAManager" xml:space="preserve">
+    <value>Not a manager</value>
+  </data>
+  <data name="Error_UnexpectedManagerSynergy" xml:space="preserve">
+    <value>Unexpected manager synergy {0}</value>
+  </data>
+  <data name="Field_Defender_DefaultName" xml:space="preserve">
+    <value>Defender</value>
+  </data>
+  <data name="Field_Defender_DisplayNameFormat" xml:space="preserve">
+    <value>{0} {1}</value>
+    <comment>0=rarity, 1=formatted defender name</comment>
+  </data>
+  <data name="Field_Defender_NameFormat" xml:space="preserve">
+    <value>{0} Defender</value>
+    <comment>0=weapon type</comment>
+  </data>
+  <data name="Field_Hero_Constructor" xml:space="preserve">
+    <value>Constructor</value>
+  </data>
+  <data name="Field_Hero_Ninja" xml:space="preserve">
+    <value>Ninja</value>
+  </data>
+  <data name="Field_Hero_NoGrantedAbility" xml:space="preserve">
+    <value>No granted ability</value>
+  </data>
+  <data name="Field_Hero_Outlander" xml:space="preserve">
+    <value>Outlander</value>
+  </data>
+  <data name="Field_Hero_Soldier" xml:space="preserve">
+    <value>Soldier</value>
+  </data>
+  <data name="Field_Hero_Unknown" xml:space="preserve">
+    <value>Unknown</value>
+  </data>
+  <data name="Field_NoDescription" xml:space="preserve">
+    <value>No description</value>
+  </data>
+  <data name="Field_Recipe_Melee" xml:space="preserve">
+    <value>Melee</value>
+  </data>
+  <data name="Field_Recipe_Ranged" xml:space="preserve">
+    <value>Ranged</value>
+  </data>
+  <data name="Field_Recipe_Trap" xml:space="preserve">
+    <value>Trap</value>
+  </data>
+  <data name="Field_Schematic_Assault" xml:space="preserve">
+    <value>Assault</value>
+  </data>
+  <data name="Field_Schematic_Axe" xml:space="preserve">
+    <value>Axe</value>
+  </data>
+  <data name="Field_Schematic_Ceiling" xml:space="preserve">
+    <value>Ceiling</value>
+  </data>
+  <data name="Field_Schematic_Club" xml:space="preserve">
+    <value>Club</value>
+  </data>
+  <data name="Field_Schematic_Crystal" xml:space="preserve">
+    <value>Crystal</value>
+  </data>
+  <data name="Field_Schematic_Explosive" xml:space="preserve">
+    <value>Explosive</value>
+  </data>
+  <data name="Field_Schematic_Floor" xml:space="preserve">
+    <value>Floor</value>
+  </data>
+  <data name="Field_Schematic_Hardware" xml:space="preserve">
+    <value>Hardware</value>
+  </data>
+  <data name="Field_Schematic_Ore" xml:space="preserve">
+    <value>Ore</value>
+  </data>
+  <data name="Field_Schematic_Pistol" xml:space="preserve">
+    <value>Pistol</value>
+  </data>
+  <data name="Field_Schematic_Scythe" xml:space="preserve">
+    <value>Scythe</value>
+  </data>
+  <data name="Field_Schematic_Shotgun" xml:space="preserve">
+    <value>Shotgun</value>
+  </data>
+  <data name="Field_Schematic_SMG" xml:space="preserve">
+    <value>SMG</value>
+  </data>
+  <data name="Field_Schematic_Sniper" xml:space="preserve">
+    <value>Sniper</value>
+  </data>
+  <data name="Field_Schematic_Spear" xml:space="preserve">
+    <value>Spear</value>
+  </data>
+  <data name="Field_Schematic_Sword" xml:space="preserve">
+    <value>Sword</value>
+  </data>
+  <data name="Field_Schematic_Unknown" xml:space="preserve">
+    <value>Unknown</value>
+  </data>
+  <data name="Field_Schematic_Wall" xml:space="preserve">
+    <value>Wall</value>
+  </data>
+  <data name="Field_Survivor_DefaultName" xml:space="preserve">
+    <value>Survivor</value>
+  </data>
+  <data name="Field_Survivor_Doctor" xml:space="preserve">
+    <value>Doctor</value>
+  </data>
+  <data name="Field_Survivor_Engineer" xml:space="preserve">
+    <value>Engineer</value>
+  </data>
+  <data name="Field_Survivor_Explorer" xml:space="preserve">
+    <value>Explorer</value>
+  </data>
+  <data name="Field_Survivor_Gadgeteer" xml:space="preserve">
+    <value>Gadgeteer</value>
+  </data>
+  <data name="Field_Survivor_Inventor" xml:space="preserve">
+    <value>Inventor</value>
+  </data>
+  <data name="Field_Survivor_LeadNameFormat" xml:space="preserve">
+    <value>Lead {0}</value>
+    <comment>0=job name</comment>
+  </data>
+  <data name="Field_Survivor_Marksman" xml:space="preserve">
+    <value>Marksman</value>
+  </data>
+  <data name="Field_Survivor_MartialArtist" xml:space="preserve">
+    <value>Martial Artist</value>
+  </data>
+  <data name="Field_Survivor_Trainer" xml:space="preserve">
+    <value>Trainer</value>
+  </data>
+  <data name="File_assets_json" xml:space="preserve">
+    <value>assets.json</value>
+    <comment>main export filename</comment>
+  </data>
+  <data name="File_schematics_json" xml:space="preserve">
+    <value>schematics.json</value>
+    <comment>export filename for crafting recipes</comment>
+  </data>
+  <data name="Status_ExportedItemRatings" xml:space="preserve">
+    <value>Exported item ratings</value>
+  </data>
+  <data name="Status_ExportedRecipes" xml:space="preserve">
+    <value>Exported recipes</value>
+  </data>
+  <data name="Status_ExportingGroup" xml:space="preserve">
+    <value>Exporting {0}</value>
+    <comment>0=asset type</comment>
+  </data>
+  <data name="Status_ExportingItemRatings" xml:space="preserve">
+    <value>Exporting item ratings</value>
+  </data>
+  <data name="Status_ExportingRecipes" xml:space="preserve">
+    <value>Exporting recipes</value>
+  </data>
+  <data name="Status_LoadedAssets" xml:space="preserve">
+    <value>Loaded {0} assets in {1} ({2} ms per asset)</value>
+    <comment>0=number loaded, 1=formatted time duration, 2=number of milliseconds</comment>
+  </data>
+  <data name="Status_LoadingLocalization" xml:space="preserve">
+    <value>Loading localization</value>
+  </data>
+  <data name="Status_LoadingMappings" xml:space="preserve">
+    <value>Loading mappings</value>
+  </data>
+  <data name="Status_ProcessingTypeGroupNumOfNum" xml:space="preserve">
+    <value>Processing {0} group {1} of {2}</value>
+    <comment>0=asset type, 1=number done, 3=total number</comment>
+  </data>
+  <data name="Status_ProcessingTypeNumOfNum" xml:space="preserve">
+    <value>Processing {0} {1} of {2}</value>
+    <comment>0=item type, 1=number done, 2=total number</comment>
+  </data>
+  <data name="Status_RegisteringExportTypes" xml:space="preserve">
+    <value>Registering export types</value>
+  </data>
+  <data name="Status_SkippingEarlyAsInstructed" xml:space="preserve">
+    <value>Skipping {0} early as instructed.</value>
+    <comment>0=asset ID</comment>
+  </data>
+  <data name="Status_SkippingGadgetWithoutAbility" xml:space="preserve">
+    <value>Skipping gadget with no gameplay ability: {0}</value>
+    <comment>0=asset ID</comment>
+  </data>
+  <data name="Status_SkippingLateAsInstructed" xml:space="preserve">
+    <value>Skipping {0} late as instructed.</value>
+    <comment>0=template ID</comment>
+  </data>
+  <data name="Status_SkippingNullGroup" xml:space="preserve">
+    <value>Skipping null {0} group containing {1} items.</value>
+    <comment>0=asset type, 1=number</comment>
+  </data>
+  <data name="Status_SkippingUnparsable" xml:space="preserve">
+    <value>Skipping group member that failed to parse: {0} ({1})</value>
+    <comment>0=template ID, 1=metadata</comment>
+  </data>
+  <data name="Status_SubmittingDynamicKey" xml:space="preserve">
+    <value>Submitting key for {0}</value>
+    <comment>0=filename</comment>
+  </data>
+  <data name="Status_SubmittingMainKey" xml:space="preserve">
+    <value>Submitting main key</value>
+  </data>
+  <data name="Warning_CannotParseDefenderName" xml:space="preserve">
+    <value>WARNING: Can't parse defender name: {0}</value>
+    <comment>0=template ID</comment>
+  </data>
+  <data name="Warning_CannotParseHeroName" xml:space="preserve">
+    <value>WARNING: Can't parse hero name: {0}</value>
+    <comment>0=template ID</comment>
+  </data>
+  <data name="Warning_CannotParseSchematicName" xml:space="preserve">
+    <value>WARNING: Can't parse schematic name {0}</value>
+    <comment>0=template ID</comment>
+  </data>
+  <data name="Warning_CannotParseSurvivorName" xml:space="preserve">
+    <value>WARNING: Can't parse survivor name: {0}</value>
+    <comment>0=template ID</comment>
+  </data>
+  <data name="Warning_CouldNotLoadAsset" xml:space="preserve">
+    <value>WARNING: Could not load {0}</value>
+    <comment>0=asset ID</comment>
+  </data>
+  <data name="Warning_CouldNotLoadCurveTableRow" xml:space="preserve">
+    <value>WARNING: Could not find curve {0}</value>
+    <comment>0=table row ID</comment>
+  </data>
+  <data name="Warning_FailedToLoadFile" xml:space="preserve">
+    <value>WARNING: Failed to load {0}</value>
+    <comment>0=filename</comment>
+  </data>
+  <data name="Warning_IgnoringUnknownModifyOperation" xml:space="preserve">
+    <value>WARNING: Ignoring unknown modify operation {0}</value>
+  </data>
+  <data name="Warning_MissingCraftingTableRow" xml:space="preserve">
+    <value>WARNING: Can't find crafting row {0}</value>
+    <comment>0=table row ID</comment>
+  </data>
+  <data name="Warning_MissingCurveTableRow" xml:space="preserve">
+    <value>WARNING: Curve table has no row {0}</value>
+    <comment>0=row ID</comment>
+  </data>
+  <data name="Warning_NoCraftingRowForSchematic" xml:space="preserve">
+    <value>WARNING: No crafting row listed for schematic {0}</value>
+    <comment>0=asset ID</comment>
+  </data>
+  <data name="Warning_NoWeaponTrapDefinitionForCraftingRow" xml:space="preserve">
+    <value>WARNING: No weapon/trap definition for crafting row {0}</value>
+    <comment>0=table row ID</comment>
+  </data>
+  <data name="Warning_OverridePercentageNotImplemented" xml:space="preserve">
+    <value>WARNING: I don't know how to Override Percentage</value>
+  </data>
+  <data name="Warning_SpecificAssetNotFound" xml:space="preserve">
+    <value>WARNING: {0} not found</value>
+    <comment>0=asset ID</comment>
+  </data>
+  <data name="Warning_UnindexedWeaponTrapPath" xml:space="preserve">
+    <value>WARNING: No weapon/trap path indexed for {0}</value>
+    <comment>0=asset ID</comment>
+  </data>
+  <data name="Warning_UnknownFormattingStyle" xml:space="preserve">
+    <value>WARNING: Unknown formatting style {0}</value>
+  </data>
+  <data name="Warning_UnmatchedCraftingRecipe" xml:space="preserve">
+    <value>WARNING: Crafting recipe with no matching schematic: {0}</value>
+    <comment>0=crafting recipe ID</comment>
+  </data>
+</root>

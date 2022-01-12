@@ -12,7 +12,7 @@
         {
             if (asset.GameplayAbility.AssetPathName.IsNone)
             {
-                Console.WriteLine("Skipping gadget with no gameplay ability: {0}", asset.Name);
+                Console.WriteLine(Resources.Status_SkippingGadgetWithoutAbility, asset.Name);
                 return false;
             }
 

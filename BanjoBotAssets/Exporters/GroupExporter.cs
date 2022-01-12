@@ -36,7 +36,7 @@
             var uniqueAssets = assetPaths.ToLookup(path => ParseAssetName(path)?.BaseName, StringComparer.OrdinalIgnoreCase);
             numToProcess = uniqueAssets.Count;
 
-            Report(progress, "Exporting " + Type);
+            Report(progress, string.Format(CultureInfo.CurrentCulture, Resources.Status_ExportingGroup, Type));
 
             await Parallel.ForEachAsync(uniqueAssets, async (grouping, _cancellationToken) =>
             {
@@ -44,7 +44,7 @@
 
                 if (baseName == null)
                 {
-                    Console.WriteLine("Skipping null {0} group containing {1} items.", Type, grouping.Count());
+                    Console.WriteLine(Resources.Status_SkippingNullGroup, Type, grouping.Count());
                     return;
                 }
 
@@ -52,7 +52,7 @@
                 var file = provider[primaryAssetPath];
 
                 var num = Interlocked.Increment(ref processedSoFar);
-                Console.WriteLine("Processing {0} group {1} of {2}", Type, num, numToProcess);
+                Console.WriteLine(Resources.Status_ProcessingTypeGroupNumOfNum, Type, num, numToProcess);
 
                 //Console.WriteLine("Loading {0}", file.PathWithoutExtension);
                 Interlocked.Increment(ref assetsLoaded);
@@ -63,13 +63,13 @@
 
                 if (asset == null)
                 {
-                    Console.WriteLine("WARNING: Failed to load {0}", file.PathWithoutExtension);
+                    Console.WriteLine(Resources.Warning_FailedToLoadFile, file.PathWithoutExtension);
                     return;
                 }
 
                 if (WantThisAsset(asset) == false)
                 {
-                    Console.WriteLine("Skipping {0} early as instructed.", file.PathWithoutExtension);
+                    Console.WriteLine(Resources.Status_SkippingEarlyAsInstructed, file.PathWithoutExtension);
                     return;
                 }
 
@@ -84,7 +84,7 @@
 
                     if (parsed == null)
                     {
-                        Console.WriteLine("Skipping group member that failed to parse: {0} ({1})", templateId, path);
+                        Console.WriteLine(Resources.Status_SkippingUnparsable, templateId, path);
                         continue;
                     }
 
@@ -102,7 +102,7 @@
 
                     if (await ExportAssetAsync(parsed, asset, fields, path, itemData) == false)
                     {
-                        Console.WriteLine("Skipping {0} late as instructed.", templateId);
+                        Console.WriteLine(Resources.Status_SkippingLateAsInstructed, templateId);
                         return;
                     }
 

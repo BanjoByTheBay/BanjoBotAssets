@@ -38,7 +38,7 @@
                 var file = provider[path];
 
                 var num = Interlocked.Increment(ref processedSoFar);
-                Console.WriteLine("Processing {0} {1} of {2}", Type, num, numToProcess);
+                Console.WriteLine(Resources.Status_ProcessingTypeNumOfNum, Type, num, numToProcess);
 
                 //Console.WriteLine("Loading {0}", file.PathWithoutExtension);
                 Interlocked.Increment(ref assetsLoaded);

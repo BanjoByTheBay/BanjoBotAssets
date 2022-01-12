@@ -22,20 +22,5 @@ namespace BanjoBotAssets
 
             return default;
         }
-
-        public static string CapitalizeFirst(this string str)
-        {
-            if (string.IsNullOrEmpty(str))
-                return str;
-
-            var sb = new StringBuilder(str);
-
-            sb[0] = char.ToUpper(sb[0]);
-
-            for (int i = 1; i < sb.Length; i++)
-                sb[i] = char.ToLower(sb[i]);
-
-            return sb.ToString();
-        }
     }
 }

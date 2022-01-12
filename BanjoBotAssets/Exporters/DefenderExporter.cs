@@ -16,11 +16,11 @@
 
             if (!match.Success)
             {
-                Console.WriteLine("WARNING: Can't parse defender name: {0}", name);
+                Console.WriteLine(Resources.Warning_CannotParseDefenderName, name);
                 return null;
             }
 
-            return new BaseParsedItemName(BaseName: match.Groups[1].Value, Rarity: match.Groups[2].Value, Tier: int.Parse(match.Groups[3].Value));
+            return new BaseParsedItemName(BaseName: match.Groups[1].Value, Rarity: match.Groups[2].Value, Tier: int.Parse(match.Groups[3].Value, CultureInfo.InvariantCulture));
         }
 
         protected override async Task<BaseItemGroupFields> ExtractCommonFieldsAsync(UFortHeroType asset, IGrouping<string?, string> grouping)
@@ -35,7 +35,7 @@
                 var i = category.LastIndexOf('_');
                 var weapon = category[(i + 1)..];
 
-                subType = $"{weapon} Defender";
+                subType = string.Format(CultureInfo.CurrentCulture, Resources.Field_Defender_NameFormat, weapon);
             }
             else
             {
@@ -51,7 +51,7 @@
                 return ft.Text;
 
             var rarity = GetRarity(parsedName, primaryAsset, fields);
-            return $"{rarity.GetNameText()} {fields.SubType ?? "Defender"}";
+            return string.Format(CultureInfo.CurrentCulture, Resources.Field_Defender_DisplayNameFormat, rarity.GetNameText(), fields.SubType ?? Resources.Field_Defender_DefaultName);
         }
     }
 }

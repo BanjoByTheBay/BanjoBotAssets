@@ -206,12 +206,18 @@ namespace BanjoBotAssets
         /// <summary>
         /// "Ranged", "Melee", or "Trap"
         /// </summary>
+        /// <remarks>
+        /// Localized using Resources.Field_Recipe_*
+        /// </remarks>
         [DisallowNull]
         public string? Type { get; set; }
         /// <summary>
         /// "Assault", "Axe", "Ceiling", "Club", "Explosive", "Floor", "Hardware",
         /// "Pistol", "Scythe", "Shotgun", "SMG", "Sniper", "Spear", "Sword", or "Wall"
         /// </summary>
+        /// <remarks>
+        /// Localized using Resources.Field_Schematic_*
+        /// </remarks>
         [DisallowNull]
         public string? Subtype { get; set; }
         public int Tier { get; set; }
@@ -222,6 +228,9 @@ namespace BanjoBotAssets
         /// <summary>
         /// "Common", "Uncommon", "Rare", "Epic", "Legendary", or "Mythic"
         /// </summary>
+        /// <remarks>
+        /// Localized using ELanguage (?)
+        /// </remarks>
         [DisallowNull]
         public string? Rarity { get; set; }
         public string? Ingredient1 { get; set; }

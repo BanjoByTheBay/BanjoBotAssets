@@ -1,4 +1,6 @@
-﻿namespace BanjoBotAssets.Exporters
+﻿// TODO: export fixed personalities for mythics
+
+namespace BanjoBotAssets.Exporters
 {
     internal sealed class SurvivorExporter : GroupExporter<UFortWorkerType>
     {
@@ -25,11 +27,11 @@
 
             if (!match.Success)
             {
-                Console.WriteLine("WARNING: Can't parse survivor name: {0}", name);
+                Console.WriteLine(Resources.Warning_CannotParseSurvivorName, name);
                 return null;
             }
 
-            return new BaseParsedItemName(BaseName: match.Groups[1].Value + match.Groups[3].Value, Rarity: match.Groups[2].Value, Tier: int.Parse(match.Groups[4].Value));
+            return new BaseParsedItemName(BaseName: match.Groups[1].Value + match.Groups[3].Value, Rarity: match.Groups[2].Value, Tier: int.Parse(match.Groups[4].Value, CultureInfo.InvariantCulture));
         }
 
         protected override async Task<BaseItemGroupFields> ExtractCommonFieldsAsync(UFortWorkerType asset, IGrouping<string?, string> grouping)
@@ -43,19 +45,19 @@
         private static string GetManagerJob(UFortWorkerType worker) =>
             worker.ManagerSynergyTag.First().Text switch
             {
-                _ when !worker.bIsManager => throw new ApplicationException("Not a manager"),
-                "Homebase.Manager.IsDoctor" => "Doctor",
-                "Homebase.Manager.IsEngineer" => "Engineer",
-                "Homebase.Manager.IsExplorer" => "Explorer",
-                "Homebase.Manager.IsGadgeteer" => "Gadgeteer",
-                "Homebase.Manager.IsInventor" => "Inventor",
-                "Homebase.Manager.IsMartialArtist" => "Martial Artist",
-                "Homebase.Manager.IsSoldier" => "Marksman",
-                "Homebase.Manager.IsTrainer" => "Trainer",
-                var other => throw new ApplicationException("Unexpected manager synergy " + other),
+                _ when !worker.bIsManager => throw new AssetFormatException(Resources.Error_NotAManager),
+                "Homebase.Manager.IsDoctor" => Resources.Field_Survivor_Doctor,
+                "Homebase.Manager.IsEngineer" => Resources.Field_Survivor_Engineer,
+                "Homebase.Manager.IsExplorer" => Resources.Field_Survivor_Explorer,
+                "Homebase.Manager.IsGadgeteer" => Resources.Field_Survivor_Gadgeteer,
+                "Homebase.Manager.IsInventor" => Resources.Field_Survivor_Inventor,
+                "Homebase.Manager.IsMartialArtist" => Resources.Field_Survivor_MartialArtist,
+                "Homebase.Manager.IsSoldier" => Resources.Field_Survivor_Marksman,
+                "Homebase.Manager.IsTrainer" => Resources.Field_Survivor_Trainer,
+                var other => throw new AssetFormatException(string.Format(CultureInfo.CurrentCulture, Resources.Error_UnexpectedManagerSynergy, other)),
             };
 
         private static string MakeSurvivorDisplayName(UFortWorkerType worker) =>
-            worker.bIsManager ? $"Lead {GetManagerJob(worker)}" : "Survivor";
+            worker.bIsManager ? string.Format(CultureInfo.CurrentCulture, Resources.Field_Survivor_LeadNameFormat, GetManagerJob(worker)) : Resources.Field_Survivor_DefaultName;
     }
 }

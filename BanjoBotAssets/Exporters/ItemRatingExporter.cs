@@ -4,19 +4,19 @@
     {
         public ItemRatingExporter(DefaultFileProvider provider) : base(provider) { }
 
-        protected override bool InterestedInAsset(string name) => name.EndsWith("ItemRating.uasset");
+        protected override bool InterestedInAsset(string name) => name.EndsWith("ItemRating.uasset", StringComparison.OrdinalIgnoreCase);
 
         public override async Task ExportAssetsAsync(IProgress<ExportProgress> progress, IAssetOutput output)
         {
-            progress.Report(new ExportProgress { TotalSteps = 2, CompletedSteps = 0, AssetsLoaded = assetsLoaded, CurrentItem = "Exporting item ratings" });
+            progress.Report(new ExportProgress { TotalSteps = 2, CompletedSteps = 0, AssetsLoaded = assetsLoaded, CurrentItem = Resources.Status_ExportingItemRatings });
 
             await ExportDefaultItemRatingsAsync(output);
 
-            progress.Report(new ExportProgress { TotalSteps = 2, CompletedSteps = 1, AssetsLoaded = assetsLoaded, CurrentItem = "Exporting item ratings" });
+            progress.Report(new ExportProgress { TotalSteps = 2, CompletedSteps = 1, AssetsLoaded = assetsLoaded, CurrentItem = Resources.Status_ExportingItemRatings });
 
             await ExportSurvivorItemRatingsAsync(output);
 
-            progress.Report(new ExportProgress { TotalSteps = 2, CompletedSteps = 2, AssetsLoaded = assetsLoaded, CurrentItem = "Exported item ratings" });
+            progress.Report(new ExportProgress { TotalSteps = 2, CompletedSteps = 2, AssetsLoaded = assetsLoaded, CurrentItem = Resources.Status_ExportedItemRatings });
         }
 
         async Task ExportDefaultItemRatingsAsync(IAssetOutput output)
@@ -25,7 +25,7 @@
 
             if (baseItemRatingPath == null)
             {
-                Console.WriteLine("WARNING: BaseItemRating not found");
+                Console.WriteLine(Resources.Warning_SpecificAssetNotFound, "BaseItemRating");
                 return;
             }
 
@@ -36,7 +36,7 @@
 
             if (curveTable == null)
             {
-                Console.WriteLine("WARNING: Could not load {0}", baseItemRatingPath);
+                Console.WriteLine(Resources.Warning_CouldNotLoadAsset, baseItemRatingPath);
                 return;
             }
 
@@ -49,7 +49,7 @@
 
             if (survivorItemRatingPath == null)
             {
-                Console.WriteLine("WARNING: SurvivorItemRating not found");
+                Console.WriteLine(Resources.Warning_SpecificAssetNotFound, "SurvivorItemRating");
                 return;
             }
 
@@ -60,7 +60,7 @@
 
             if (curveTable == null)
             {
-                Console.WriteLine("WARNING: Could not load {0}", survivorItemRatingPath);
+                Console.WriteLine(Resources.Warning_CouldNotLoadAsset, survivorItemRatingPath);
                 return;
             }
 
@@ -106,7 +106,7 @@
 
                     if (rowFName.IsNone)
                     {
-                        Console.WriteLine("WARNING: Curve table has no row {0}", rowNameStr);
+                        Console.WriteLine(Resources.Warning_MissingCurveTableRow, rowNameStr);
                         continue;
                     }
 
@@ -114,7 +114,7 @@
 
                     if (curve == null)
                     {
-                        Console.WriteLine("WARNING: Could not find curve {0}", rowNameStr);
+                        Console.WriteLine(Resources.Warning_CouldNotLoadCurveTableRow, rowNameStr);
                         continue;
                     }
 
