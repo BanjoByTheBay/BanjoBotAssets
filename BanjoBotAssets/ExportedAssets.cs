@@ -62,6 +62,8 @@ namespace BanjoBotAssets
     {
         [DisallowNull]
         public QuestObjective[]? Objectives { get; set; }
+        [DisallowNull]
+        public string? Category { get; set; }
     }
 
     internal class QuestObjective

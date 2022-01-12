@@ -32,6 +32,7 @@
             }
 
             namedItemData.Objectives = objectives.ToArray();
+            namedItemData.Category = asset.Category?.RowName.Text ?? "";
             return Task.FromResult(true);
         }
     }
