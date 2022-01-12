@@ -88,6 +88,15 @@ namespace BanjoBotAssets {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Couldn&apos;t load mappings..
+        /// </summary>
+        internal static string Error_MappingsFetchFailed {
+            get {
+                return ResourceManager.GetString("Error_MappingsFetchFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Not a manager.
         /// </summary>
         internal static string Error_NotAManager {
@@ -588,6 +597,15 @@ namespace BanjoBotAssets {
         internal static string Status_RegisteringExportTypes {
             get {
                 return ResourceManager.GetString("Status_RegisteringExportTypes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Retrying mappings.
+        /// </summary>
+        internal static string Status_RetryingMappings {
+            get {
+                return ResourceManager.GetString("Status_RetryingMappings", resourceCulture);
             }
         }
         

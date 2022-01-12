@@ -127,6 +127,9 @@
   <data name="Error_GameNotFound" xml:space="preserve">
     <value>Couldn't find game directory. Add it to the GameDirectories setting.</value>
   </data>
+  <data name="Error_MappingsFetchFailed" xml:space="preserve">
+    <value>Couldn't load mappings.</value>
+  </data>
   <data name="Error_NotAManager" xml:space="preserve">
     <value>Not a manager</value>
   </data>
@@ -303,6 +306,9 @@
   </data>
   <data name="Status_RegisteringExportTypes" xml:space="preserve">
     <value>Registering export types</value>
+  </data>
+  <data name="Status_RetryingMappings" xml:space="preserve">
+    <value>Retrying mappings</value>
   </data>
   <data name="Status_SkippingEarlyAsInstructed" xml:space="preserve">
     <value>Skipping {0} early as instructed.</value>

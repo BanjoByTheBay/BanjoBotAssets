@@ -65,6 +65,21 @@ foreach (var dk in aes.Data.DynamicKeys)
 
 Console.WriteLine(Resources.Status_LoadingMappings);
 provider.LoadMappings();
+
+// sometimes the mappings don't load, and then nothing works
+if (provider.MappingsForThisGame is null or { Enums.Count: 0, Types.Count: 0 })
+{
+    Thread.Sleep(5 * 1000);
+    Console.WriteLine(Resources.Status_RetryingMappings);
+    provider.LoadMappings();
+
+    if (provider.MappingsForThisGame is null or { Enums.Count: 0, Types.Count: 0 })
+    {
+        Console.WriteLine(Resources.Error_MappingsFetchFailed);
+        return 3;
+    }
+}
+
 Console.WriteLine(Resources.Status_LoadingLocalization);
 provider.LoadLocalization(GetLocalizationLanguage());
 
