@@ -64,6 +64,10 @@ namespace BanjoBotAssets
         public QuestObjective[]? Objectives { get; set; }
         [DisallowNull]
         public string? Category { get; set; }
+        [DisallowNull]
+        public QuestReward[]? Rewards { get; set; }
+        [DisallowNull]
+        public string? QuestType { get; set; }
     }
 
     internal class QuestObjective
@@ -75,6 +79,15 @@ namespace BanjoBotAssets
         [DisallowNull]
         public string? HudShortDescription { get; set; }
         public int Count { get; set; }
+    }
+
+    internal class QuestReward
+    {
+        [DisallowNull]
+        public string? Item { get; set; }
+        public int Quantity { get; set; }
+        public bool Hidden { get; set; }
+        public bool Selectable { get; set; }
     }
 
     internal class ItemRatingTables
