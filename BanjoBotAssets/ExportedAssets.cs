@@ -4,7 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace BanjoBotAssets
 {
-    class ExportedAssets
+    internal class ExportedAssets
     {
         public DateTime ExportedAt { get; set; } = DateTime.Now;
 
@@ -16,7 +16,7 @@ namespace BanjoBotAssets
     }
 
     [JsonObject(ItemNullValueHandling = NullValueHandling.Ignore)]
-    class NamedItemData
+    internal class NamedItemData
     {
         [DisallowNull]
         public string? Name { get; set; }
@@ -32,7 +32,7 @@ namespace BanjoBotAssets
         public int? Tier { get; set; }
     }
 
-    class HeroItemData : NamedItemData
+    internal class HeroItemData : NamedItemData
     {
         [DisallowNull]
         public string? HeroPerk { get; set; }
@@ -44,27 +44,27 @@ namespace BanjoBotAssets
         public string? CommanderPerkDescription { get; set; }
     }
 
-    class SchematicItemData : NamedItemData
+    internal class SchematicItemData : NamedItemData
     {
         public string? EvoType { get; set; }
         [DisallowNull]
         public AlterationSlot[]? AlterationSlots { get; set; }
     }
 
-    class AlterationSlot
+    internal class AlterationSlot
     {
         public int RequiredLevel { get; set; }
         [DisallowNull]
         public string[][]? Alterations { get; set; }
     }
 
-    class QuestItemData : NamedItemData
+    internal class QuestItemData : NamedItemData
     {
         [DisallowNull]
         public QuestObjective[]? Objectives { get; set; }
     }
 
-    class QuestObjective
+    internal class QuestObjective
     {
         [DisallowNull]
         public string? BackendName { get; set; }
@@ -75,7 +75,7 @@ namespace BanjoBotAssets
         public int Count { get; set; }
     }
 
-    class ItemRatingTables
+    internal class ItemRatingTables
     {
         [DisallowNull]
         public ItemRatingTable? Survivor { get; set; }
@@ -92,20 +92,20 @@ namespace BanjoBotAssets
         }
     }
 
-    class ItemRatingTable
+    internal class ItemRatingTable
     {
         // key: $"{rarity}_T{tier:00}", e.g. "SR_T05"
         public Dictionary<string, ItemRatingTier> Tiers { get; set; } = new(StringComparer.OrdinalIgnoreCase);
     }
 
-    class ItemRatingTier
+    internal class ItemRatingTier
     {
         public int FirstLevel { get; set; }
         [DisallowNull]
         public float[]? Ratings { get; set; }
     }
 
-    class DifficultyInfo
+    internal class DifficultyInfo
     {
         public int RequiredRating { get; set; }
         public int MaximumRating { get; set; }
@@ -193,13 +193,13 @@ namespace BanjoBotAssets
         }
     }
 
-    enum RecipeMaterial
+    internal enum RecipeMaterial
     {
         Ore,
         Crystal,
     }
 
-    class ExportedRecipe
+    internal class ExportedRecipe
     {
         [DisallowNull]
         public string? ItemName { get; set; }

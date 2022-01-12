@@ -7,7 +7,7 @@ namespace BanjoBotAssets.Exporters
         private int numToProcess;
         private int processedSoFar;
 
-        public BlueprintExporter(DefaultFileProvider provider) : base(provider) { }
+        protected BlueprintExporter(DefaultFileProvider provider) : base(provider) { }
 
         protected abstract string Type { get; }
         protected abstract string DisplayNameProperty { get; }
@@ -22,7 +22,7 @@ namespace BanjoBotAssets.Exporters
         {
             numToProcess = assetPaths.Count;
 
-            await Parallel.ForEachAsync(assetPaths, async (path, _cancellationToken) =>
+            await Parallel.ForEachAsync(assetPaths, async (path, _) =>
             {
                 var file = provider![path];
 
@@ -56,7 +56,7 @@ namespace BanjoBotAssets.Exporters
                     Type = Type,
                 };
 
-                if (await ExportAssetAsync(bpClass, cdo, namedItemData) == false)
+                if (!await ExportAssetAsync(bpClass, cdo, namedItemData))
                 {
                     return;
                 }
@@ -64,6 +64,5 @@ namespace BanjoBotAssets.Exporters
                 output.AddNamedItem(bpClassPath, namedItemData);
             });
         }
-
     }
 }

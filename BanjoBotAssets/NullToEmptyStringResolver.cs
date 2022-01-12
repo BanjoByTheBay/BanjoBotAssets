@@ -13,7 +13,8 @@ namespace BanjoBotAssets
         protected override IList<JsonProperty> CreateProperties(Type type, MemberSerialization memberSerialization)
         {
             return type.GetProperties()
-                    .Select(p => {
+                    .Select(p =>
+                    {
                         var jp = base.CreateProperty(p, memberSerialization);
                         jp.ValueProvider = new NullToEmptyStringValueProvider(p);
                         return jp;
@@ -23,7 +24,7 @@ namespace BanjoBotAssets
 
     public class NullToEmptyStringValueProvider : IValueProvider
     {
-        readonly PropertyInfo _MemberInfo;
+        private readonly PropertyInfo _MemberInfo;
 
         public NullToEmptyStringValueProvider(PropertyInfo memberInfo)
         {
@@ -32,9 +33,7 @@ namespace BanjoBotAssets
 
         public object? GetValue(object target)
         {
-            object? result = _MemberInfo.GetValue(target);
-            if (/*_MemberInfo.PropertyType == typeof(string) &&*/ result == null) result = "";
-            return result;
+            return _MemberInfo.GetValue(target) ?? (object?)"";
         }
 
         public void SetValue(object target, object? value)

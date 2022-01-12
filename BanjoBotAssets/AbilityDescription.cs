@@ -19,7 +19,7 @@ namespace BanjoBotAssets
             return FormatMarkup(markup, tokens);
         }
 
-        static async Task<(string? markup, UObject? tooltip)> GetMarkupAsync(UObject? grantedAbilityKit, IAssetCounter assetCounter)
+        private static async Task<(string? markup, UObject? tooltip)> GetMarkupAsync(UObject? grantedAbilityKit, IAssetCounter assetCounter)
         {
             var tooltipDescription = grantedAbilityKit?.GetOrDefault<FText>("TooltipDescription");
             if (tooltipDescription != null)
@@ -38,14 +38,15 @@ namespace BanjoBotAssets
         }
 
         //const string LEVEL = "F_Level_8_E09B5737400C3B2BE4EB12A65A011266";
-        const string ROW = "Row_4_BFED534C47DE4BA0FAD849A5DFCFFEA2";
-        const string RETURN_FORMATTING = "ReturnFormating_5_537D683042CBD7E588B26ABF9AC9ABE6";
-        const string SHOULD_MODIFY_VALUE = "ShouldModifyValue_25_8A6AE4A84CC50870C881B987E540F003";
-        //const string MODIFY_LEVEL = "F_ModifyLevel_19_9F27BA314EA57935BE8DF7AAE57CDC1E";
-        const string MODIFY_ROW = "ModfifyRow_20_FB710B884BD580129A762F82C8CE1C03";
-        const string MODIFY_OPERATION = "ModifyOperation_21_A19E46F44E5371B3E69778A2D93B9AE9";
+        private const string ROW = "Row_4_BFED534C47DE4BA0FAD849A5DFCFFEA2";
+        private const string RETURN_FORMATTING = "ReturnFormating_5_537D683042CBD7E588B26ABF9AC9ABE6";
+        private const string SHOULD_MODIFY_VALUE = "ShouldModifyValue_25_8A6AE4A84CC50870C881B987E540F003";
 
-        static async Task GetTokensAsync(UObject cdo, Dictionary<string, string> tokens, IAssetCounter assetCounter)
+        //const string MODIFY_LEVEL = "F_ModifyLevel_19_9F27BA314EA57935BE8DF7AAE57CDC1E";
+        private const string MODIFY_ROW = "ModfifyRow_20_FB710B884BD580129A762F82C8CE1C03";
+        private const string MODIFY_OPERATION = "ModifyOperation_21_A19E46F44E5371B3E69778A2D93B9AE9";
+
+        private static async Task GetTokensAsync(UObject cdo, Dictionary<string, string> tokens, IAssetCounter assetCounter)
         {
             var style = cdo.GetOrDefault("dataRows_conversionStyle", new UScriptMap());
 
@@ -97,8 +98,7 @@ namespace BanjoBotAssets
 
                 // format the value
                 var formatting = tokenDef.Get<FName>(RETURN_FORMATTING);
-                string formattedValue;
-                formattedValue = ApplyFormatting(value, formatting);
+                string formattedValue = ApplyFormatting(value, formatting);
 
                 tokens[tokenName] = formattedValue;
             }

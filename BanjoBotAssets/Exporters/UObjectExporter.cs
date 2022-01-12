@@ -2,13 +2,13 @@
 {
     internal abstract class UObjectExporter : UObjectExporter<UObject>
     {
-        public UObjectExporter(DefaultFileProvider provider) : base(provider) { }
+        protected UObjectExporter(DefaultFileProvider provider) : base(provider) { }
     }
 
     internal abstract class UObjectExporter<TAsset> : UObjectExporter<TAsset, NamedItemData>
         where TAsset : UObject
     {
-        public UObjectExporter(DefaultFileProvider provider) : base(provider)
+        protected UObjectExporter(DefaultFileProvider provider) : base(provider)
         {
         }
     }
@@ -17,7 +17,7 @@
         where TAsset : UObject
         where TItemData : NamedItemData, new()
     {
-        public UObjectExporter(DefaultFileProvider provider) : base(provider) { }
+        protected UObjectExporter(DefaultFileProvider provider) : base(provider) { }
 
         protected abstract string Type { get; }
 
@@ -33,7 +33,7 @@
             var numToProcess = assetPaths.Count;
             var processedSoFar = 0;
 
-            await Parallel.ForEachAsync(assetPaths, async (path, _cancellationToken) =>
+            await Parallel.ForEachAsync(assetPaths, async (path, _) =>
             {
                 var file = provider[path];
 
@@ -90,7 +90,7 @@
                     itemData.Rarity = rarity.GetNameText().Text;
                 }
 
-                if (await ExportAssetAsync(uobject, itemData) == false)
+                if (!await ExportAssetAsync(uobject, itemData))
                 {
                     return;
                 }

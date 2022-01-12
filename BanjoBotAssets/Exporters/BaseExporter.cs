@@ -7,7 +7,7 @@
 
         protected int assetsLoaded;
 
-        public BaseExporter(DefaultFileProvider provider)
+        protected BaseExporter(DefaultFileProvider provider)
         {
             this.provider = provider;
         }

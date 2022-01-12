@@ -40,7 +40,6 @@
                     DisplayName = displayName.Trim(),
                 });
             }
-
         }
 
         protected override bool InterestedInAsset(string name) => name.EndsWith("GameDifficultyGrowthBounds.uasset", StringComparison.OrdinalIgnoreCase);

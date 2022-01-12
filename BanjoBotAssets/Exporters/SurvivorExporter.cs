@@ -13,7 +13,6 @@ namespace BanjoBotAssets.Exporters
         protected override bool InterestedInAsset(string name) =>
             name.Contains("Workers/Worker") || name.Contains("Managers/Manager");
 
-
         // regular survivor:    WorkerBasic_SR_T02
         // special survivor:    Worker_Leprechaun_VR_T01
         // mythic survivor:     Worker_Karolina_UR_T02

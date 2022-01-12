@@ -15,7 +15,7 @@
     {
         private int numToProcess, processedSoFar;
 
-        public GroupExporter(DefaultFileProvider provider) : base(provider) { }
+        protected GroupExporter(DefaultFileProvider provider) : base(provider) { }
 
         protected abstract string Type { get; }
         protected abstract TParsedName? ParseAssetName(string name);
@@ -38,7 +38,7 @@
 
             Report(progress, string.Format(CultureInfo.CurrentCulture, Resources.Status_ExportingGroup, Type));
 
-            await Parallel.ForEachAsync(uniqueAssets, async (grouping, _cancellationToken) =>
+            await Parallel.ForEachAsync(uniqueAssets, async (grouping, _) =>
             {
                 var baseName = grouping.Key;
 
@@ -67,7 +67,7 @@
                     return;
                 }
 
-                if (WantThisAsset(asset) == false)
+                if (!WantThisAsset(asset))
                 {
                     Console.WriteLine(Resources.Status_SkippingEarlyAsInstructed, file.PathWithoutExtension);
                     return;
@@ -100,7 +100,7 @@
                         Tier = parsed.Tier,
                     };
 
-                    if (await ExportAssetAsync(parsed, asset, fields, path, itemData) == false)
+                    if (!await ExportAssetAsync(parsed, asset, fields, path, itemData))
                     {
                         Console.WriteLine(Resources.Status_SkippingLateAsInstructed, templateId);
                         return;
@@ -160,7 +160,7 @@
     internal abstract class GroupExporter<TAsset> : GroupExporter<TAsset, BaseParsedItemName, BaseItemGroupFields, NamedItemData>
         where TAsset : UObject
     {
-        public GroupExporter(DefaultFileProvider provider) : base(provider)
+        protected GroupExporter(DefaultFileProvider provider) : base(provider)
         {
         }
     }

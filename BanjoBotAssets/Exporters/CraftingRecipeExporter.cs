@@ -6,7 +6,7 @@
         {
         }
 
-        private static readonly Regex widOrTidRegex = new(@"^[tw]id_", RegexOptions.IgnoreCase);
+        private static readonly Regex widOrTidRegex = new("^[tw]id_", RegexOptions.IgnoreCase);
 
         public override async Task ExportAssetsAsync(IProgress<ExportProgress> progress, IAssetOutput output)
         {

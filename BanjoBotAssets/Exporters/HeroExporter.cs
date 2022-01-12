@@ -32,7 +32,7 @@ namespace BanjoBotAssets.Exporters
             return asset.AttributeInitKey?.AttributeInitCategory.PlainText != "AthenaHero";
         }
 
-        static readonly Regex heroAssetNameRegex = new(@".*/([^/]+)_(C|UC|R|VR|SR|UR)_T(\d+)(?:\..*)?$");
+        private static readonly Regex heroAssetNameRegex = new(@".*/([^/]+)_(C|UC|R|VR|SR|UR)_T(\d+)(?:\..*)?$");
 
         protected override BaseParsedItemName? ParseAssetName(string name)
         {

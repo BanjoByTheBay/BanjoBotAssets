@@ -114,7 +114,6 @@ foreach (var (name, file) in provider.Files)
     }
 }
 
-
 // log all asset names found to file
 //foreach (var (name, assets) in allAssetLists)
 //{

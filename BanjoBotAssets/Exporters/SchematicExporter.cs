@@ -12,7 +12,7 @@ namespace BanjoBotAssets.Exporters
     {
         public SchematicItemGroupFields() : this("", null, null, "") { }
     }
-    
+
     internal class SchematicExporter : GroupExporter<UObject, ParsedSchematicName, SchematicItemGroupFields, SchematicItemData>
     {
         private readonly Dictionary<string, string> weaponOrTrapPaths = new(StringComparer.OrdinalIgnoreCase);
@@ -73,7 +73,7 @@ namespace BanjoBotAssets.Exporters
         }
 
         private static readonly Regex schematicAssetNameRegex = new(@".*/([^/]+?)(?:_(C|UC|R|VR|SR|UR))?(?:_(Ore|Crystal))?(?:_?T(\d+))?(?:\..*)?$", RegexOptions.IgnoreCase);
-        
+
         protected override ParsedSchematicName? ParseAssetName(string name)
         {
             var match = schematicAssetNameRegex.Match(name);

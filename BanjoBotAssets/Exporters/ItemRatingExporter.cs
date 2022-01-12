@@ -19,9 +19,9 @@
             progress.Report(new ExportProgress { TotalSteps = 2, CompletedSteps = 2, AssetsLoaded = assetsLoaded, CurrentItem = Resources.Status_ExportedItemRatings });
         }
 
-        async Task ExportDefaultItemRatingsAsync(IAssetOutput output)
+        private async Task ExportDefaultItemRatingsAsync(IAssetOutput output)
         {
-            var baseItemRatingPath = assetPaths.FirstOrDefault(p => Path.GetFileNameWithoutExtension(p) == "BaseItemRating");
+            var baseItemRatingPath = assetPaths.Find(p => Path.GetFileNameWithoutExtension(p) == "BaseItemRating");
 
             if (baseItemRatingPath == null)
             {
@@ -43,9 +43,9 @@
             output.AddDefaultItemRatings(EvaluateItemRatingCurve(curveTable, "Default"));
         }
 
-        async Task ExportSurvivorItemRatingsAsync(IAssetOutput output)
+        private async Task ExportSurvivorItemRatingsAsync(IAssetOutput output)
         {
-            var survivorItemRatingPath = assetPaths.FirstOrDefault(p => Path.GetFileNameWithoutExtension(p) == "SurvivorItemRating");
+            var survivorItemRatingPath = assetPaths.Find(p => Path.GetFileNameWithoutExtension(p) == "SurvivorItemRating");
 
             if (survivorItemRatingPath == null)
             {
@@ -68,7 +68,7 @@
             output.AddLeadSurvivorItemRatings(EvaluateItemRatingCurve(curveTable, "Manager", true));
         }
 
-        static readonly (string rarity, int maxTier)[] rarityTiers =
+        private static readonly (string rarity, int maxTier)[] rarityTiers =
         {
             ("C", 2),
             ("UC", 3),
@@ -77,8 +77,7 @@
             ("SR", 5),
             ("UR", 5),
         };
-
-        static readonly (int tier, int minLevel, int maxLevel)[] tierLevels =
+        private static readonly (int tier, int minLevel, int maxLevel)[] tierLevels =
         {
             (1, 1, 10),
             (2, 10, 20),
@@ -87,7 +86,7 @@
             (5, 40, 60),    // tier 5 goes up to LV 60 with superchargers
         };
 
-        static ItemRatingTable EvaluateItemRatingCurve(UCurveTable curveTable, string prefix, bool skipUR = false)
+        private static ItemRatingTable EvaluateItemRatingCurve(UCurveTable curveTable, string prefix, bool skipUR = false)
         {
             var tiers = new Dictionary<string, ItemRatingTier>(StringComparer.OrdinalIgnoreCase);
 
