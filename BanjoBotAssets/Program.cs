@@ -89,6 +89,7 @@ ObjectTypeRegistry.RegisterClass("FortDefenderItemDefinition", typeof(UFortHeroT
 ObjectTypeRegistry.RegisterClass("FortTrapItemDefinition", typeof(UFortItemDefinition));
 ObjectTypeRegistry.RegisterClass("FortAlterationItemDefinition", typeof(UFortItemDefinition));
 ObjectTypeRegistry.RegisterClass("FortResourceItemDefinition", typeof(UFortWorldItemDefinition));
+ObjectTypeRegistry.RegisterClass("FortGameplayModifierItemDefinition", typeof(UFortItemDefinition));
 
 var exportedAssets = new ExportedAssets();
 var exportedRecipes = new List<ExportedRecipe>();
@@ -112,6 +113,7 @@ IExporter[] exporters =
     new TeamPerkExporter(provider),
     new ZoneRewardExporter(provider),
     new ZoneThemeExporter(provider),
+    new GameplayModifierExporter(provider),
     new QuestExporter(provider),
 };
 
