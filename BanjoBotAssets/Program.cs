@@ -138,7 +138,7 @@ foreach (var (name, file) in provider.Files)
 //    }
 //}
 
-var progress = new Progress<ExportProgress>(prog =>
+var progress = new Progress<ExportProgress>(_ =>
 {
     // TODO: do something with progress reports
 });
@@ -226,12 +226,14 @@ for (int i = 0; i < exportedRecipes.Count; i++)
     recipe.Tier = schematic.Tier ?? 0;
 
     if (schematic is SchematicItemData { EvoType: string evoType })
+    {
         recipe.Material = evoType.ToLower(CultureInfo.InvariantCulture) switch
         {
             "ore" => Resources.Field_Schematic_Ore,
             "crystal" => Resources.Field_Schematic_Crystal,
             _ => $"<{evoType}>",
         };
+    }
 
     // change ingredient IDs to display names
     if (recipe.Ingredient1 != null)

@@ -31,14 +31,14 @@
             });
         }
 
-        public override async Task ExportAssetsAsync(IProgress<ExportProgress> progress, IAssetOutput output)
+        public override Task ExportAssetsAsync(IProgress<ExportProgress> progress, IAssetOutput output)
         {
             var uniqueAssets = assetPaths.ToLookup(path => ParseAssetName(path)?.BaseName, StringComparer.OrdinalIgnoreCase);
             numToProcess = uniqueAssets.Count;
 
             Report(progress, string.Format(CultureInfo.CurrentCulture, Resources.Status_ExportingGroup, Type));
 
-            await Parallel.ForEachAsync(uniqueAssets, async (grouping, _) =>
+            return Parallel.ForEachAsync(uniqueAssets, async (grouping, _) =>
             {
                 var baseName = grouping.Key;
 

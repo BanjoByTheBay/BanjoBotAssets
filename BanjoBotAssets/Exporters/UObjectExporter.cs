@@ -28,12 +28,12 @@
             return Task.FromResult(true);
         }
 
-        public override async Task ExportAssetsAsync(IProgress<ExportProgress> progress, IAssetOutput output)
+        public override Task ExportAssetsAsync(IProgress<ExportProgress> progress, IAssetOutput output)
         {
             var numToProcess = assetPaths.Count;
             var processedSoFar = 0;
 
-            await Parallel.ForEachAsync(assetPaths, async (path, _) =>
+            return Parallel.ForEachAsync(assetPaths, async (path, _) =>
             {
                 var file = provider[path];
 

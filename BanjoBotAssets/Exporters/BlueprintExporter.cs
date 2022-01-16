@@ -18,11 +18,11 @@ namespace BanjoBotAssets.Exporters
             return Task.FromResult(true);
         }
 
-        public override async Task ExportAssetsAsync(IProgress<ExportProgress> progress, IAssetOutput output)
+        public override Task ExportAssetsAsync(IProgress<ExportProgress> progress, IAssetOutput output)
         {
             numToProcess = assetPaths.Count;
 
-            await Parallel.ForEachAsync(assetPaths, async (path, _) =>
+            return Parallel.ForEachAsync(assetPaths, async (path, _) =>
             {
                 var file = provider![path];
 
