@@ -29,16 +29,13 @@ namespace BanjoBotAssets.Extensions
         {
             services.AddSingleton((Func<IServiceProvider, AbstractVfsFileProvider>)(sp =>
                  {
-                     var logger = sp.GetRequiredService<ILoggerFactory>().CreateLogger<DefaultFileProvider>();
-                     logger.LogWarning("creating a DefaultFileProvider!");
-
                      var options = sp.GetRequiredService<IOptions<GameFileOptions>>();
                      var gameDirectory = options.Value.GameDirectories.First(Directory.Exists);
                      var provider = new DefaultFileProvider(
                          gameDirectory,
                          SearchOption.TopDirectoryOnly,
                          isCaseInsensitive: false,
-                         new VersionContainer(EGame.GAME_UE5_0));
+                         new VersionContainer(EGame.GAME_UE5_LATEST));
                      provider.Initialize();
                      return provider;
                  }));
@@ -53,8 +50,7 @@ namespace BanjoBotAssets.Extensions
         {
             // all IExporter implementations derived from BaseExporter, and their service aggregator
             services
-                .AddTransient<IExporter, IngredientExporter>()
-                //.AddDerivedServices<IExporter, BaseExporter>(ServiceLifetime.Transient)
+                .AddDerivedServices<IExporter, BaseExporter>(ServiceLifetime.Transient)
                 .AddTransient<IExporterContext, ExporterContext>();
 
             // performance options affecting the exporters

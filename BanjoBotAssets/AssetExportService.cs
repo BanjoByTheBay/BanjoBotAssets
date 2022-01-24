@@ -4,14 +4,13 @@ using CUE4Parse.UE4.Objects.Core.Misc;
 using CUE4Parse.UE4.Versions;
 using System.Diagnostics;
 using Microsoft.Extensions.Options;
-using CUE4Parse.FileProvider;
 using BanjoBotAssets.Exporters.Impl;
 using BanjoBotAssets.Aes;
 using BanjoBotAssets.Models;
 
 namespace BanjoBotAssets
 {
-    internal sealed class AssetExportService : IHostedService
+    internal sealed class AssetExportService : BackgroundService
     {
         private readonly ILogger<AssetExportService> logger;
         private readonly IHostApplicationLifetime lifetime;
@@ -20,6 +19,7 @@ namespace BanjoBotAssets
         private readonly IEnumerable<IAesProvider> aesProviders;
         private readonly IAesCacheUpdater aesCacheUpdater;
         private readonly IEnumerable<IExportArtifact> exportArtifacts;
+        private readonly AbstractVfsFileProvider provider;
 
         public AssetExportService(ILogger<AssetExportService> logger,
             IHostApplicationLifetime lifetime,
@@ -27,7 +27,8 @@ namespace BanjoBotAssets
             IOptions<GameFileOptions> options,
             IEnumerable<IAesProvider> aesProviders,
             IAesCacheUpdater aesCacheUpdater,
-            IEnumerable<IExportArtifact> exportArtifacts)
+            IEnumerable<IExportArtifact> exportArtifacts,
+            AbstractVfsFileProvider provider)
         {
             this.logger = logger;
             this.lifetime = lifetime;
@@ -36,9 +37,10 @@ namespace BanjoBotAssets
             this.aesProviders = aesProviders;
             this.aesCacheUpdater = aesCacheUpdater;
             this.exportArtifacts = exportArtifacts;
+            this.provider = provider;
         }
 
-        public async Task StartAsync(CancellationToken cancellationToken)
+        protected override async Task ExecuteAsync(CancellationToken cancellationToken)
         {
             Environment.ExitCode = await RunAsync(cancellationToken);
             lifetime.StopApplication();
@@ -56,13 +58,6 @@ namespace BanjoBotAssets
                 logger.LogCritical(Resources.Error_GameNotFound);
                 return 1;
             }
-
-            var provider = new DefaultFileProvider(
-                gameDirectory,
-                SearchOption.TopDirectoryOnly,
-                false,
-                new VersionContainer(EGame.GAME_UE5_LATEST));
-            provider.Initialize();
 
             // get encryption keys from cache or external API
             AesApiResponse? aes = null;
@@ -125,7 +120,6 @@ namespace BanjoBotAssets
 
             var exportedAssets = new ExportedAssets();
             var exportedRecipes = new List<ExportedRecipe>();
-            //using var logFile = new StreamWriter("assets.log");
 
             // find interesting assets
             foreach (var (name, file) in provider.Files)
@@ -141,15 +135,6 @@ namespace BanjoBotAssets
                 }
             }
 
-            // log all asset names found to file
-            //foreach (var (name, assets) in allAssetLists)
-            //{
-            //    foreach (var asset in assets)
-            //    {
-            //        logFile.WriteLine("{0}: {1}", name, asset);
-            //    }
-            //}
-
             var progress = new Progress<ExportProgress>(_ =>
             {
                 // TODO: do something with progress reports
@@ -160,8 +145,10 @@ namespace BanjoBotAssets
             stopwatch.Start();
 
             // give each exporter its own output object to use,
-            // then combine the results when the tasks all complete
+            // we'll combine the results when the tasks all complete.
             var allPrivateExports = new List<IAssetOutput>(exporters.Select(_ => new AssetOutput()));
+
+            // run the exporters!
             await Task.WhenAll(
                 exporters.Select((e, i) =>
                     e.ExportAssetsAsync(progress, allPrivateExports[i], cancellationToken)));
@@ -198,11 +185,6 @@ namespace BanjoBotAssets
                 return result;
 
             return Enum.Parse<ELanguage>(Resources.ELanguage);
-        }
-
-        public Task StopAsync(CancellationToken cancellationToken)
-        {
-            return Task.CompletedTask;
         }
     }
 }

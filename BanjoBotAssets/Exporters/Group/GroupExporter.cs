@@ -42,7 +42,9 @@ namespace BanjoBotAssets.Exporters.Impl
 
             Report(progress, string.Format(CultureInfo.CurrentCulture, Resources.Status_ExportingGroup, Type));
 
-            return Parallel.ForEachAsync(uniqueAssets, async (grouping, _) =>
+            var opts = new ParallelOptions { CancellationToken = cancellationToken, MaxDegreeOfParallelism = performanceOptions.Value.MaxParallelism };
+
+            return Parallel.ForEachAsync(uniqueAssets, opts, async (grouping, _) =>
             {
                 var baseName = grouping.Key;
 

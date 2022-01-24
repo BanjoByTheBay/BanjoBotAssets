@@ -40,12 +40,7 @@ namespace BanjoBotAssets.Exporters.Impl
 
             return Parallel.ForEachAsync(assetPaths, opts, async (path, _) =>
             {
-                if (!provider.TryFindGameFile(path, out var file))
-                {
-                    logger.LogError("where's my file?: {0}", path);
-                    System.Diagnostics.Debugger.Break();
-                }
-                //var file = provider[path];
+                var file = provider[path];
 
                 var num = Interlocked.Increment(ref processedSoFar);
                 logger.LogInformation(Resources.Status_ProcessingTypeNumOfNum, Type, num, numToProcess);

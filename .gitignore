@@ -2,6 +2,8 @@
 .vs
 *~
 aes.json
+assets.json
+schematics.json
 bin
 obj
 *.dll

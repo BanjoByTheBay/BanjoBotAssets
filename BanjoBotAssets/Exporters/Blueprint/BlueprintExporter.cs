@@ -26,7 +26,9 @@ namespace BanjoBotAssets.Exporters.Impl
         {
             numToProcess = assetPaths.Count;
 
-            return Parallel.ForEachAsync(assetPaths, async (path, _) =>
+            var opts = new ParallelOptions { CancellationToken = cancellationToken, MaxDegreeOfParallelism = performanceOptions.Value.MaxParallelism };
+
+            return Parallel.ForEachAsync(assetPaths, opts, async (path, _) =>
             {
                 var file = provider![path];
 
