@@ -1,6 +1,7 @@
-﻿using Microsoft.Extensions.Options;
+﻿using BanjoBotAssets.Exporters.Options;
+using Microsoft.Extensions.Options;
 
-namespace BanjoBotAssets.Exporters.Impl
+namespace BanjoBotAssets.Exporters.Helpers
 {
     internal interface IExporterContext
     {

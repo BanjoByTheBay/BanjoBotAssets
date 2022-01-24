@@ -1,5 +1,4 @@
-﻿using BanjoBotAssets;
-using BanjoBotAssets.Extensions;
+﻿using BanjoBotAssets.Extensions;
 using System.Reflection;
 
 await Host.CreateDefaultBuilder(args)

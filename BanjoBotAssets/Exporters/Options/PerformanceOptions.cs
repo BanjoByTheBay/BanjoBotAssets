@@ -1,4 +1,4 @@
-﻿namespace BanjoBotAssets.Exporters.Impl
+﻿namespace BanjoBotAssets.Exporters.Options
 {
     internal class PerformanceOptions
     {

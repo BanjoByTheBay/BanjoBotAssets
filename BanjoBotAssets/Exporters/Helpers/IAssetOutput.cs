@@ -1,6 +1,6 @@
 ﻿using BanjoBotAssets.Models;
 
-namespace BanjoBotAssets.Exporters
+namespace BanjoBotAssets.Exporters.Helpers
 {
     internal interface IAssetOutput
     {

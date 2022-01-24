@@ -27,6 +27,8 @@
 		<Using Include="CUE4Parse_Fortnite.Enums" />
 		<Using Include="System.Globalization" />
 		<Using Include="System.Text.RegularExpressions" />
+		<Using Include="BanjoBotAssets" />
+		<Using Include="BanjoBotAssets.Properties" />
 	</ItemGroup>
 	
   <ItemGroup>
@@ -54,7 +56,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Resources.Designer.cs">
+    <Compile Update="Properties\Resources.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
@@ -62,13 +64,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Update="appsettings.json">
+    <Content Update="Config\appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Update="Resources.resx">
+    <EmbeddedResource Update="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>

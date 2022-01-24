@@ -1,6 +1,8 @@
-﻿using Microsoft.Extensions.Options;
+﻿using BanjoBotAssets.Exporters.Helpers;
+using BanjoBotAssets.Exporters.Options;
+using Microsoft.Extensions.Options;
 
-namespace BanjoBotAssets.Exporters.Impl
+namespace BanjoBotAssets.Exporters
 {
     internal abstract class BaseExporter : IExporter
     {
