@@ -1,14 +1,18 @@
-﻿namespace BanjoBotAssets.Exporters
+﻿using CUE4Parse.FN.Enums.FortniteGame;
+
+namespace BanjoBotAssets.Exporters
 {
     internal abstract class UObjectExporter : UObjectExporter<UObject>
     {
-        protected UObjectExporter(DefaultFileProvider provider) : base(provider) { }
+        protected UObjectExporter(AbstractVfsFileProvider provider, ILogger logger) : base(provider, logger)
+        {
+        }
     }
 
     internal abstract class UObjectExporter<TAsset> : UObjectExporter<TAsset, NamedItemData>
         where TAsset : UObject
     {
-        protected UObjectExporter(DefaultFileProvider provider) : base(provider)
+        protected UObjectExporter(AbstractVfsFileProvider provider, ILogger logger) : base(provider, logger)
         {
         }
     }
@@ -17,7 +21,9 @@
         where TAsset : UObject
         where TItemData : NamedItemData, new()
     {
-        protected UObjectExporter(DefaultFileProvider provider) : base(provider) { }
+        protected UObjectExporter(AbstractVfsFileProvider provider, ILogger logger) : base(provider, logger)
+        {
+        }
 
         protected abstract string Type { get; }
 
@@ -28,7 +34,7 @@
             return Task.FromResult(true);
         }
 
-        public override Task ExportAssetsAsync(IProgress<ExportProgress> progress, IAssetOutput output)
+        public override Task ExportAssetsAsync(IProgress<ExportProgress> progress, IAssetOutput output, CancellationToken cancellationToken)
         {
             var numToProcess = assetPaths.Count;
             var processedSoFar = 0;

@@ -2,9 +2,11 @@
 {
     internal sealed class DifficultyExporter : BaseExporter
     {
-        public DifficultyExporter(DefaultFileProvider provider) : base(provider) { }
+        public DifficultyExporter(AbstractVfsFileProvider provider, ILogger logger) : base(provider, logger)
+        {
+        }
 
-        public override async Task ExportAssetsAsync(IProgress<ExportProgress> progress, IAssetOutput output)
+        public override async Task ExportAssetsAsync(IProgress<ExportProgress> progress, IAssetOutput output, CancellationToken cancellationToken)
         {
             var growthBoundsPath = assetPaths.First(p => Path.GetFileNameWithoutExtension(p) == "GameDifficultyGrowthBounds");
 

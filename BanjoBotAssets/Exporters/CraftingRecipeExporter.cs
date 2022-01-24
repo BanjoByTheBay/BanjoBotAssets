@@ -2,13 +2,13 @@
 {
     internal class CraftingRecipeExporter : BaseExporter
     {
-        public CraftingRecipeExporter(DefaultFileProvider provider) : base(provider)
+        private static readonly Regex widOrTidRegex = new("^[tw]id_", RegexOptions.IgnoreCase);
+
+        public CraftingRecipeExporter(AbstractVfsFileProvider provider, ILogger logger) : base(provider, logger)
         {
         }
 
-        private static readonly Regex widOrTidRegex = new("^[tw]id_", RegexOptions.IgnoreCase);
-
-        public override async Task ExportAssetsAsync(IProgress<ExportProgress> progress, IAssetOutput output)
+        public override async Task ExportAssetsAsync(IProgress<ExportProgress> progress, IAssetOutput output, CancellationToken cancellationToken)
         {
             Interlocked.Increment(ref assetsLoaded);
 

@@ -2,7 +2,9 @@
 {
     internal sealed class MissionGenExporter : BlueprintExporter
     {
-        public MissionGenExporter(DefaultFileProvider provider) : base(provider) { }
+        public MissionGenExporter(AbstractVfsFileProvider provider, ILogger logger) : base(provider, logger)
+        {
+        }
 
         protected override string Type => "MissionGen";
 

@@ -2,11 +2,9 @@
 {
     internal sealed class ItemRatingExporter : BaseExporter
     {
-        public ItemRatingExporter(DefaultFileProvider provider) : base(provider) { }
-
         protected override bool InterestedInAsset(string name) => name.EndsWith("ItemRating.uasset", StringComparison.OrdinalIgnoreCase);
 
-        public override async Task ExportAssetsAsync(IProgress<ExportProgress> progress, IAssetOutput output)
+        public override async Task ExportAssetsAsync(IProgress<ExportProgress> progress, IAssetOutput output, CancellationToken cancellationToken)
         {
             progress.Report(new ExportProgress { TotalSteps = 2, CompletedSteps = 0, AssetsLoaded = assetsLoaded, CurrentItem = Resources.Status_ExportingItemRatings });
 
@@ -85,6 +83,10 @@
             (4, 30, 40),
             (5, 40, 60),    // tier 5 goes up to LV 60 with superchargers
         };
+
+        public ItemRatingExporter(AbstractVfsFileProvider provider, ILogger logger) : base(provider, logger)
+        {
+        }
 
         private static ItemRatingTable EvaluateItemRatingCurve(UCurveTable curveTable, string prefix, bool skipUR = false)
         {

@@ -2,7 +2,7 @@
 {
     internal sealed class TeamPerkExporter : UObjectExporter
     {
-        public TeamPerkExporter(DefaultFileProvider provider) : base(provider) { }
+        public TeamPerkExporter(AbstractVfsFileProvider provider, ILogger logger) : base(provider, logger) { }
 
         protected override string Type => "TeamPerk";
 

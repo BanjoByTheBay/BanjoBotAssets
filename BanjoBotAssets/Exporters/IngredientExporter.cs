@@ -4,7 +4,7 @@ namespace BanjoBotAssets.Exporters
 {
     internal sealed class IngredientExporter : UObjectExporter<UFortIngredientItemDefinition>
     {
-        public IngredientExporter(DefaultFileProvider provider) : base(provider) { }
+        public IngredientExporter(AbstractVfsFileProvider provider, ILogger logger) : base(provider, logger) { }
 
         protected override string Type => "Ingredient";
 

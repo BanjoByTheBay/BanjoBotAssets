@@ -2,7 +2,7 @@
 {
     internal sealed class GameplayModifierExporter : UObjectExporter<UFortItemDefinition>
     {
-        public GameplayModifierExporter(DefaultFileProvider provider) : base(provider) { }
+        public GameplayModifierExporter(AbstractVfsFileProvider provider, ILogger logger) : base(provider, logger) { }
 
         protected override string Type => "GameplayModifier";
 

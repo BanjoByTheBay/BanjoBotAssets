@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk.Worker">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -13,6 +13,22 @@
     <PackageProjectUrl>https://github.com/taradinoc/BanjoBotAssets</PackageProjectUrl>
   </PropertyGroup>
 
+	<ItemGroup>
+		<Using Include="CUE4Parse.FileProvider.Vfs" />
+		<Using Include="CUE4Parse.FN.Exports.FortniteGame" />
+		<Using Include="CUE4Parse.FN.Structs.Engine" />
+		<Using Include="CUE4Parse.FN.Structs.FortniteGame" />
+		<Using Include="CUE4Parse.UE4.Assets" />
+		<Using Include="CUE4Parse.UE4.Assets.Exports" />
+		<Using Include="CUE4Parse.UE4.Assets.Exports.Engine" />
+		<Using Include="CUE4Parse.UE4.Assets.Objects" />
+		<Using Include="CUE4Parse.UE4.Objects.Core.i18N" />
+		<Using Include="CUE4Parse.UE4.Objects.UObject" />
+		<Using Include="CUE4Parse_Fortnite.Enums" />
+		<Using Include="System.Globalization" />
+		<Using Include="System.Text.RegularExpressions" />
+	</ItemGroup>
+	
   <ItemGroup>
     <None Remove="*.dll" />
   </ItemGroup>
@@ -22,6 +38,8 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="6.0.0" />
     <PackageReference Include="Roslynator.Analyzers" Version="3.3.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -47,6 +65,12 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="appsettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>

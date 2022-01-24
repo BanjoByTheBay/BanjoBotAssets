@@ -8,7 +8,7 @@
 
         private static readonly Regex defenderAssetNameRegex = new(@".*/([^/]+)_(C|UC|R|VR|SR|UR)_T(\d+)(?:\..*)?$");
 
-        public DefenderExporter(DefaultFileProvider provider) : base(provider) { }
+        public DefenderExporter(AbstractVfsFileProvider provider, ILogger logger) : base(provider, logger) { }
 
         protected override BaseParsedItemName? ParseAssetName(string name)
         {
@@ -16,7 +16,7 @@
 
             if (!match.Success)
             {
-                Console.WriteLine(Resources.Warning_CannotParseDefenderName, name);
+                logger.LogWarning(Resources.Warning_CannotParseDefenderName, name);
                 return null;
             }
 

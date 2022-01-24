@@ -19,10 +19,6 @@ namespace BanjoBotAssets.Exporters
         private string? craftingPath, alterationGroupPath, slotDefsPath, slotLoadoutsPath;
         private UDataTable? craftingTable, alterationGroupTable, slotDefsTable, slotLoadoutsTable;
 
-        public SchematicExporter(DefaultFileProvider provider) : base(provider)
-        {
-        }
-
         protected override string Type => "Schematic";
 
         protected override bool InterestedInAsset(string name)
@@ -52,14 +48,14 @@ namespace BanjoBotAssets.Exporters
             return name.Contains("/SID_") || name.Contains("Schematics/Ammo/Ammo_");
         }
 
-        public override async Task ExportAssetsAsync(IProgress<ExportProgress> progress, IAssetOutput output)
+        public override async Task ExportAssetsAsync(IProgress<ExportProgress> progress, IAssetOutput output, CancellationToken cancellationToken)
         {
             craftingTable = await TryLoadTableAsync(craftingPath);
             alterationGroupTable = await TryLoadTableAsync(alterationGroupPath);
             slotDefsTable = await TryLoadTableAsync(slotDefsPath);
             slotLoadoutsTable = await TryLoadTableAsync(slotLoadoutsPath);
 
-            await base.ExportAssetsAsync(progress, output);
+            await base.ExportAssetsAsync(progress, output, cancellationToken);
         }
 
         private async Task<UDataTable?> TryLoadTableAsync(string? path)
@@ -152,6 +148,10 @@ namespace BanjoBotAssets.Exporters
         }
 
         private static readonly Regex schematicSubTypeRegex = new(@"^(?:Weapon\.(?:Ranged|Melee\.(?:Edged|Blunt|Piercing))|Trap(?=\.(?:Ceiling|Floor|Wall)))\.([^.]+)", RegexOptions.IgnoreCase);
+
+        public SchematicExporter(AbstractVfsFileProvider provider, ILogger logger) : base(provider, logger)
+        {
+        }
 
         private static string SubTypeFromTags(FGameplayTagContainer tags)
         {

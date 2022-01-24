@@ -2,7 +2,9 @@
 {
     internal sealed class ZoneRewardExporter : UObjectExporter
     {
-        public ZoneRewardExporter(DefaultFileProvider provider) : base(provider) { }
+        public ZoneRewardExporter(AbstractVfsFileProvider provider, ILogger logger) : base(provider, logger)
+        {
+        }
 
         protected override string Type => "CardPack";
 

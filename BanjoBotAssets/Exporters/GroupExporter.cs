@@ -15,7 +15,9 @@
     {
         private int numToProcess, processedSoFar;
 
-        protected GroupExporter(DefaultFileProvider provider) : base(provider) { }
+        protected GroupExporter(AbstractVfsFileProvider provider, ILogger logger) : base(provider, logger)
+        {
+        }
 
         protected abstract string Type { get; }
         protected abstract TParsedName? ParseAssetName(string name);
@@ -31,7 +33,7 @@
             });
         }
 
-        public override Task ExportAssetsAsync(IProgress<ExportProgress> progress, IAssetOutput output)
+        public override Task ExportAssetsAsync(IProgress<ExportProgress> progress, IAssetOutput output, CancellationToken cancellationToken)
         {
             var uniqueAssets = assetPaths.ToLookup(path => ParseAssetName(path)?.BaseName, StringComparer.OrdinalIgnoreCase);
             numToProcess = uniqueAssets.Count;
@@ -160,7 +162,7 @@
     internal abstract class GroupExporter<TAsset> : GroupExporter<TAsset, BaseParsedItemName, BaseItemGroupFields, NamedItemData>
         where TAsset : UObject
     {
-        protected GroupExporter(DefaultFileProvider provider) : base(provider)
+        protected GroupExporter(AbstractVfsFileProvider provider, ILogger logger) : base(provider, logger)
         {
         }
     }

@@ -2,7 +2,9 @@
 {
     internal sealed class AlterationExporter : UObjectExporter<UFortItemDefinition>
     {
-        public AlterationExporter(DefaultFileProvider provider) : base(provider) { }
+        public AlterationExporter(AbstractVfsFileProvider provider, ILogger logger) : base(provider, logger)
+        {
+        }
 
         protected override string Type => "Alteration";
 

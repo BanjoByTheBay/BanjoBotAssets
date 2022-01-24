@@ -162,17 +162,23 @@ namespace BanjoBotAssets
             survivorItemRatings = itemRatings;
         }
 
-        public void CopyTo(ExportedAssets exportedAssets, IList<ExportedRecipe> exportedRecipes)
+        public void CopyTo(ExportedAssets exportedAssets, IList<ExportedRecipe> exportedRecipes, CancellationToken cancellationToken)
         {
+            cancellationToken.ThrowIfCancellationRequested();
+
             foreach (var (k, v) in namedItems)
             {
                 exportedAssets.NamedItems.TryAdd(k, v);
             }
 
+            cancellationToken.ThrowIfCancellationRequested();
+
             foreach (var (k, v) in difficultyInfo)
             {
                 exportedAssets.DifficultyInfo.TryAdd(k, v);
             }
+
+            cancellationToken.ThrowIfCancellationRequested();
 
             if (defaultItemRatings != null)
                 exportedAssets.ItemRatings.Default = defaultItemRatings;
@@ -199,6 +205,8 @@ namespace BanjoBotAssets
                     (exportedRecipe.Ingredient5, exportedRecipe.Quantity5!) = pair;
 
                 exportedRecipes.Add(exportedRecipe);
+
+                cancellationToken.ThrowIfCancellationRequested();
             }
         }
 

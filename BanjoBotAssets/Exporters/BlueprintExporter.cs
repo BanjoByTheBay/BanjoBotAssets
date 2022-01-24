@@ -7,7 +7,9 @@ namespace BanjoBotAssets.Exporters
         private int numToProcess;
         private int processedSoFar;
 
-        protected BlueprintExporter(DefaultFileProvider provider) : base(provider) { }
+        protected BlueprintExporter(AbstractVfsFileProvider provider, ILogger logger) : base(provider, logger)
+        {
+        }
 
         protected abstract string Type { get; }
         protected abstract string DisplayNameProperty { get; }
@@ -18,7 +20,7 @@ namespace BanjoBotAssets.Exporters
             return Task.FromResult(true);
         }
 
-        public override Task ExportAssetsAsync(IProgress<ExportProgress> progress, IAssetOutput output)
+        public override Task ExportAssetsAsync(IProgress<ExportProgress> progress, IAssetOutput output, CancellationToken cancellationToken)
         {
             numToProcess = assetPaths.Count;
 
@@ -27,7 +29,7 @@ namespace BanjoBotAssets.Exporters
                 var file = provider![path];
 
                 var num = Interlocked.Increment(ref processedSoFar);
-                Console.WriteLine(Resources.Status_ProcessingTypeNumOfNum, Type, num, numToProcess);
+                logger.LogInformation(Resources.Status_ProcessingTypeNumOfNum, Type, num, numToProcess);
 
                 //Console.WriteLine("Loading {0}", file.PathWithoutExtension);
                 Interlocked.Increment(ref assetsLoaded);
@@ -35,7 +37,7 @@ namespace BanjoBotAssets.Exporters
 
                 if (pkg.GetExports().First() is not UBlueprintGeneratedClass bpClass)
                 {
-                    Console.WriteLine(Resources.Warning_FailedToLoadFile, file.PathWithoutExtension);
+                    logger.LogWarning(Resources.Warning_FailedToLoadFile, file.PathWithoutExtension);
                     return;
                 }
 

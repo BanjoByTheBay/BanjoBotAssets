@@ -2,7 +2,9 @@
 {
     internal sealed class ZoneThemeExporter : BlueprintExporter
     {
-        public ZoneThemeExporter(DefaultFileProvider provider) : base(provider) { }
+        public ZoneThemeExporter(AbstractVfsFileProvider provider, ILogger logger) : base(provider, logger)
+        {
+        }
 
         protected override string Type => "ZoneTheme";
 

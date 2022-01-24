@@ -13,10 +13,6 @@ namespace BanjoBotAssets.Exporters
 
     internal sealed class HeroExporter : GroupExporter<UFortHeroType, BaseParsedItemName, HeroItemGroupFields, HeroItemData>
     {
-        public HeroExporter(DefaultFileProvider provider) : base(provider)
-        {
-        }
-
         protected override string Type => "Hero";
 
         protected override bool InterestedInAsset(string name) => name.Contains("/HID_");
@@ -33,6 +29,10 @@ namespace BanjoBotAssets.Exporters
         }
 
         private static readonly Regex heroAssetNameRegex = new(@".*/([^/]+)_(C|UC|R|VR|SR|UR)_T(\d+)(?:\..*)?$");
+
+        public HeroExporter(AbstractVfsFileProvider provider, ILogger logger) : base(provider, logger)
+        {
+        }
 
         protected override BaseParsedItemName? ParseAssetName(string name)
         {

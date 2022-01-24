@@ -17,7 +17,7 @@
     {
         void ObserveAsset(string name);
 
-        Task ExportAssetsAsync(IProgress<ExportProgress> progress, IAssetOutput output);
+        Task ExportAssetsAsync(IProgress<ExportProgress> progress, IAssetOutput output, CancellationToken cancellationToken);
 
         int AssetsLoaded { get; }
     }
@@ -32,8 +32,14 @@
         void AddSurvivorItemRatings(ItemRatingTable itemRatings);
         void AddLeadSurvivorItemRatings(ItemRatingTable itemRatings);
 
-        void CopyTo(ExportedAssets exportedAssets, IList<ExportedRecipe> exportedRecipes);
+        void CopyTo(ExportedAssets exportedAssets, IList<ExportedRecipe> exportedRecipes, CancellationToken cancellationToken);
 
         void AddCraftingRecipe(string name, IReadOnlyDictionary<string, int> ingredients);
+    }
+
+    internal interface IExportFinalizer
+    {
+        Task RunAsync(ExportedAssets exportedAssets, IList<ExportedRecipe> exportedRecipes,
+            CancellationToken cancellationToken = default);
     }
 }

@@ -5,7 +5,7 @@
         private string? questRewardsPath;
         private UDataTable? questRewardsTable;
 
-        public QuestExporter(DefaultFileProvider provider) : base(provider)
+        public QuestExporter(AbstractVfsFileProvider provider, ILogger logger) : base(provider, logger)
         {
         }
 
@@ -23,11 +23,11 @@
             return name.Contains("/Content/Quests/");
         }
 
-        public override async Task ExportAssetsAsync(IProgress<ExportProgress> progress, IAssetOutput output)
+        public override async Task ExportAssetsAsync(IProgress<ExportProgress> progress, IAssetOutput output, CancellationToken cancellationToken)
         {
             questRewardsTable = await TryLoadTableAsync(questRewardsPath);
 
-            await base.ExportAssetsAsync(progress, output);
+            await base.ExportAssetsAsync(progress, output, cancellationToken);
         }
 
         private async Task<UDataTable?> TryLoadTableAsync(string? path)

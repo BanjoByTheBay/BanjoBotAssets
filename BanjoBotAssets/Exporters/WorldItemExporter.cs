@@ -2,7 +2,9 @@
 {
     internal sealed class WorldItemExporter : UObjectExporter
     {
-        public WorldItemExporter(DefaultFileProvider provider) : base(provider) { }
+        public WorldItemExporter(AbstractVfsFileProvider provider, ILogger logger) : base(provider, logger)
+        {
+        }
 
         protected override string Type => "WorldItem";
 

@@ -4,10 +4,6 @@ namespace BanjoBotAssets.Exporters
 {
     internal sealed class SurvivorExporter : GroupExporter<UFortWorkerType>
     {
-        public SurvivorExporter(DefaultFileProvider provider) : base(provider)
-        {
-        }
-
         protected override string Type => "Worker";
 
         protected override bool InterestedInAsset(string name) =>
@@ -19,6 +15,10 @@ namespace BanjoBotAssets.Exporters
         // lead:                ManagerEngineer_R_T04
         // mythic lead:         ManagerMartialArtist_SR_samurai_T03
         private static readonly Regex survivorAssetNameRegex = new(@".*/([^/]+)_(C|UC|R|VR|SR|UR)_([a-z]+_)?T(\d+)(?:\..*)?$");
+
+        public SurvivorExporter(AbstractVfsFileProvider provider, ILogger logger) : base(provider, logger)
+        {
+        }
 
         protected override BaseParsedItemName? ParseAssetName(string name)
         {

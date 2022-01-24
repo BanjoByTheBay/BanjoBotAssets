@@ -2,7 +2,7 @@
 {
     internal sealed class GadgetExporter : UObjectExporter<UFortGadgetItemDefinition>
     {
-        public GadgetExporter(DefaultFileProvider provider) : base(provider) { }
+        public GadgetExporter(AbstractVfsFileProvider provider, ILogger logger) : base(provider, logger) { }
 
         protected override string Type => "Gadget";
 

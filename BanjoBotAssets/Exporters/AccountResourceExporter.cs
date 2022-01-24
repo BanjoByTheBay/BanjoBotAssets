@@ -2,7 +2,7 @@
 {
     internal sealed class AccountResourceExporter : UObjectExporter
     {
-        public AccountResourceExporter(DefaultFileProvider provider) : base(provider) { }
+        public AccountResourceExporter(AbstractVfsFileProvider provider, ILogger logger) : base(provider, logger) { }
 
         protected override string Type => "AccountResource";
 
