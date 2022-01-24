@@ -3,9 +3,16 @@ using CUE4Parse.UE4.Objects.Engine;
 
 namespace BanjoBotAssets.Exporters.Impl
 {
-    internal static class AbilityDescription
+    internal class AbilityDescription
     {
-        public static async Task<string?> GetAsync(UObject? grantedAbilityKit, IAssetCounter assetCounter)
+        private readonly ILogger<AbilityDescription> logger;
+
+        public AbilityDescription(ILogger<AbilityDescription> logger)
+        {
+            this.logger = logger;
+        }
+
+        public async Task<string?> GetAsync(UObject? grantedAbilityKit, IAssetCounter assetCounter)
         {
             var (markup, cdo) = await GetMarkupAsync(grantedAbilityKit, assetCounter);
 
@@ -47,7 +54,7 @@ namespace BanjoBotAssets.Exporters.Impl
         private const string MODIFY_ROW = "ModfifyRow_20_FB710B884BD580129A762F82C8CE1C03";
         private const string MODIFY_OPERATION = "ModifyOperation_21_A19E46F44E5371B3E69778A2D93B9AE9";
 
-        private static async Task GetTokensAsync(UObject cdo, Dictionary<string, string> tokens, IAssetCounter assetCounter)
+        private async Task GetTokensAsync(UObject cdo, Dictionary<string, string> tokens, IAssetCounter assetCounter)
         {
             var style = cdo.GetOrDefault("dataRows_conversionStyle", new UScriptMap());
 
@@ -105,7 +112,7 @@ namespace BanjoBotAssets.Exporters.Impl
             }
         }
 
-        private static float? GetValueFromCurveTable(FStructFallback tokenDef, string property)
+        private float? GetValueFromCurveTable(FStructFallback tokenDef, string property)
         {
             var row = tokenDef.Get<FStructFallback>(property);
 
@@ -118,7 +125,7 @@ namespace BanjoBotAssets.Exporters.Impl
 
             if (curveName.IsNone)
             {
-                Console.WriteLine(Resources.Warning_MissingCurveTableRow, rowNameStr);
+                logger.LogWarning(Resources.Warning_MissingCurveTableRow, rowNameStr);
                 return null;
             }
 

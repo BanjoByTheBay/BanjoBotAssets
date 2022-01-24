@@ -4,16 +4,20 @@ namespace BanjoBotAssets.Exporters.Impl
 {
     internal abstract class BaseExporter : IExporter
     {
+        protected readonly List<string> assetPaths = new();
+        protected int assetsLoaded;
+
         protected readonly AbstractVfsFileProvider provider;
         protected readonly ILogger logger;
-        protected readonly List<string> assetPaths = new();
         protected readonly IOptions<PerformanceOptions> performanceOptions;
-
-        protected int assetsLoaded;
+        protected readonly AbilityDescription abilityDescription;
 
         protected BaseExporter(IExporterContext services)
         {
-            (provider, logger, performanceOptions) = (services.Provider, services.LoggerFactory.CreateLogger(GetType().FullName ?? ""), services.PerformanceOptions);
+            provider = services.Provider;
+            performanceOptions = services.PerformanceOptions;
+            logger = services.LoggerFactory.CreateLogger(GetType().FullName ?? "");
+            abilityDescription = services.AbilityDescription;
         }
 
         public int AssetsLoaded => assetsLoaded;

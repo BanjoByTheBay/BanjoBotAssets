@@ -7,10 +7,13 @@ namespace BanjoBotAssets.Exporters.Impl
     internal class SchematicsJsonArtifact : IExportArtifact
     {
         private readonly IOptions<ExportedFileOptions<SchematicsJsonArtifact>> options;
+        private readonly ILogger<SchematicsJsonArtifact> logger;
 
-        public SchematicsJsonArtifact(IOptions<ExportedFileOptions<SchematicsJsonArtifact>> options)
+        public SchematicsJsonArtifact(IOptions<ExportedFileOptions<SchematicsJsonArtifact>> options,
+            ILogger<SchematicsJsonArtifact> logger)
         {
             this.options = options;
+            this.logger = logger;
         }
 
         public Task RunAsync(ExportedAssets exportedAssets, IList<ExportedRecipe> exportedRecipes, CancellationToken cancellationToken = default)
@@ -53,7 +56,7 @@ namespace BanjoBotAssets.Exporters.Impl
                 // change schematic ID to display name and fill in other fields
                 if (!exportedAssets.NamedItems.TryGetValue(recipe.ItemName, out var schematic))
                 {
-                    Console.WriteLine(Resources.Warning_UnmatchedCraftingRecipe, recipe.ItemName);
+                    logger.LogDebug(Resources.Warning_UnmatchedCraftingRecipe, recipe.ItemName);
                     recipesToExclude.Push(i);
                     continue;
                 }

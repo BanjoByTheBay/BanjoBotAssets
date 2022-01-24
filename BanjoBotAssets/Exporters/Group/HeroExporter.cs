@@ -80,7 +80,7 @@ namespace BanjoBotAssets.Exporters
             Interlocked.Increment(ref assetsLoaded);
             var grantedAbilityKit = perk == null ? null : await perk.GetOrDefault<FSoftObjectPath>("GrantedAbilityKit").LoadAsync(provider);
             var displayName = grantedAbilityKit?.GetOrDefault<FText>("DisplayName")?.Text ?? $"<{grantedAbilityKit?.Name ?? Resources.Field_Hero_NoGrantedAbility}>";
-            var description = await AbilityDescription.GetAsync(grantedAbilityKit, this) ?? $"<{Resources.Field_NoDescription}>";
+            var description = await abilityDescription.GetAsync(grantedAbilityKit, this) ?? $"<{Resources.Field_NoDescription}>";
             return (displayName, description);
         }
 

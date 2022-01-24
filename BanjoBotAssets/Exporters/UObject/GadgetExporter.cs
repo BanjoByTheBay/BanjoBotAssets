@@ -21,7 +21,7 @@ namespace BanjoBotAssets.Exporters
 
             Interlocked.Increment(ref assetsLoaded);
             var gameplayAbility = await asset.GameplayAbility.LoadAsync(provider);
-            namedItemData.Description = await AbilityDescription.GetAsync(gameplayAbility, this);
+            namedItemData.Description = await abilityDescription.GetAsync(gameplayAbility, this);
             return true;
         }
     }
