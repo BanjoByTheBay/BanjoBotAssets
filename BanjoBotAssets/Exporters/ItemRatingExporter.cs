@@ -1,4 +1,7 @@
-﻿namespace BanjoBotAssets.Exporters
+﻿using BanjoBotAssets.Exporters.Impl;
+using BanjoBotAssets.Models;
+
+namespace BanjoBotAssets.Exporters
 {
     internal sealed class ItemRatingExporter : BaseExporter
     {
@@ -23,7 +26,7 @@
 
             if (baseItemRatingPath == null)
             {
-                Console.WriteLine(Resources.Warning_SpecificAssetNotFound, "BaseItemRating");
+                logger.LogError(Resources.Warning_SpecificAssetNotFound, "BaseItemRating");
                 return;
             }
 
@@ -34,7 +37,7 @@
 
             if (curveTable == null)
             {
-                Console.WriteLine(Resources.Warning_CouldNotLoadAsset, baseItemRatingPath);
+                logger.LogError(Resources.Warning_CouldNotLoadAsset, baseItemRatingPath);
                 return;
             }
 
@@ -47,7 +50,7 @@
 
             if (survivorItemRatingPath == null)
             {
-                Console.WriteLine(Resources.Warning_SpecificAssetNotFound, "SurvivorItemRating");
+                logger.LogError(Resources.Warning_SpecificAssetNotFound, "SurvivorItemRating");
                 return;
             }
 
@@ -58,7 +61,7 @@
 
             if (curveTable == null)
             {
-                Console.WriteLine(Resources.Warning_CouldNotLoadAsset, survivorItemRatingPath);
+                logger.LogError(Resources.Warning_CouldNotLoadAsset, survivorItemRatingPath);
                 return;
             }
 
@@ -84,11 +87,9 @@
             (5, 40, 60),    // tier 5 goes up to LV 60 with superchargers
         };
 
-        public ItemRatingExporter(AbstractVfsFileProvider provider, ILogger logger) : base(provider, logger)
-        {
-        }
+        public ItemRatingExporter(IExporterContext services) : base(services) { }
 
-        private static ItemRatingTable EvaluateItemRatingCurve(UCurveTable curveTable, string prefix, bool skipUR = false)
+        private ItemRatingTable EvaluateItemRatingCurve(UCurveTable curveTable, string prefix, bool skipUR = false)
         {
             var tiers = new Dictionary<string, ItemRatingTier>(StringComparer.OrdinalIgnoreCase);
 
@@ -107,7 +108,7 @@
 
                     if (rowFName.IsNone)
                     {
-                        Console.WriteLine(Resources.Warning_MissingCurveTableRow, rowNameStr);
+                        logger.LogError(Resources.Warning_MissingCurveTableRow, rowNameStr);
                         continue;
                     }
 
@@ -115,7 +116,7 @@
 
                     if (curve == null)
                     {
-                        Console.WriteLine(Resources.Warning_CouldNotLoadCurveTableRow, rowNameStr);
+                        logger.LogError(Resources.Warning_CouldNotLoadCurveTableRow, rowNameStr);
                         continue;
                     }
 

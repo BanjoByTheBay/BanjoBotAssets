@@ -1,8 +1,11 @@
-﻿namespace BanjoBotAssets.Exporters
+﻿using BanjoBotAssets.Exporters.Impl;
+using BanjoBotAssets.Models;
+
+namespace BanjoBotAssets.Exporters
 {
     internal sealed class DifficultyExporter : BaseExporter
     {
-        public DifficultyExporter(AbstractVfsFileProvider provider, ILogger logger) : base(provider, logger)
+        public DifficultyExporter(IExporterContext services) : base(services)
         {
         }
 
@@ -12,7 +15,7 @@
 
             if (growthBoundsPath == null)
             {
-                Console.WriteLine(Resources.Warning_SpecificAssetNotFound, "GameDifficultyGrowthBounds");
+                logger.LogError(Resources.Warning_SpecificAssetNotFound, "GameDifficultyGrowthBounds");
                 return;
             }
 
@@ -23,7 +26,7 @@
 
             if (dataTable == null)
             {
-                Console.WriteLine(Resources.Warning_CouldNotLoadAsset, growthBoundsPath);
+                logger.LogError(Resources.Warning_CouldNotLoadAsset, growthBoundsPath);
                 return;
             }
 

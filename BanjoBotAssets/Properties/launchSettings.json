@@ -1,0 +1,11 @@
+{
+  "profiles": {
+    "BanjoBotAssets": {
+      "commandName": "Project",
+      "workingDirectory": "D:\\working\\github\\BanjoBotAssets",
+      "environmentVariables": {
+        "DOTNET_ENVIRONMENT": "Development"
+      }
+    }
+  }
+}

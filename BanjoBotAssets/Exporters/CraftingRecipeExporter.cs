@@ -1,10 +1,12 @@
-﻿namespace BanjoBotAssets.Exporters
+﻿using BanjoBotAssets.Exporters.Impl;
+
+namespace BanjoBotAssets.Exporters
 {
-    internal class CraftingRecipeExporter : BaseExporter
+    internal sealed class CraftingRecipeExporter : BaseExporter
     {
         private static readonly Regex widOrTidRegex = new("^[tw]id_", RegexOptions.IgnoreCase);
 
-        public CraftingRecipeExporter(AbstractVfsFileProvider provider, ILogger logger) : base(provider, logger)
+        public CraftingRecipeExporter(IExporterContext services) : base(services)
         {
         }
 

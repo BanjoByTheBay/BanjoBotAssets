@@ -270,6 +270,9 @@
     <value>schematics.json</value>
     <comment>export filename for crafting recipes</comment>
   </data>
+  <data name="Status_DecryptingGameFiles" xml:space="preserve">
+    <value>Decrypting game files</value>
+  </data>
   <data name="Status_ExportedItemRatings" xml:space="preserve">
     <value>Exported item ratings</value>
   </data>
@@ -286,15 +289,27 @@
   <data name="Status_ExportingRecipes" xml:space="preserve">
     <value>Exporting recipes</value>
   </data>
+  <data name="Status_FetchingAesFromApi" xml:space="preserve">
+    <value>Fetching AES keys from external API: {0}</value>
+    <comment>0=URL</comment>
+  </data>
   <data name="Status_LoadedAssets" xml:space="preserve">
     <value>Loaded {0} assets in {1} ({2} ms per asset)</value>
     <comment>0=number loaded, 1=formatted time duration, 2=number of milliseconds</comment>
+  </data>
+  <data name="Status_LoadingAesFromFile" xml:space="preserve">
+    <value>Loading AES keys from {0}</value>
+    <comment>0=filename</comment>
   </data>
   <data name="Status_LoadingLocalization" xml:space="preserve">
     <value>Loading localization</value>
   </data>
   <data name="Status_LoadingMappings" xml:space="preserve">
     <value>Loading mappings</value>
+  </data>
+  <data name="Status_MissingAesCache" xml:space="preserve">
+    <value>No cached AES keys found at {0}</value>
+    <comment>0=filename</comment>
   </data>
   <data name="Status_ProcessingTypeGroupNumOfNum" xml:space="preserve">
     <value>Processing {0} group {1} of {2}</value>
@@ -309,6 +324,10 @@
   </data>
   <data name="Status_RetryingMappings" xml:space="preserve">
     <value>Retrying mappings</value>
+  </data>
+  <data name="Status_SavingAesToFile" xml:space="preserve">
+    <value>Caching AES keys in {0}</value>
+    <comment>0=filename</comment>
   </data>
   <data name="Status_SkippingEarlyAsInstructed" xml:space="preserve">
     <value>Skipping {0} early as instructed.</value>

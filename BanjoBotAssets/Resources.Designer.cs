@@ -502,6 +502,15 @@ namespace BanjoBotAssets {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Decrypting game files.
+        /// </summary>
+        internal static string Status_DecryptingGameFiles {
+            get {
+                return ResourceManager.GetString("Status_DecryptingGameFiles", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Exported item ratings.
         /// </summary>
         internal static string Status_ExportedItemRatings {
@@ -547,11 +556,29 @@ namespace BanjoBotAssets {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Fetching AES keys from external API: {0}.
+        /// </summary>
+        internal static string Status_FetchingAesFromApi {
+            get {
+                return ResourceManager.GetString("Status_FetchingAesFromApi", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Loaded {0} assets in {1} ({2} ms per asset).
         /// </summary>
         internal static string Status_LoadedAssets {
             get {
                 return ResourceManager.GetString("Status_LoadedAssets", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Loading AES keys from {0}.
+        /// </summary>
+        internal static string Status_LoadingAesFromFile {
+            get {
+                return ResourceManager.GetString("Status_LoadingAesFromFile", resourceCulture);
             }
         }
         
@@ -570,6 +597,15 @@ namespace BanjoBotAssets {
         internal static string Status_LoadingMappings {
             get {
                 return ResourceManager.GetString("Status_LoadingMappings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No cached AES keys found at {0}.
+        /// </summary>
+        internal static string Status_MissingAesCache {
+            get {
+                return ResourceManager.GetString("Status_MissingAesCache", resourceCulture);
             }
         }
         
@@ -606,6 +642,15 @@ namespace BanjoBotAssets {
         internal static string Status_RetryingMappings {
             get {
                 return ResourceManager.GetString("Status_RetryingMappings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Caching AES keys in {0}.
+        /// </summary>
+        internal static string Status_SavingAesToFile {
+            get {
+                return ResourceManager.GetString("Status_SavingAesToFile", resourceCulture);
             }
         }
         

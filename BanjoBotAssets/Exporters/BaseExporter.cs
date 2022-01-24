@@ -1,17 +1,19 @@
-﻿namespace BanjoBotAssets.Exporters
+﻿using Microsoft.Extensions.Options;
+
+namespace BanjoBotAssets.Exporters.Impl
 {
     internal abstract class BaseExporter : IExporter
     {
         protected readonly AbstractVfsFileProvider provider;
         protected readonly ILogger logger;
         protected readonly List<string> assetPaths = new();
+        protected readonly IOptions<PerformanceOptions> performanceOptions;
 
         protected int assetsLoaded;
 
-        protected BaseExporter(AbstractVfsFileProvider provider, ILogger logger)
+        protected BaseExporter(IExporterContext services)
         {
-            this.provider = provider;
-            this.logger = logger;
+            (provider, logger, performanceOptions) = (services.Provider, services.LoggerFactory.CreateLogger(GetType().FullName ?? ""), services.PerformanceOptions);
         }
 
         public int AssetsLoaded => assetsLoaded;

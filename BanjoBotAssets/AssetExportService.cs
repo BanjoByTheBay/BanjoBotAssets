@@ -2,11 +2,12 @@
 using CUE4Parse.Encryption.Aes;
 using CUE4Parse.UE4.Objects.Core.Misc;
 using CUE4Parse.UE4.Versions;
-using Newtonsoft.Json;
 using System.Diagnostics;
-using System.Net.Http.Json;
 using Microsoft.Extensions.Options;
 using CUE4Parse.FileProvider;
+using BanjoBotAssets.Exporters.Impl;
+using BanjoBotAssets.Aes;
+using BanjoBotAssets.Models;
 
 namespace BanjoBotAssets
 {
@@ -16,16 +17,25 @@ namespace BanjoBotAssets
         private readonly IHostApplicationLifetime lifetime;
         private readonly IEnumerable<IExporter> exporters;
         private readonly IOptions<GameFileOptions> options;
+        private readonly IEnumerable<IAesProvider> aesProviders;
+        private readonly IAesCacheUpdater aesCacheUpdater;
+        private readonly IEnumerable<IExportArtifact> exportArtifacts;
 
         public AssetExportService(ILogger<AssetExportService> logger,
             IHostApplicationLifetime lifetime,
             IEnumerable<IExporter> exporters,
-            IOptions<GameFileOptions> options)
+            IOptions<GameFileOptions> options,
+            IEnumerable<IAesProvider> aesProviders,
+            IAesCacheUpdater aesCacheUpdater,
+            IEnumerable<IExportArtifact> exportArtifacts)
         {
             this.logger = logger;
             this.lifetime = lifetime;
             this.exporters = exporters;
             this.options = options;
+            this.aesProviders = aesProviders;
+            this.aesCacheUpdater = aesCacheUpdater;
+            this.exportArtifacts = exportArtifacts;
         }
 
         public async Task StartAsync(CancellationToken cancellationToken)
@@ -43,7 +53,7 @@ namespace BanjoBotAssets
 
             if (gameDirectory == null)
             {
-                logger.LogError(Resources.Error_GameNotFound);
+                logger.LogCritical(Resources.Error_GameNotFound);
                 return 1;
             }
 
@@ -54,26 +64,33 @@ namespace BanjoBotAssets
                 new VersionContainer(EGame.GAME_UE5_LATEST));
             provider.Initialize();
 
-            // get encryption keys from fortnite-api.com
-            AesApiResponse? aes;
+            // get encryption keys from cache or external API
+            AesApiResponse? aes = null;
 
-            using (var client = new HttpClient())
+            foreach (var ap in aesProviders)
             {
-                aes = await client.GetFromJsonAsync<AesApiResponse>(Settings.Default.AesApiUri, cancellationToken);
+                if (await ap.TryGetAesAsync(cancellationToken) is { } good)
+                {
+                    aes = good;
+                    await aesCacheUpdater.UpdateAesCacheAsync(aes, cancellationToken);
+                    break;
+                }
             }
 
             if (aes == null)
             {
-                logger.LogError(Resources.Error_AesFetchFailed);
+                logger.LogCritical(Resources.Error_AesFetchFailed);
                 return 2;
             }
 
-            logger.LogInformation(Resources.Status_SubmittingMainKey);
+            logger.LogInformation(Resources.Status_DecryptingGameFiles);
+
+            logger.LogDebug(Resources.Status_SubmittingMainKey);
             provider.SubmitKey(new FGuid(), new FAesKey(aes.Data.MainKey));
 
             foreach (var dk in aes.Data.DynamicKeys)
             {
-                logger.LogInformation(Resources.Status_SubmittingDynamicKey, dk.PakFilename);
+                logger.LogDebug(Resources.Status_SubmittingDynamicKey, dk.PakFilename);
                 provider.SubmitKey(new FGuid(dk.PakGuid), new FAesKey(dk.Key));
             }
 
@@ -81,6 +98,7 @@ namespace BanjoBotAssets
             provider.LoadMappings();
 
             // sometimes the mappings don't load, and then nothing works
+            // TODO: cache mappings locally
             if (provider.MappingsForThisGame is null or { Enums.Count: 0, Types.Count: 0 })
             {
                 await Task.Delay(5 * 1000, cancellationToken);
@@ -89,7 +107,7 @@ namespace BanjoBotAssets
 
                 if (provider.MappingsForThisGame is null or { Enums.Count: 0, Types.Count: 0 })
                 {
-                    logger.LogError(Resources.Error_MappingsFetchFailed);
+                    logger.LogCritical(Resources.Error_MappingsFetchFailed);
                     return 3;
                 }
             }
@@ -141,16 +159,12 @@ namespace BanjoBotAssets
             var stopwatch = new Stopwatch();
             stopwatch.Start();
 
-            var allPrivateExports = new List<IAssetOutput>();
-
-            await Task.WhenAll(exporters.Select(e =>
-            {
-                // give the exporter its own output object to use,
-                // then combine the results when the task completes
-                var privateExport = new AssetOutput();
-                allPrivateExports.Add(privateExport);
-                return e.ExportAssetsAsync(progress, privateExport, cancellationToken);
-            }));
+            // give each exporter its own output object to use,
+            // then combine the results when the tasks all complete
+            var allPrivateExports = new List<IAssetOutput>(exporters.Select(_ => new AssetOutput()));
+            await Task.WhenAll(
+                exporters.Select((e, i) =>
+                    e.ExportAssetsAsync(progress, allPrivateExports[i], cancellationToken)));
 
             stopwatch.Stop();
 
@@ -161,26 +175,29 @@ namespace BanjoBotAssets
             // collect exported assets
             foreach (var privateExport in allPrivateExports)
             {
+                cancellationToken.ThrowIfCancellationRequested();
                 privateExport.CopyTo(exportedAssets, exportedRecipes, cancellationToken);
             }
 
             allPrivateExports.Clear();
 
-            // send to finalizers
-            
-
+            // generate output artifacts
+            foreach (var art in exportArtifacts)
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                await art.RunAsync(exportedAssets, exportedRecipes, cancellationToken);
+            }
 
             // done!
             return 0;
+        }
 
-            static ELanguage GetLocalizationLanguage()
-            {
-                if (!string.IsNullOrEmpty(Settings.Default.ELanguage) && Enum.TryParse<ELanguage>(Settings.Default.ELanguage, out var result))
-                    return result;
+        private ELanguage GetLocalizationLanguage()
+        {
+            if (!string.IsNullOrEmpty(options.Value.ELanguage) && Enum.TryParse<ELanguage>(options.Value.ELanguage, out var result))
+                return result;
 
-                return Enum.Parse<ELanguage>(Resources.ELanguage);
-            }
-
+            return Enum.Parse<ELanguage>(Resources.ELanguage);
         }
 
         public Task StopAsync(CancellationToken cancellationToken)
