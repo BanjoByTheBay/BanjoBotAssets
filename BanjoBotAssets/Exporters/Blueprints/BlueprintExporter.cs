@@ -1,6 +1,6 @@
-﻿using BanjoBotAssets.Exporters.Helpers;
+﻿using BanjoBotAssets.Artifacts;
+using BanjoBotAssets.Exporters.Helpers;
 using BanjoBotAssets.Extensions;
-using BanjoBotAssets.Models;
 using CUE4Parse.UE4.Objects.Engine;
 
 namespace BanjoBotAssets.Exporters.Blueprints

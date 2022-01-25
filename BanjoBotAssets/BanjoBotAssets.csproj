@@ -34,6 +34,17 @@
   <ItemGroup>
     <None Remove="*.dll" />
   </ItemGroup>
+	
+  <ItemGroup>
+    <Content Remove="Config\appsettings.json" />
+  </ItemGroup>
+	
+  <ItemGroup>
+    <ContentWithTargetPath Include="Config\appsettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		<TargetPath>appsettings.json</TargetPath>
+    </ContentWithTargetPath>
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="AsyncFixer" Version="1.5.1">
@@ -61,12 +72,6 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Update="Config\appsettings.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
   </ItemGroup>
 
   <ItemGroup>

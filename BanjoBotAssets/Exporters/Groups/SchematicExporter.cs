@@ -1,5 +1,5 @@
-﻿using BanjoBotAssets.Exporters.Helpers;
-using BanjoBotAssets.Models;
+﻿using BanjoBotAssets.Artifacts;
+using BanjoBotAssets.Exporters.Helpers;
 using CUE4Parse.UE4.Objects.GameplayTags;
 
 // TODO: export weapon/trap stats

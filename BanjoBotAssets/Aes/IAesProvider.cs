@@ -1,6 +1,4 @@
-﻿using BanjoBotAssets.Exporters;
-
-namespace BanjoBotAssets.Aes
+﻿namespace BanjoBotAssets.Aes
 {
     internal interface IAesProvider
     {

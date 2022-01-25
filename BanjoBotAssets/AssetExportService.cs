@@ -5,10 +5,9 @@ using CUE4Parse.UE4.Versions;
 using System.Diagnostics;
 using Microsoft.Extensions.Options;
 using BanjoBotAssets.Aes;
-using BanjoBotAssets.Models;
-using BanjoBotAssets.Exporters.Artifacts;
 using BanjoBotAssets.Exporters.Options;
 using BanjoBotAssets.Exporters.Helpers;
+using BanjoBotAssets.Artifacts;
 
 namespace BanjoBotAssets
 {

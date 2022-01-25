@@ -1,6 +1,4 @@
-﻿using BanjoBotAssets.Models;
-
-namespace BanjoBotAssets.Exporters.Artifacts
+﻿namespace BanjoBotAssets.Artifacts
 {
     internal interface IExportArtifact
     {

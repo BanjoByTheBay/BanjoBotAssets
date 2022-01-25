@@ -1,4 +1,4 @@
-﻿namespace BanjoBotAssets.Models
+﻿namespace BanjoBotAssets.Artifacts
 {
     internal class ExportedAssets
     {

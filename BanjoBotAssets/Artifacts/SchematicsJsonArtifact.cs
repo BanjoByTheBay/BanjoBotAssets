@@ -1,10 +1,9 @@
 ﻿using BanjoBotAssets.Exporters.Helpers;
 using BanjoBotAssets.Exporters.Options;
-using BanjoBotAssets.Models;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 
-namespace BanjoBotAssets.Exporters.Artifacts
+namespace BanjoBotAssets.Artifacts
 {
     internal class SchematicsJsonArtifact : IExportArtifact
     {

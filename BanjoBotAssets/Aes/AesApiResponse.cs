@@ -2,7 +2,7 @@
 
 using System.Text.Json.Serialization;
 
-namespace BanjoBotAssets.Exporters
+namespace BanjoBotAssets.Aes
 {
     public class AesApiResponse
     {

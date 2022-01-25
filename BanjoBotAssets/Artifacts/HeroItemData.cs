@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 
-namespace BanjoBotAssets.Models
+namespace BanjoBotAssets.Artifacts
 {
     internal class HeroItemData : NamedItemData
     {

@@ -1,5 +1,5 @@
-﻿using BanjoBotAssets.Exporters.Helpers;
-using BanjoBotAssets.Models;
+﻿using BanjoBotAssets.Artifacts;
+using BanjoBotAssets.Exporters.Helpers;
 
 namespace BanjoBotAssets.Exporters.UObjects
 {

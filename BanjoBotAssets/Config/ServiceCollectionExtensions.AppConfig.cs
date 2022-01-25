@@ -1,6 +1,6 @@
 ﻿using BanjoBotAssets.Aes;
+using BanjoBotAssets.Artifacts;
 using BanjoBotAssets.Exporters;
-using BanjoBotAssets.Exporters.Artifacts;
 using BanjoBotAssets.Exporters.Helpers;
 using BanjoBotAssets.Exporters.Options;
 using CUE4Parse.FileProvider;
@@ -31,10 +31,12 @@ namespace BanjoBotAssets.Extensions
 
         public static IServiceCollection AddAssetExporters(this IServiceCollection services)
         {
-            // all IExporter implementations derived from BaseExporter, and their service aggregator
+            // all IExporter implementations derived from BaseExporter,
+            // and their service aggregator and helpers
             services
                 .AddDerivedServices<IExporter, BaseExporter>(ServiceLifetime.Transient)
-                .AddTransient<IExporterContext, ExporterContext>();
+                .AddTransient<IExporterContext, ExporterContext>()
+                .AddTransient<AbilityDescription>();
 
             // performance options affecting the exporters
             services
@@ -73,7 +75,15 @@ namespace BanjoBotAssets.Extensions
             services.AddSingleton((Func<IServiceProvider, AbstractVfsFileProvider>)(sp =>
                  {
                      var options = sp.GetRequiredService<IOptions<GameFileOptions>>();
-                     var gameDirectory = options.Value.GameDirectories.First(Directory.Exists);
+                     string gameDirectory;
+                     try
+                     {
+                         gameDirectory = options.Value.GameDirectories.First(Directory.Exists);
+                     }
+                     catch (InvalidOperationException ex)
+                     {
+                         throw new InvalidOperationException(Resources.Error_GameNotFound, ex);
+                     }
                      var provider = new DefaultFileProvider(
                          gameDirectory,
                          SearchOption.TopDirectoryOnly,
@@ -84,7 +94,12 @@ namespace BanjoBotAssets.Extensions
                  }));
 
             services.AddOptions<GameFileOptions>()
-                .Configure<IConfiguration>((options, config) => config.GetSection(nameof(GameFileOptions)).Bind(options));
+                .Configure<IConfiguration>((options, config) =>
+                {
+                    options.ELanguage = "";
+                    options.GameDirectories = Array.Empty<string>();
+                    config.GetSection(nameof(GameFileOptions)).Bind(options);
+                });
 
             return services;
         }

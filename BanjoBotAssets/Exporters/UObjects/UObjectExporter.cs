@@ -1,5 +1,5 @@
-﻿using BanjoBotAssets.Exporters.Helpers;
-using BanjoBotAssets.Models;
+﻿using BanjoBotAssets.Artifacts;
+using BanjoBotAssets.Exporters.Helpers;
 using CUE4Parse.FN.Enums.FortniteGame;
 
 namespace BanjoBotAssets.Exporters.UObjects

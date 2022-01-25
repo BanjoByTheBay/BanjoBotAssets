@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System.Diagnostics.CodeAnalysis;
 
-namespace BanjoBotAssets.Models
+namespace BanjoBotAssets.Artifacts
 {
     [JsonObject(ItemNullValueHandling = NullValueHandling.Ignore)]
     internal class NamedItemData

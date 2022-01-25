@@ -1,7 +1,9 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using Newtonsoft.Json;
+using System.Diagnostics.CodeAnalysis;
 
-namespace BanjoBotAssets.Models
+namespace BanjoBotAssets.Artifacts
 {
+    [JsonObject(ItemNullValueHandling = NullValueHandling.Ignore)]
     internal class QuestObjective
     {
         [DisallowNull]
@@ -10,6 +12,8 @@ namespace BanjoBotAssets.Models
         public string? Description { get; set; }
         [DisallowNull]
         public string? HudShortDescription { get; set; }
+        public string? ObjectiveStatRowName { get; set; }
+        public int? ZonePowerLevel { get; set; }
         public int Count { get; set; }
     }
 }

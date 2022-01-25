@@ -1,7 +1,7 @@
-﻿using BanjoBotAssets.Exporters.Helpers;
+﻿using BanjoBotAssets.Artifacts;
 using System.Collections.Concurrent;
 
-namespace BanjoBotAssets.Models
+namespace BanjoBotAssets.Exporters.Helpers
 {
     internal class AssetOutput : IAssetOutput
     {
