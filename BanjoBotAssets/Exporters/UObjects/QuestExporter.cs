@@ -1,6 +1,5 @@
 ﻿using BanjoBotAssets.Artifacts;
 using BanjoBotAssets.Exporters.Helpers;
-using BanjoBotAssets.Extensions;
 
 namespace BanjoBotAssets.Exporters.UObjects
 {
@@ -74,6 +73,12 @@ namespace BanjoBotAssets.Exporters.UObjects
                     {
                         var row = o.ObjectiveStatHandle.RowName;
                         qo.ZonePowerLevel = TryGetZonePowerLevelCondition(row.Text);
+
+                        if (qo.ZonePowerLevel != null)
+                        {
+                            qo.Description = qo.Description.Replace("[UIRating]", qo.ZonePowerLevel.ToString(), StringComparison.OrdinalIgnoreCase);
+                            qo.HudShortDescription = qo.HudShortDescription.Replace("[UIRating]", qo.ZonePowerLevel.ToString(), StringComparison.OrdinalIgnoreCase);
+                        }
                     }
 
                     objectives.Add(qo);
@@ -122,23 +127,24 @@ namespace BanjoBotAssets.Exporters.UObjects
             {
                 // parse the Condition property if it's one we recognize
                 var condition = rowValue.GetOrDefault<string>("Condition");
-
-                int minDifficulty = 0;
                 if (condition != null && zoneDifficultyRegex.Match(condition) is { Success: true } match)
                 {
-                    minDifficulty = int.Parse(match.Groups[1].Value, CultureInfo.InvariantCulture);
-                }
-
-                // find the highest number row whose difficulty value is <= the one mentioned in the COndition property
-                // NOTE: this assumes the rows are in decreasing order, which they are as of 19.10
-                foreach (var row in homebaseRatingDifficultyMappingTable.RowMap)
-                {
-                    if (row.Value.Get<int>("Difficulty") <= minDifficulty)
+                    if (int.TryParse(match.Groups[1].Value, NumberStyles.Integer, CultureInfo.InvariantCulture, out var minDifficulty))
                     {
-                        return int.Parse(row.Key.Text, CultureInfo.InvariantCulture);
+                        // find the highest number row whose difficulty value is <= the one mentioned in the Condition property
+                        // NOTE: this assumes the rows are in decreasing order, which they are as of 19.10
+                        foreach (var row in homebaseRatingDifficultyMappingTable.RowMap)
+                        {
+                            if (row.Value.Get<int>("Difficulty") <= minDifficulty)
+                            {
+                                return int.Parse(row.Key.Text, CultureInfo.InvariantCulture);
+                            }
+                        }
                     }
+
+                    // difficulty is literally off the charts
+                    logger.LogWarning(Resources.Warning_CannotParseDifficultyCondition, condition);
                 }
-                return minDifficulty;
             }
 
             return null;

@@ -12,7 +12,6 @@ namespace BanjoBotAssets.Artifacts
         public string? Description { get; set; }
         [DisallowNull]
         public string? HudShortDescription { get; set; }
-        public string? ObjectiveStatRowName { get; set; }
         public int? ZonePowerLevel { get; set; }
         public int Count { get; set; }
     }

@@ -727,6 +727,15 @@ namespace BanjoBotAssets.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to WARNING: Can&apos;t determine PL requirement from objective condition: {0}.
+        /// </summary>
+        internal static string Warning_CannotParseDifficultyCondition {
+            get {
+                return ResourceManager.GetString("Warning_CannotParseDifficultyCondition", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to WARNING: Can&apos;t parse hero name: {0}.
         /// </summary>
         internal static string Warning_CannotParseHeroName {

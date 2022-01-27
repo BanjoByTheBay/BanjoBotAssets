@@ -360,6 +360,10 @@
     <value>WARNING: Can't parse defender name: {0}</value>
     <comment>0=template ID</comment>
   </data>
+  <data name="Warning_CannotParseDifficultyCondition" xml:space="preserve">
+    <value>WARNING: Can't determine PL requirement from objective condition: {0}</value>
+    <comment>0=conditional expression</comment>
+  </data>
   <data name="Warning_CannotParseHeroName" xml:space="preserve">
     <value>WARNING: Can't parse hero name: {0}</value>
     <comment>0=template ID</comment>
