@@ -6,6 +6,12 @@ await Host.CreateDefaultBuilder(args)
     .UseEnvironment("Development")
 #endif
     .UseContentRoot(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location))
+    .ConfigureLogging(logging =>
+    {
+        logging
+            .ClearProviders()
+            .AddSimpleConsole(console => console.SingleLine = true);
+    })
     .ConfigureServices(services =>
     {
         services
