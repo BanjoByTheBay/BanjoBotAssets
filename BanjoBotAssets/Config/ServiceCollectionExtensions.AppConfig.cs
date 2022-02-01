@@ -91,7 +91,8 @@ namespace BanjoBotAssets.Extensions
                          new VersionContainer(EGame.GAME_UE5_LATEST));
                      provider.Initialize();
                      return provider;
-                 }));
+                 }))
+                .AddTransient<ITypeMappingsProviderFactory, CachingBenBotMappingsProviderFactory>();
 
             services.AddOptions<GameFileOptions>()
                 .Configure<IConfiguration>((options, config) =>

@@ -21,6 +21,7 @@ namespace BanjoBotAssets
         private readonly IAesCacheUpdater aesCacheUpdater;
         private readonly IEnumerable<IExportArtifact> exportArtifacts;
         private readonly AbstractVfsFileProvider provider;
+        private readonly ITypeMappingsProviderFactory typeMappingsProviderFactory;
 
         public AssetExportService(ILogger<AssetExportService> logger,
             IHostApplicationLifetime lifetime,
@@ -29,7 +30,8 @@ namespace BanjoBotAssets
             IEnumerable<IAesProvider> aesProviders,
             IAesCacheUpdater aesCacheUpdater,
             IEnumerable<IExportArtifact> exportArtifacts,
-            AbstractVfsFileProvider provider)
+            AbstractVfsFileProvider provider,
+            ITypeMappingsProviderFactory typeMappingsProviderFactory)
         {
             this.logger = logger;
             this.lifetime = lifetime;
@@ -39,6 +41,7 @@ namespace BanjoBotAssets
             this.aesCacheUpdater = aesCacheUpdater;
             this.exportArtifacts = exportArtifacts;
             this.provider = provider;
+            this.typeMappingsProviderFactory = typeMappingsProviderFactory;
         }
 
         protected override async Task ExecuteAsync(CancellationToken cancellationToken)
@@ -91,7 +94,11 @@ namespace BanjoBotAssets
             }
 
             logger.LogInformation(Resources.Status_LoadingMappings);
-            provider.LoadMappings();
+
+            if (provider.GameName.Equals("FortniteGame", StringComparison.OrdinalIgnoreCase))
+            {
+                provider.MappingsContainer = typeMappingsProviderFactory.Create("fortnitegame");
+            }
 
             // sometimes the mappings don't load, and then nothing works
             // TODO: cache mappings locally
