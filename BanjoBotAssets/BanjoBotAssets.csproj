@@ -36,16 +36,9 @@
   </ItemGroup>
 	
   <ItemGroup>
-    <Content Remove="Config\appsettings.json" />
+    <Content Remove="aes.json" />
   </ItemGroup>
 	
-  <ItemGroup>
-    <ContentWithTargetPath Include="Config\appsettings.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		<TargetPath>appsettings.json</TargetPath>
-    </ContentWithTargetPath>
-  </ItemGroup>
-
   <ItemGroup>
     <PackageReference Include="AsyncFixer" Version="1.5.1">
       <PrivateAssets>all</PrivateAssets>
@@ -72,6 +65,12 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="appsettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>
