@@ -151,7 +151,9 @@ namespace BanjoBotAssets.Exporters.Groups
 
         private static readonly Regex schematicSubTypeRegex = new(@"^(?:Weapon\.(?:Ranged|Melee\.(?:Edged|Blunt|Piercing))|Trap(?=\.(?:Ceiling|Floor|Wall)))\.([^.]+)", RegexOptions.IgnoreCase);
 
-        public SchematicExporter(IExporterContext services) : base(services) { }
+        public SchematicExporter(IExporterContext services) : base(services)
+        {
+        }
 
         private static string SubTypeFromTags(FGameplayTagContainer tags)
         {

@@ -8,6 +8,7 @@ using BanjoBotAssets.Aes;
 using BanjoBotAssets.Exporters.Options;
 using BanjoBotAssets.Exporters.Helpers;
 using BanjoBotAssets.Artifacts;
+using BanjoBotAssets.Config;
 
 namespace BanjoBotAssets
 {
@@ -22,6 +23,7 @@ namespace BanjoBotAssets
         private readonly IEnumerable<IExportArtifact> exportArtifacts;
         private readonly AbstractVfsFileProvider provider;
         private readonly ITypeMappingsProviderFactory typeMappingsProviderFactory;
+        private readonly IOptions<ScopeOptions> scopeOptions;
 
         public AssetExportService(ILogger<AssetExportService> logger,
             IHostApplicationLifetime lifetime,
@@ -31,7 +33,8 @@ namespace BanjoBotAssets
             IAesCacheUpdater aesCacheUpdater,
             IEnumerable<IExportArtifact> exportArtifacts,
             AbstractVfsFileProvider provider,
-            ITypeMappingsProviderFactory typeMappingsProviderFactory)
+            ITypeMappingsProviderFactory typeMappingsProviderFactory,
+            IOptions<ScopeOptions> scopeOptions)
         {
             this.logger = logger;
             this.lifetime = lifetime;
@@ -42,6 +45,7 @@ namespace BanjoBotAssets
             this.exportArtifacts = exportArtifacts;
             this.provider = provider;
             this.typeMappingsProviderFactory = typeMappingsProviderFactory;
+            this.scopeOptions = scopeOptions;
         }
 
         protected override async Task ExecuteAsync(CancellationToken cancellationToken)
@@ -50,20 +54,53 @@ namespace BanjoBotAssets
             lifetime.StopApplication();
         }
 
-        private async Task<int> RunAsync(CancellationToken cancellationToken)
+        private class CriticalFailureException: ApplicationException
         {
-            // open PAK files
-            var gameDirectories = options.Value.GameDirectories.Cast<string>();
-
-            var gameDirectory = gameDirectories.FirstOrDefault(d => Directory.Exists(d));
-
-            if (gameDirectory == null)
+            public CriticalFailureException()
             {
-                logger.LogCritical(Resources.Error_GameNotFound);
-                return 1;
             }
 
-            // get encryption keys from cache or external API
+            public CriticalFailureException(string? message) : base(message)
+            {
+            }
+
+            public CriticalFailureException(string? message, Exception? innerException) : base(message, innerException)
+            {
+            }
+        }
+
+        private async Task<int> RunAsync(CancellationToken cancellationToken)
+        {
+            // by the time this method is called, the CUE4Parse file provider has already been created,
+            // and the game files have been located but not decrypted. we need to supply the AES keys,
+            // from cache or from an external API.
+            await DecryptGameFilesAsync(cancellationToken);
+
+            // load the type mappings CUE4Parse uses to parse UE structures
+            await LoadMappingsAsync(cancellationToken);
+
+            // load localized resources
+            LoadLocalization(cancellationToken);
+
+            // register the export classes used to expose UE structures as strongly-typed C# objects
+            RegisterExportTypes();
+
+            // feed the file list to each exporter so they can record the paths they're interested in
+            OfferFileListToExporters();
+
+            // run exporters and collect their intermediate results
+            var (exportedAssets, exportedRecipes) = await RunSelectedExportersAsync(cancellationToken);
+
+            // generate output artifacts
+            await GenerateSelectedArtifactsAsync(exportedAssets, exportedRecipes, cancellationToken);
+
+            // done!
+            return 0;
+        }
+
+        private async Task DecryptGameFilesAsync(CancellationToken cancellationToken)
+        {
+            // get the keys from cache or a web service
             AesApiResponse? aes = null;
 
             foreach (var ap in aesProviders)
@@ -77,11 +114,9 @@ namespace BanjoBotAssets
             }
 
             if (aes == null)
-            {
-                logger.LogCritical(Resources.Error_AesFetchFailed);
-                return 2;
-            }
+                throw new CriticalFailureException(Resources.Error_AesFetchFailed);
 
+            // offer them to CUE4Parse
             logger.LogInformation(Resources.Status_DecryptingGameFiles);
 
             logger.LogDebug(Resources.Status_SubmittingMainKey);
@@ -92,7 +127,10 @@ namespace BanjoBotAssets
                 logger.LogDebug(Resources.Status_SubmittingDynamicKey, dk.PakFilename);
                 provider.SubmitKey(new FGuid(dk.PakGuid), new FAesKey(dk.Key));
             }
+        }
 
+        private async Task LoadMappingsAsync(CancellationToken cancellationToken)
+        {
             logger.LogInformation(Resources.Status_LoadingMappings);
 
             if (provider.GameName.Equals("FortniteGame", StringComparison.OrdinalIgnoreCase))
@@ -109,15 +147,12 @@ namespace BanjoBotAssets
                 provider.LoadMappings();
 
                 if (provider.MappingsForThisGame is null or { Enums.Count: 0, Types.Count: 0 })
-                {
-                    logger.LogCritical(Resources.Error_MappingsFetchFailed);
-                    return 3;
-                }
+                    throw new CriticalFailureException(Resources.Error_MappingsFetchFailed);
             }
+        }
 
-            logger.LogInformation(Resources.Status_LoadingLocalization);
-            provider.LoadLocalization(GetLocalizationLanguage(), cancellationToken);
-
+        private void RegisterExportTypes()
+        {
             logger.LogInformation(Resources.Status_RegisteringExportTypes);
             ObjectTypeRegistry.RegisterEngine(typeof(UFortItemDefinition).Assembly);
             ObjectTypeRegistry.RegisterClass("FortDefenderItemDefinition", typeof(UFortHeroType));
@@ -125,11 +160,62 @@ namespace BanjoBotAssets
             ObjectTypeRegistry.RegisterClass("FortAlterationItemDefinition", typeof(UFortItemDefinition));
             ObjectTypeRegistry.RegisterClass("FortResourceItemDefinition", typeof(UFortWorldItemDefinition));
             ObjectTypeRegistry.RegisterClass("FortGameplayModifierItemDefinition", typeof(UFortItemDefinition));
+        }
+
+        private async Task GenerateSelectedArtifactsAsync(ExportedAssets exportedAssets, IList<ExportedRecipe> exportedRecipes, CancellationToken cancellationToken)
+        {
+            foreach (var art in exportArtifacts)
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                await art.RunAsync(exportedAssets, exportedRecipes, cancellationToken);
+            }
+        }
+
+        private async Task<(ExportedAssets, IList<ExportedRecipe>)> RunSelectedExportersAsync(CancellationToken cancellationToken)
+        {
+            // run the exporters and collect their outputs
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
+
+            // give each exporter its own output object to use,
+            // we'll combine the results when the tasks all complete.
+            var allPrivateExports = new List<IAssetOutput>(exporters.Select(_ => new AssetOutput()));
+
+            // run the exporters!
+            IEnumerable<IExporter> exportersToRun = exporters;
+            if (!string.IsNullOrWhiteSpace(scopeOptions.Value.Only))
+            {
+                var wanted = scopeOptions.Value.Only.Split(',');
+                exportersToRun = exportersToRun.Where(e => wanted.Contains(e.GetType().Name, StringComparer.OrdinalIgnoreCase));
+            }
+
+            var progress = new Progress<ExportProgress>(_ =>
+            {
+                // TODO: do something with progress reports
+            });
+            await Task.WhenAll(
+                exportersToRun.Zip(allPrivateExports, (e, r) => e.ExportAssetsAsync(progress, r, cancellationToken)));
+
+            stopwatch.Stop();
 
             var exportedAssets = new ExportedAssets();
             var exportedRecipes = new List<ExportedRecipe>();
+            var assetsLoaded = exporters.Sum(e => e.AssetsLoaded);
 
-            // find interesting assets
+            logger.LogInformation(Resources.Status_LoadedAssets, assetsLoaded, stopwatch.Elapsed, stopwatch.ElapsedMilliseconds / Math.Max(assetsLoaded, 1));
+
+            foreach (var privateExport in allPrivateExports)
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                privateExport.CopyTo(exportedAssets, exportedRecipes, cancellationToken);
+            }
+
+            allPrivateExports.Clear();
+            return (exportedAssets, exportedRecipes);
+        }
+
+        private void OfferFileListToExporters()
+        {
             foreach (var (name, file) in provider.Files)
             {
                 if (name.Contains("/Athena/"))
@@ -142,50 +228,16 @@ namespace BanjoBotAssets
                     e.ObserveAsset(name);
                 }
             }
-
-            var progress = new Progress<ExportProgress>(_ =>
-            {
-                // TODO: do something with progress reports
-            });
-
-            var assetsLoaded = 0;
-            var stopwatch = new Stopwatch();
-            stopwatch.Start();
-
-            // give each exporter its own output object to use,
-            // we'll combine the results when the tasks all complete.
-            var allPrivateExports = new List<IAssetOutput>(exporters.Select(_ => new AssetOutput()));
-
-            // run the exporters!
-            await Task.WhenAll(
-                exporters.Select((e, i) =>
-                    e.ExportAssetsAsync(progress, allPrivateExports[i], cancellationToken)));
-
-            stopwatch.Stop();
-
-            assetsLoaded = exporters.Sum(e => e.AssetsLoaded);
-
-            logger.LogInformation(Resources.Status_LoadedAssets, assetsLoaded, stopwatch.Elapsed, stopwatch.ElapsedMilliseconds / Math.Max(assetsLoaded, 1));
-
-            // collect exported assets
-            foreach (var privateExport in allPrivateExports)
-            {
-                cancellationToken.ThrowIfCancellationRequested();
-                privateExport.CopyTo(exportedAssets, exportedRecipes, cancellationToken);
-            }
-
-            allPrivateExports.Clear();
-
-            // generate output artifacts
-            foreach (var art in exportArtifacts)
-            {
-                cancellationToken.ThrowIfCancellationRequested();
-                await art.RunAsync(exportedAssets, exportedRecipes, cancellationToken);
-            }
-
-            // done!
-            return 0;
         }
+
+
+        private void LoadLocalization(CancellationToken cancellationToken)
+        {
+            logger.LogInformation(Resources.Status_LoadingLocalization);
+            provider.LoadLocalization(GetLocalizationLanguage(), cancellationToken);
+        }
+
+
 
         private ELanguage GetLocalizationLanguage()
         {

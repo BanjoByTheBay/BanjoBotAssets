@@ -45,7 +45,7 @@ namespace BanjoBotAssets.Exporters.Groups
 
             var opts = new ParallelOptions { CancellationToken = cancellationToken, MaxDegreeOfParallelism = performanceOptions.Value.MaxParallelism };
 
-            return Parallel.ForEachAsync(uniqueAssets, opts, async (grouping, _) =>
+            return Parallel.ForEachAsync(scopeOptions.Value.Limit != null ? uniqueAssets.Take((int)scopeOptions.Value.Limit) : uniqueAssets, opts, async (grouping, _) =>
             {
                 var baseName = grouping.Key;
 

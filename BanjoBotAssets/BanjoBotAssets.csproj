@@ -37,6 +37,12 @@
 	
   <ItemGroup>
     <Content Remove="aes.json" />
+    <Content Remove="assets.json" />
+    <Content Remove="schematics.json" />
+  </ItemGroup>
+	
+  <ItemGroup>
+    <None Remove="mappings.usmap" />
   </ItemGroup>
 	
   <ItemGroup>

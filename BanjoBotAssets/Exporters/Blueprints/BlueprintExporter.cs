@@ -29,7 +29,7 @@ namespace BanjoBotAssets.Exporters.Blueprints
 
             var opts = new ParallelOptions { CancellationToken = cancellationToken, MaxDegreeOfParallelism = performanceOptions.Value.MaxParallelism };
 
-            return Parallel.ForEachAsync(assetPaths, opts, async (path, _) =>
+            return Parallel.ForEachAsync(scopeOptions.Value.Limit != null ? assetPaths.Take((int)scopeOptions.Value.Limit) : assetPaths, opts, async (path, _) =>
             {
                 var file = provider![path];
 

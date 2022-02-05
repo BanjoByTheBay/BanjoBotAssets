@@ -1,5 +1,8 @@
-﻿using BanjoBotAssets.Extensions;
+﻿using BanjoBotAssets.Config;
+using BanjoBotAssets.Extensions;
 using System.Reflection;
+
+// TODO: export Ventures reward/level tables
 
 await Host.CreateDefaultBuilder(args)
 #if DEBUG
@@ -20,7 +23,11 @@ await Host.CreateDefaultBuilder(args)
             .AddAesProviders()
             .AddGameFileProvider()
             .AddAssetExporters();
+
+        services
+            .AddOptions<ScopeOptions>()
+            .Configure<IConfiguration>((scope, config) => config.Bind(scope));
     })
-    .RunConsoleAsync();
+    .RunConsoleAsync(o => o.SuppressStatusMessages = true);
 
 return Environment.ExitCode;

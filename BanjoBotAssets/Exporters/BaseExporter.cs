@@ -1,4 +1,5 @@
-﻿using BanjoBotAssets.Exporters.Helpers;
+﻿using BanjoBotAssets.Config;
+using BanjoBotAssets.Exporters.Helpers;
 using BanjoBotAssets.Exporters.Options;
 using Microsoft.Extensions.Options;
 
@@ -12,12 +13,14 @@ namespace BanjoBotAssets.Exporters
         protected readonly AbstractVfsFileProvider provider;
         protected readonly ILogger logger;
         protected readonly IOptions<PerformanceOptions> performanceOptions;
+        protected readonly IOptions<ScopeOptions> scopeOptions;
         protected readonly AbilityDescription abilityDescription;
 
         protected BaseExporter(IExporterContext services)
         {
             provider = services.Provider;
             performanceOptions = services.PerformanceOptions;
+            scopeOptions = services.ScopeOptions;
             logger = services.LoggerFactory.CreateLogger(GetType().FullName ?? "");
             abilityDescription = services.AbilityDescription;
         }

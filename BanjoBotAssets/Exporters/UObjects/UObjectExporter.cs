@@ -39,7 +39,7 @@ namespace BanjoBotAssets.Exporters.UObjects
 
             var opts = new ParallelOptions { CancellationToken = cancellationToken, MaxDegreeOfParallelism = performanceOptions.Value.MaxParallelism };
 
-            return Parallel.ForEachAsync(assetPaths, opts, async (path, _) =>
+            return Parallel.ForEachAsync(scopeOptions.Value.Limit != null ? assetPaths.Take((int)scopeOptions.Value.Limit) : assetPaths, opts, async (path, _) =>
             {
                 var file = provider[path];
 
@@ -68,9 +68,17 @@ namespace BanjoBotAssets.Exporters.UObjects
                 }
                 else
                 {
-                    var pkg = await provider.LoadPackageAsync(file);
-                    cancellationToken.ThrowIfCancellationRequested();
-                    uobject = pkg.GetExport(0) as TAsset;
+                    try
+                    {
+                        var pkg = await provider.LoadPackageAsync(file);
+                        cancellationToken.ThrowIfCancellationRequested();
+                        uobject = pkg.GetExport(0) as TAsset;
+                    }
+                    catch (Exception ex)
+                    {
+                        logger.LogError(ex, Resources.Warning_FailedToLoadFile, file.PathWithoutExtension);
+                        return;
+                    }
                 }
 
                 if (uobject == null)
