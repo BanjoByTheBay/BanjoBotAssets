@@ -124,6 +124,14 @@
   <data name="Error_AesFetchFailed" xml:space="preserve">
     <value>Couldn't load AES keys.</value>
   </data>
+  <data name="Error_ExceptionWhileProcessingAsset" xml:space="preserve">
+    <value>Exception while processing asset {0}</value>
+    <comment>0=asset ID</comment>
+  </data>
+  <data name="Error_ExceptionWhileProcessingAssetGroup" xml:space="preserve">
+    <value>Exception while processing asset group {0}</value>
+    <comment>0=asset group ID</comment>
+  </data>
   <data name="Error_GameNotFound" xml:space="preserve">
     <value>Couldn't find game directory. Add it to the GameDirectories setting.</value>
   </data>

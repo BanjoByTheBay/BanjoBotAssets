@@ -31,44 +31,51 @@ namespace BanjoBotAssets.Exporters.Blueprints
 
             return Parallel.ForEachAsync(scopeOptions.Value.Limit != null ? assetPaths.Take((int)scopeOptions.Value.Limit) : assetPaths, opts, async (path, _) =>
             {
-                var file = provider![path];
-
-                var num = Interlocked.Increment(ref processedSoFar);
-                logger.LogInformation(Resources.Status_ProcessingTypeNumOfNum, Type, num, numToProcess);
-
-                //logger.LogInformation("Loading {0}", file.PathWithoutExtension);
-                Interlocked.Increment(ref assetsLoaded);
-                var pkg = await provider.LoadPackageAsync(file.PathWithoutExtension);
-
-                if (pkg.GetExports().First() is not UBlueprintGeneratedClass bpClass)
+                try
                 {
-                    logger.LogWarning(Resources.Warning_FailedToLoadFile, file.PathWithoutExtension);
-                    return;
+                    var file = provider![path];
+
+                    var num = Interlocked.Increment(ref processedSoFar);
+                    logger.LogInformation(Resources.Status_ProcessingTypeNumOfNum, Type, num, numToProcess);
+
+                    //logger.LogInformation("Loading {0}", file.PathWithoutExtension);
+                    Interlocked.Increment(ref assetsLoaded);
+                    var pkg = await provider.LoadPackageAsync(file.PathWithoutExtension);
+
+                    if (pkg.GetExports().First() is not UBlueprintGeneratedClass bpClass)
+                    {
+                        logger.LogWarning(Resources.Warning_FailedToLoadFile, file.PathWithoutExtension);
+                        return;
+                    }
+
+                    var bpClassPath = bpClass.GetPathName();
+
+                    Interlocked.Increment(ref assetsLoaded);
+                    var cdo = await bpClass.ClassDefaultObject.LoadAsync();
+
+                    var displayName = (await cdo.GetInheritedOrDefaultAsync<FText>(DisplayNameProperty, this))?.Text ?? $"<{bpClass.Name}>";
+                    var description = DescriptionProperty == null ? null : (await cdo.GetInheritedOrDefaultAsync<FText>(DescriptionProperty, this))?.Text;
+
+                    var namedItemData = new NamedItemData
+                    {
+                        AssetPath = file.PathWithoutExtension,
+                        Description = description,
+                        DisplayName = displayName.Trim(),
+                        Name = bpClass.Name,
+                        Type = Type,
+                    };
+
+                    if (!await ExportAssetAsync(bpClass, cdo, namedItemData))
+                    {
+                        return;
+                    }
+
+                    output.AddNamedItem(bpClassPath, namedItemData);
                 }
-
-                var bpClassPath = bpClass.GetPathName();
-
-                Interlocked.Increment(ref assetsLoaded);
-                var cdo = await bpClass.ClassDefaultObject.LoadAsync();
-
-                var displayName = (await cdo.GetInheritedOrDefaultAsync<FText>(DisplayNameProperty, this))?.Text ?? $"<{bpClass.Name}>";
-                var description = DescriptionProperty == null ? null : (await cdo.GetInheritedOrDefaultAsync<FText>(DescriptionProperty, this))?.Text;
-
-                var namedItemData = new NamedItemData
+                catch (Exception ex)
                 {
-                    AssetPath = file.PathWithoutExtension,
-                    Description = description,
-                    DisplayName = displayName.Trim(),
-                    Name = bpClass.Name,
-                    Type = Type,
-                };
-
-                if (!await ExportAssetAsync(bpClass, cdo, namedItemData))
-                {
-                    return;
+                    logger.LogError(ex, Resources.Error_ExceptionWhileProcessingAsset, path);
                 }
-
-                output.AddNamedItem(bpClassPath, namedItemData);
             });
         }
     }

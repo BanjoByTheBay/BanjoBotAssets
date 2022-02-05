@@ -79,6 +79,24 @@ namespace BanjoBotAssets.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Exception while processing asset {0}.
+        /// </summary>
+        internal static string Error_ExceptionWhileProcessingAsset {
+            get {
+                return ResourceManager.GetString("Error_ExceptionWhileProcessingAsset", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Exception while processing asset group {0}.
+        /// </summary>
+        internal static string Error_ExceptionWhileProcessingAssetGroup {
+            get {
+                return ResourceManager.GetString("Error_ExceptionWhileProcessingAssetGroup", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Couldn&apos;t find game directory. Add it to the GameDirectories setting..
         /// </summary>
         internal static string Error_GameNotFound {

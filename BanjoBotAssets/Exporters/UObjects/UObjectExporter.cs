@@ -41,83 +41,90 @@ namespace BanjoBotAssets.Exporters.UObjects
 
             return Parallel.ForEachAsync(scopeOptions.Value.Limit != null ? assetPaths.Take((int)scopeOptions.Value.Limit) : assetPaths, opts, async (path, _) =>
             {
-                var file = provider[path];
-
-                var num = Interlocked.Increment(ref processedSoFar);
-                logger.LogInformation(Resources.Status_ProcessingTypeNumOfNum, Type, num, numToProcess);
-
-                //logger.LogInformation("Loading {0}", file.PathWithoutExtension);
-                Interlocked.Increment(ref assetsLoaded);
-
-                TAsset? uobject;
-                if (IgnoreLoadFailures)
+                try
                 {
-                    var pkg = await provider.TryLoadPackageAsync(file);
+                    var file = provider[path];
 
-                    cancellationToken.ThrowIfCancellationRequested();
+                    var num = Interlocked.Increment(ref processedSoFar);
+                    logger.LogInformation(Resources.Status_ProcessingTypeNumOfNum, Type, num, numToProcess);
 
-                    if (pkg?.GetExport(0) is TAsset asset)
+                    //logger.LogInformation("Loading {0}", file.PathWithoutExtension);
+                    Interlocked.Increment(ref assetsLoaded);
+
+                    TAsset? uobject;
+                    if (IgnoreLoadFailures)
                     {
-                        uobject = asset;
+                        var pkg = await provider.TryLoadPackageAsync(file);
+
+                        cancellationToken.ThrowIfCancellationRequested();
+
+                        if (pkg?.GetExport(0) is TAsset asset)
+                        {
+                            uobject = asset;
+                        }
+                        else
+                        {
+                            // ignore
+                            return;
+                        }
                     }
                     else
                     {
-                        // ignore
+                        try
+                        {
+                            var pkg = await provider.LoadPackageAsync(file);
+                            cancellationToken.ThrowIfCancellationRequested();
+                            uobject = pkg.GetExport(0) as TAsset;
+                        }
+                        catch (Exception ex)
+                        {
+                            logger.LogError(ex, Resources.Warning_FailedToLoadFile, file.PathWithoutExtension);
+                            return;
+                        }
+                    }
+
+                    if (uobject == null)
+                    {
+                        logger.LogError(Resources.Warning_FailedToLoadFile, file.PathWithoutExtension);
                         return;
                     }
-                }
-                else
-                {
-                    try
+
+                    var templateId = $"{Type}:{uobject.Name}";
+                    var displayName = uobject.GetOrDefault<FText>("DisplayName")?.Text ?? $"<{uobject.Name}>";
+                    var description = uobject.GetOrDefault<FText>("Description")?.Text;
+
+                    var itemData = new TItemData
                     {
-                        var pkg = await provider.LoadPackageAsync(file);
-                        cancellationToken.ThrowIfCancellationRequested();
-                        uobject = pkg.GetExport(0) as TAsset;
+                        AssetPath = provider.FixPath(path),
+                        Name = uobject.Name,
+                        Type = Type,
+                        DisplayName = displayName.Trim(),
+                        Description = description,
+                    };
+
+                    if (uobject.GetOrDefault<EFortItemTier>("Tier") is EFortItemTier tier && tier != default)
+                    {
+                        itemData.Tier = (int)tier;
                     }
-                    catch (Exception ex)
+
+                    if (uobject.GetOrDefault<EFortRarity>("Rarity") is EFortRarity rarity && rarity != default)
                     {
-                        logger.LogError(ex, Resources.Warning_FailedToLoadFile, file.PathWithoutExtension);
+                        itemData.Rarity = rarity.GetNameText().Text;
+                    }
+
+                    cancellationToken.ThrowIfCancellationRequested();
+
+                    if (!await ExportAssetAsync(uobject, itemData))
+                    {
                         return;
                     }
+
+                    output.AddNamedItem(templateId, itemData);
                 }
-
-                if (uobject == null)
+                catch (Exception ex)
                 {
-                    logger.LogError(Resources.Warning_FailedToLoadFile, file.PathWithoutExtension);
-                    return;
+                    logger.LogError(ex, Resources.Error_ExceptionWhileProcessingAsset, path);
                 }
-
-                var templateId = $"{Type}:{uobject.Name}";
-                var displayName = uobject.GetOrDefault<FText>("DisplayName")?.Text ?? $"<{uobject.Name}>";
-                var description = uobject.GetOrDefault<FText>("Description")?.Text;
-
-                var itemData = new TItemData
-                {
-                    AssetPath = provider.FixPath(path),
-                    Name = uobject.Name,
-                    Type = Type,
-                    DisplayName = displayName.Trim(),
-                    Description = description,
-                };
-
-                if (uobject.GetOrDefault<EFortItemTier>("Tier") is EFortItemTier tier && tier != default)
-                {
-                    itemData.Tier = (int)tier;
-                }
-
-                if (uobject.GetOrDefault<EFortRarity>("Rarity") is EFortRarity rarity && rarity != default)
-                {
-                    itemData.Rarity = rarity.GetNameText().Text;
-                }
-
-                cancellationToken.ThrowIfCancellationRequested();
-
-                if (!await ExportAssetAsync(uobject, itemData))
-                {
-                    return;
-                }
-
-                output.AddNamedItem(templateId, itemData);
             });
         }
     }

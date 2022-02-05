@@ -47,73 +47,80 @@ namespace BanjoBotAssets.Exporters.Groups
 
             return Parallel.ForEachAsync(scopeOptions.Value.Limit != null ? uniqueAssets.Take((int)scopeOptions.Value.Limit) : uniqueAssets, opts, async (grouping, _) =>
             {
-                var baseName = grouping.Key;
-
-                if (baseName == null)
+                try
                 {
-                    logger.LogInformation(Resources.Status_SkippingNullGroup, Type, grouping.Count());
-                    return;
-                }
+                    var baseName = grouping.Key;
 
-                var primaryAssetPath = SelectPrimaryAsset(grouping);
-                var file = provider[primaryAssetPath];
-
-                var num = Interlocked.Increment(ref processedSoFar);
-                logger.LogInformation(Resources.Status_ProcessingTypeGroupNumOfNum, Type, num, numToProcess);
-
-                //logger.LogInformation("Loading {0}", file.PathWithoutExtension);
-                Interlocked.Increment(ref assetsLoaded);
-
-                Report(progress, file.PathWithoutExtension);
-
-                var asset = await provider.LoadObjectAsync<TAsset>(file.PathWithoutExtension);
-
-                if (asset == null)
-                {
-                    logger.LogError(Resources.Warning_FailedToLoadFile, file.PathWithoutExtension);
-                    return;
-                }
-
-                if (!WantThisAsset(asset))
-                {
-                    logger.LogInformation(Resources.Status_SkippingEarlyAsInstructed, file.PathWithoutExtension);
-                    return;
-                }
-
-                var fields = await ExtractCommonFieldsAsync(asset, grouping);
-
-                LogAssetName(baseName, fields);
-
-                foreach (var path in grouping)
-                {
-                    var templateId = $"{Type}:{Path.GetFileNameWithoutExtension(path)}";
-                    var parsed = ParseAssetName(path);
-
-                    if (parsed == null)
+                    if (baseName == null)
                     {
-                        logger.LogWarning(Resources.Status_SkippingUnparsable, templateId, path);
-                        continue;
-                    }
-
-                    var itemData = new TItemData
-                    {
-                        AssetPath = provider.FixPath(Path.Combine(Path.GetDirectoryName(path)!, Path.GetFileNameWithoutExtension(path))),
-                        Description = GetDescription(parsed, asset, fields),
-                        DisplayName = GetDisplayName(parsed, asset, fields).Trim(),
-                        Name = Path.GetFileNameWithoutExtension(path),
-                        SubType = fields.SubType,
-                        Type = Type,
-                        Rarity = GetRarity(parsed, asset, fields).GetNameText().Text,
-                        Tier = parsed.Tier,
-                    };
-
-                    if (!await ExportAssetAsync(parsed, asset, fields, path, itemData))
-                    {
-                        logger.LogInformation(Resources.Status_SkippingLateAsInstructed, templateId);
+                        logger.LogInformation(Resources.Status_SkippingNullGroup, Type, grouping.Count());
                         return;
                     }
 
-                    output.AddNamedItem(templateId, itemData);
+                    var primaryAssetPath = SelectPrimaryAsset(grouping);
+                    var file = provider[primaryAssetPath];
+
+                    var num = Interlocked.Increment(ref processedSoFar);
+                    logger.LogInformation(Resources.Status_ProcessingTypeGroupNumOfNum, Type, num, numToProcess);
+
+                    //logger.LogInformation("Loading {0}", file.PathWithoutExtension);
+                    Interlocked.Increment(ref assetsLoaded);
+
+                    Report(progress, file.PathWithoutExtension);
+
+                    var asset = await provider.LoadObjectAsync<TAsset>(file.PathWithoutExtension);
+
+                    if (asset == null)
+                    {
+                        logger.LogError(Resources.Warning_FailedToLoadFile, file.PathWithoutExtension);
+                        return;
+                    }
+
+                    if (!WantThisAsset(asset))
+                    {
+                        logger.LogInformation(Resources.Status_SkippingEarlyAsInstructed, file.PathWithoutExtension);
+                        return;
+                    }
+
+                    var fields = await ExtractCommonFieldsAsync(asset, grouping);
+
+                    LogAssetName(baseName, fields);
+
+                    foreach (var path in grouping)
+                    {
+                        var templateId = $"{Type}:{Path.GetFileNameWithoutExtension(path)}";
+                        var parsed = ParseAssetName(path);
+
+                        if (parsed == null)
+                        {
+                            logger.LogWarning(Resources.Status_SkippingUnparsable, templateId, path);
+                            continue;
+                        }
+
+                        var itemData = new TItemData
+                        {
+                            AssetPath = provider.FixPath(Path.Combine(Path.GetDirectoryName(path)!, Path.GetFileNameWithoutExtension(path))),
+                            Description = GetDescription(parsed, asset, fields),
+                            DisplayName = GetDisplayName(parsed, asset, fields).Trim(),
+                            Name = Path.GetFileNameWithoutExtension(path),
+                            SubType = fields.SubType,
+                            Type = Type,
+                            Rarity = GetRarity(parsed, asset, fields).GetNameText().Text,
+                            Tier = parsed.Tier,
+                        };
+
+                        if (!await ExportAssetAsync(parsed, asset, fields, path, itemData))
+                        {
+                            logger.LogInformation(Resources.Status_SkippingLateAsInstructed, templateId);
+                            return;
+                        }
+
+                        output.AddNamedItem(templateId, itemData);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    logger.LogError(ex, Resources.Error_ExceptionWhileProcessingAssetGroup, grouping.Key);
                 }
             });
         }
