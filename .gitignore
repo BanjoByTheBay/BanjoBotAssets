@@ -7,3 +7,5 @@ schematics.json
 bin
 obj
 *.dll
+*.usmap
+*.old
