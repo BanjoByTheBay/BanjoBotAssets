@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Options;
+﻿using BanjoBotAssets.Config;
+using Microsoft.Extensions.Options;
 using System.Text.Json;
 
 namespace BanjoBotAssets.Aes

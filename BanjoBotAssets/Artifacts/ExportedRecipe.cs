@@ -46,5 +46,7 @@ namespace BanjoBotAssets.Artifacts
         public object? Quantity4 { get; set; }
         public string? Ingredient5 { get; set; }
         public object? Quantity5 { get; set; }
+
+        public string GetMergeKey() => $"{ItemName}|{Tier}|{Material}|{Rarity}";
     }
 }

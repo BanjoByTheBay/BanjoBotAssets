@@ -2,7 +2,7 @@
   "profiles": {
     "BanjoBotAssets": {
       "commandName": "Project",
-      "commandLineArgs": "/only QuestExporter /limit 10",
+      "commandLineArgs": "/merge true /only SurvivorExporter /limit 10",
       "workingDirectory": "D:\\working\\github\\BanjoBotAssets",
       "environmentVariables": {
         "DOTNET_ENVIRONMENT": "Development"

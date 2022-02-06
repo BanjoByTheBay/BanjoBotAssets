@@ -1,17 +1,15 @@
-﻿using BanjoBotAssets.Exporters.Helpers;
-using BanjoBotAssets.Exporters.Options;
-using Microsoft.Extensions.Options;
+﻿using BanjoBotAssets.Config;
+using BanjoBotAssets.Exporters.Helpers;
 using Newtonsoft.Json;
 
 namespace BanjoBotAssets.Artifacts
 {
-    internal class SchematicsJsonArtifact : IExportArtifact
+    internal sealed class SchematicsJsonArtifact : IExportArtifact
     {
-        private readonly IOptions<ExportedFileOptions<SchematicsJsonArtifact>> options;
+        private readonly ExportedFileOptions options;
         private readonly ILogger<SchematicsJsonArtifact> logger;
 
-        public SchematicsJsonArtifact(IOptions<ExportedFileOptions<SchematicsJsonArtifact>> options,
-            ILogger<SchematicsJsonArtifact> logger)
+        public SchematicsJsonArtifact(ExportedFileOptions options, ILogger<SchematicsJsonArtifact> logger)
         {
             this.options = options;
             this.logger = logger;
@@ -96,14 +94,82 @@ namespace BanjoBotAssets.Artifacts
             while (recipesToExclude.Count > 0)
                 exportedRecipes.RemoveAt(recipesToExclude.Pop());
 
-            using (var file = File.CreateText(options.Value.Path))
+            var settings = new JsonSerializerSettings { ContractResolver = NullToEmptyStringResolver.Instance, Formatting = Formatting.Indented };
+            var serializer = JsonSerializer.CreateDefault(settings);
+
+            string path = options.Path;
+
+            if (options.Merge && File.Exists(path))
             {
-                var settings = new JsonSerializerSettings { ContractResolver = NullToEmptyStringResolver.Instance, Formatting = Formatting.Indented };
-                var serializer = JsonSerializer.CreateDefault(settings);
+                logger.LogInformation(Resources.Status_MergingIntoExistingArtifact, path);
+
+                IList<ExportedRecipe> previous;
+                using (var stream = File.OpenText(path))
+                {
+                    var rdr = new JsonTextReader(stream);
+                    previous = serializer.Deserialize<IList<ExportedRecipe>>(rdr)
+                        ?? throw new InvalidOperationException(string.Format(CultureInfo.CurrentCulture, Resources.Error_CannotReadPreviousArtifact, path));
+                }
+
+                Merge(previous, exportedRecipes);
+                exportedRecipes = previous;
+            }
+            else
+            {
+                logger.LogInformation(Resources.Status_WritingFreshArtifact, path);
+            }
+
+            using (var file = File.CreateText(path))
+            {
                 serializer.Serialize(file, exportedRecipes);
             }
 
             return Task.CompletedTask;
+        }
+
+        private static IList<ExportedRecipe> Merge(IList<ExportedRecipe> previous, IList<ExportedRecipe> current)
+        {
+            // duplicate current and build a map of merge key => array index
+            var mySrc = new List<ExportedRecipe?>(current.Count);
+            var keyedSrc = new Dictionary<string, int>(current.Count);
+
+            foreach (var er in current)
+            {
+                keyedSrc.Add(er.GetMergeKey(), mySrc.Count);
+                mySrc.Add(er);
+            }
+
+            // copy previous into result, taking values from current instead whenever possible
+            var result = new List<ExportedRecipe>(previous.Count + (mySrc.Count / 10));
+
+            foreach (var recipe in previous)
+            {
+                var mergeKey = recipe.GetMergeKey();
+
+                if (keyedSrc.TryGetValue(mergeKey, out var i))
+                {
+                    var item = mySrc[i];
+                    System.Diagnostics.Debug.Assert(item != null);
+                    result.Add(item);
+                    keyedSrc.Remove(mergeKey);
+                    mySrc[i] = null;
+                }
+                else
+                {
+                    result.Add(recipe);
+                }
+            }
+
+            // copy any remaining items from current
+            foreach (var recipe in mySrc)
+            {
+                if (recipe != null)
+                {
+                    mySrc.Add(recipe);
+                }
+            }
+
+            return result;
         }
     }
 }

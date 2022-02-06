@@ -1,8 +1,8 @@
 ﻿using BanjoBotAssets.Aes;
 using BanjoBotAssets.Artifacts;
+using BanjoBotAssets.Config;
 using BanjoBotAssets.Exporters;
 using BanjoBotAssets.Exporters.Helpers;
-using BanjoBotAssets.Exporters.Options;
 using CUE4Parse.FileProvider;
 using CUE4Parse.UE4.Versions;
 using Microsoft.Extensions.Options;
@@ -23,7 +23,8 @@ namespace BanjoBotAssets.Extensions
                 .Configure<IConfiguration>((options, config) =>
                 {
                     options.AesApiUri = "https://fortnite-api.com/v2/aes";
-                    config.GetRequiredSection(nameof(AesOptions)).Bind(options);
+                    options.LocalFilePath = "aes.json";
+                    config.GetSection(nameof(AesOptions)).Bind(options);
                 });
 
             return services;
@@ -47,27 +48,59 @@ namespace BanjoBotAssets.Extensions
                     config.GetRequiredSection("PerformanceOptions").Bind(options);
                 });
 
+            // all artifacts use global Merge option by default
+            services
+                .ConfigureAll<ExportedFileOptions, IOptions<ScopeOptions>>(
+                        (options, scopeOptions) => options.Merge = scopeOptions.Value.Merge);
+
             // artifact generator for assets.json and its options
             services
-                .AddTransient<IExportArtifact, AssetsJsonArtifact>()
-                .AddOptions<ExportedFileOptions<AssetsJsonArtifact>>()
-                .Configure<IConfiguration>((options, config) =>
+                .AddTransientWithNamedOptions<IExportArtifact, AssetsJsonArtifact, ExportedFileOptions>()
+                .Configure<IConfiguration, IOptions<ScopeOptions>>((options, config, scopeOptions) =>
                 {
                     options.Path = Resources.File_assets_json;
+                    options.Merge = scopeOptions.Value.Merge;
                     config.GetRequiredSection("ExportedAssets").Bind(options);
                 });
 
             // artifact generator for schematics.json and its options
             services
-                .AddTransient<IExportArtifact, SchematicsJsonArtifact>()
-                .AddOptions<ExportedFileOptions<SchematicsJsonArtifact>>()
-                .Configure<IConfiguration>((options, config) =>
+                .AddTransientWithNamedOptions<IExportArtifact, SchematicsJsonArtifact, ExportedFileOptions>()
+                .Configure<IConfiguration, IOptions<ScopeOptions>>((options, config, scopeOptions) =>
                 {
                     options.Path = Resources.File_schematics_json;
+                    options.Merge = scopeOptions.Value.Merge;
                     config.GetRequiredSection("ExportedSchematics").Bind(options);
                 });
 
             return services;
+        }
+
+        public static IServiceCollection ConfigureAll<TOptions, TDep1>(this IServiceCollection services, Action<TOptions, TDep1> configureOptions)
+            where TOptions : class
+            where TDep1 : class
+        {
+            return services
+                .AddTransient<IConfigureOptions<TOptions>>(sp =>
+                    new ConfigureNamedOptions<TOptions, TDep1>(
+                        name: null,
+                        sp.GetRequiredService<TDep1>(),
+                        configureOptions));
+        }
+
+        public static OptionsBuilder<TOptions> AddTransientWithNamedOptions<TService, TImplementation, TOptions>(this IServiceCollection services)
+            where TService : class
+            where TImplementation : TService
+            where TOptions : class
+        {
+            return services
+                .AddTransient<TService>(sp =>
+                {
+                    using var scope = sp.CreateScope();
+                    var opts = scope.ServiceProvider.GetRequiredService<IOptionsSnapshot<TOptions>>();
+                    return ActivatorUtilities.CreateInstance<TImplementation>(sp, opts.Get(typeof(TImplementation).FullName));
+                })
+                .AddOptions<TOptions>(typeof(TImplementation).FullName);
         }
 
         public static IServiceCollection AddGameFileProvider(this IServiceCollection services)
@@ -91,8 +124,7 @@ namespace BanjoBotAssets.Extensions
                          new VersionContainer(EGame.GAME_UE5_LATEST));
                      provider.Initialize();
                      return provider;
-                 }))
-                .AddTransient<ITypeMappingsProviderFactory, CachingBenBotMappingsProviderFactory>();
+                 }));
 
             services.AddOptions<GameFileOptions>()
                 .Configure<IConfiguration>((options, config) =>
@@ -100,6 +132,22 @@ namespace BanjoBotAssets.Extensions
                     options.ELanguage = "";
                     options.GameDirectories = Array.Empty<string>();
                     config.GetSection(nameof(GameFileOptions)).Bind(options);
+                });
+
+            return services;
+        }
+
+        public static IServiceCollection AddMappingsProviders(this IServiceCollection services)
+        {
+            services
+                .AddTransient<ITypeMappingsProviderFactory, CachingBenBotMappingsProviderFactory>();
+
+            services.AddOptions<MappingsOptions>()
+                .Configure<IConfiguration>((options, config) =>
+                {
+                    options.MappingsApiUri = "https://benbot.app/api/v1/mappings";
+                    options.LocalFilePath = "mappings.usmap";
+                    config.GetSection(nameof(MappingsOptions)).Bind(options);
                 });
 
             return services;

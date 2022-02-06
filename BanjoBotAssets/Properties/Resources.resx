@@ -124,6 +124,10 @@
   <data name="Error_AesFetchFailed" xml:space="preserve">
     <value>Couldn't load AES keys.</value>
   </data>
+  <data name="Error_CannotReadPreviousArtifact" xml:space="preserve">
+    <value>Unable to merge because the previous artifact could not be read: {0}</value>
+    <comment>0=filename</comment>
+  </data>
   <data name="Error_ExceptionWhileProcessingAsset" xml:space="preserve">
     <value>Exception while processing asset {0}</value>
     <comment>0=asset ID</comment>
@@ -315,6 +319,10 @@
   <data name="Status_LoadingMappings" xml:space="preserve">
     <value>Loading mappings</value>
   </data>
+  <data name="Status_MergingIntoExistingArtifact" xml:space="preserve">
+    <value>Merging into existing artifact: {0}</value>
+    <comment>0=filename</comment>
+  </data>
   <data name="Status_MissingAesCache" xml:space="preserve">
     <value>No cached AES keys found at {0}</value>
     <comment>0=filename</comment>
@@ -363,6 +371,10 @@
   </data>
   <data name="Status_SubmittingMainKey" xml:space="preserve">
     <value>Submitting main key</value>
+  </data>
+  <data name="Status_WritingFreshArtifact" xml:space="preserve">
+    <value>Writing artifact: {0}</value>
+    <comment>0=filename</comment>
   </data>
   <data name="Warning_CannotParseDefenderName" xml:space="preserve">
     <value>WARNING: Can't parse defender name: {0}</value>

@@ -15,5 +15,10 @@ namespace BanjoBotAssets.Config
         /// or <see cref="UObjectExporter"/> to export. (By default, they're all exported.)
         /// </summary>
         public int? Limit { get; set; }
+        /// <summary>
+        /// Whether to keep an existing output file and merge in the newly exported items, rather than overwriting
+        /// the file.
+        /// </summary>
+        public bool Merge { get; set; }
     }
 }

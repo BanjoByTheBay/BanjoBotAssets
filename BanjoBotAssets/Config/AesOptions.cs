@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace BanjoBotAssets.Aes
+namespace BanjoBotAssets.Config
 {
     internal class AesOptions
     {

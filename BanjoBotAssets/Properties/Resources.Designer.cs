@@ -79,6 +79,15 @@ namespace BanjoBotAssets.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Unable to merge because the previous artifact could not be read: {0}.
+        /// </summary>
+        internal static string Error_CannotReadPreviousArtifact {
+            get {
+                return ResourceManager.GetString("Error_CannotReadPreviousArtifact", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Exception while processing asset {0}.
         /// </summary>
         internal static string Error_ExceptionWhileProcessingAsset {
@@ -619,6 +628,15 @@ namespace BanjoBotAssets.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Merging into existing artifact: {0}.
+        /// </summary>
+        internal static string Status_MergingIntoExistingArtifact {
+            get {
+                return ResourceManager.GetString("Status_MergingIntoExistingArtifact", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to No cached AES keys found at {0}.
         /// </summary>
         internal static string Status_MissingAesCache {
@@ -732,6 +750,15 @@ namespace BanjoBotAssets.Properties {
         internal static string Status_SubmittingMainKey {
             get {
                 return ResourceManager.GetString("Status_SubmittingMainKey", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Writing artifact: {0}.
+        /// </summary>
+        internal static string Status_WritingFreshArtifact {
+            get {
+                return ResourceManager.GetString("Status_WritingFreshArtifact", resourceCulture);
             }
         }
         

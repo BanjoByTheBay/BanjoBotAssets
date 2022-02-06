@@ -21,6 +21,7 @@ await Host.CreateDefaultBuilder(args)
             .AddHostedService<AssetExportService>()
             .AddHttpClient()
             .AddAesProviders()
+            .AddMappingsProviders()
             .AddGameFileProvider()
             .AddAssetExporters();
 

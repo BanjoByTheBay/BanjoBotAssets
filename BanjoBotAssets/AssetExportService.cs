@@ -5,7 +5,6 @@ using CUE4Parse.UE4.Versions;
 using System.Diagnostics;
 using Microsoft.Extensions.Options;
 using BanjoBotAssets.Aes;
-using BanjoBotAssets.Exporters.Options;
 using BanjoBotAssets.Exporters.Helpers;
 using BanjoBotAssets.Artifacts;
 using BanjoBotAssets.Config;
@@ -139,12 +138,11 @@ namespace BanjoBotAssets
             }
 
             // sometimes the mappings don't load, and then nothing works
-            // TODO: cache mappings locally
             if (provider.MappingsForThisGame is null or { Enums.Count: 0, Types.Count: 0 })
             {
                 await Task.Delay(5 * 1000, cancellationToken);
                 logger.LogWarning(Resources.Status_RetryingMappings);
-                provider.LoadMappings();
+                provider.MappingsContainer = typeMappingsProviderFactory.Create("fortnitegame");
 
                 if (provider.MappingsForThisGame is null or { Enums.Count: 0, Types.Count: 0 })
                     throw new CriticalFailureException(Resources.Error_MappingsFetchFailed);

@@ -1,5 +1,7 @@
 ﻿using System.Runtime.InteropServices;
+using BanjoBotAssets.Config;
 using CUE4Parse.MappingsProvider;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json.Linq;
 
 namespace BanjoBotAssets
@@ -34,25 +36,23 @@ namespace BanjoBotAssets
     {
         private readonly IHttpClientFactory httpClientFactory;
         private readonly ILogger<CachingBenBotMappingsProvider> logger;
-
+        private readonly IOptions<MappingsOptions> options;
         private readonly string? _specificVersion;
         private readonly string _gameName;
         private readonly bool _isWindows64Bit;
 
         public CachingBenBotMappingsProvider(IHttpClientFactory httpClientFactory, ILogger<CachingBenBotMappingsProvider> logger,
-            string gameName, string? specificVersion = null)
+            IOptions<MappingsOptions> options, string gameName, string? specificVersion = null)
         {
             this.httpClientFactory = httpClientFactory;
             this.logger = logger;
-
+            this.options = options;
             _specificVersion = specificVersion;
             _gameName = gameName;
             _isWindows64Bit = Environment.Is64BitOperatingSystem && RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
             Reload();
         }
         
-        public const string BenMappingsEndpoint = "https://benbot.app/api/v1/mappings";
-
         private HttpClient CreateHttpClient()
         {
             var client = httpClientFactory.CreateClient();
@@ -70,18 +70,19 @@ namespace BanjoBotAssets
         {
             try
             {
-                const string CacheFile = "mappings.usmap";
-                if (File.Exists(CacheFile))
+                string cacheFile = options.Value.LocalFilePath;
+
+                if (File.Exists(cacheFile))
                 {
-                    var bytes = await File.ReadAllBytesAsync(CacheFile);
-                    AddUsmap(bytes, _gameName, CacheFile);
-                    logger.LogInformation("Loaded cached mappings from {File}", CacheFile);
+                    var bytes = await File.ReadAllBytesAsync(cacheFile);
+                    AddUsmap(bytes, _gameName, cacheFile);
+                    logger.LogInformation("Loaded cached mappings from {File}", cacheFile);
                     return true;
                 }
 
                 var jsonText = _specificVersion != null
-                    ? await LoadEndpoint(BenMappingsEndpoint + $"?version={_specificVersion}")
-                    : await LoadEndpoint(BenMappingsEndpoint);
+                    ? await LoadEndpoint(options.Value.MappingsApiUri + $"?version={_specificVersion}")
+                    : await LoadEndpoint(options.Value.MappingsApiUri);
                 if (jsonText == null)
                 {
                     logger.LogError("Failed to get BenBot Mappings Endpoint");
@@ -122,8 +123,8 @@ namespace BanjoBotAssets
                     return false;
                 }
 
-                await File.WriteAllBytesAsync(CacheFile, usmapBytes);
-                logger.LogInformation("Cached mappings to {File}", CacheFile);
+                await File.WriteAllBytesAsync(cacheFile, usmapBytes);
+                logger.LogInformation("Cached mappings to {File}", cacheFile);
 
                 AddUsmap(usmapBytes, _gameName, usmapName!);
                 return true;
