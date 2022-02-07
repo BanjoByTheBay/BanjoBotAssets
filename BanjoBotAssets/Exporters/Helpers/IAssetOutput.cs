@@ -12,8 +12,11 @@ namespace BanjoBotAssets.Exporters.Helpers
         void AddSurvivorItemRatings(ItemRatingTable itemRatings);
         void AddLeadSurvivorItemRatings(ItemRatingTable itemRatings);
 
+        void AddCraftingRecipe(string name, IReadOnlyDictionary<string, int> ingredients);
+        void AddDisplayNameCorrection(string schematicTemplateId, string v);
+
         void CopyTo(ExportedAssets exportedAssets, IList<ExportedRecipe> exportedRecipes, CancellationToken cancellationToken);
 
-        void AddCraftingRecipe(string name, IReadOnlyDictionary<string, int> ingredients);
+        void ApplyDisplayNameCorrections(ExportedAssets exportedAssets);
     }
 }

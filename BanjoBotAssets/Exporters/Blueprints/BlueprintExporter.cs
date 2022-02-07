@@ -72,7 +72,7 @@ namespace BanjoBotAssets.Exporters.Blueprints
 
                     output.AddNamedItem(bpClassPath, namedItemData);
                 }
-                catch (Exception ex)
+                catch (Exception ex) when (ex is not OperationCanceledException)
                 {
                     logger.LogError(ex, Resources.Error_ExceptionWhileProcessingAsset, path);
                 }

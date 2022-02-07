@@ -121,7 +121,7 @@ namespace BanjoBotAssets.Exporters.UObjects
 
                     output.AddNamedItem(templateId, itemData);
                 }
-                catch (Exception ex)
+                catch (Exception ex) when (ex is not OperationCanceledException)
                 {
                     logger.LogError(ex, Resources.Error_ExceptionWhileProcessingAsset, path);
                 }

@@ -29,6 +29,9 @@ namespace BanjoBotAssets.Exporters
                 var recipeResults = recipe.GetOrDefault<FFortItemQuantityPair[]>("RecipeResults");
                 var assetName = recipeResults[0].ItemPrimaryAssetId.PrimaryAssetName.Text;
 
+                /// NOTE: we store template IDs instead of display names in the recipes here.
+                /// they're replaced with display names in <see cref="Artifacts.SchematicsJsonArtifact"/>.
+
                 // for weapons and traps, find the schematic by replacing the wid_ or tid_ prefix with sid_
                 var templateId = widOrTidRegex.Replace(assetName, "Schematic:sid_");
                 if (templateId == assetName)

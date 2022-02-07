@@ -11,6 +11,8 @@ namespace BanjoBotAssets.Exporters.Helpers
 
         private readonly ConcurrentDictionary<string, IReadOnlyDictionary<string, int>> craftingRecipes = new(StringComparer.OrdinalIgnoreCase);
 
+        private readonly ConcurrentDictionary<string, string> displayNameCorrections = new(StringComparer.OrdinalIgnoreCase);
+
         public void AddDefaultItemRatings(ItemRatingTable itemRatings)
         {
             defaultItemRatings = itemRatings;
@@ -87,6 +89,22 @@ namespace BanjoBotAssets.Exporters.Helpers
         public void AddCraftingRecipe(string name, IReadOnlyDictionary<string, int> ingredients)
         {
             craftingRecipes.TryAdd(name, ingredients);
+        }
+
+        public void AddDisplayNameCorrection(string templateId, string correctedName)
+        {
+            displayNameCorrections.TryAdd(templateId, correctedName);
+        }
+
+        public void ApplyDisplayNameCorrections(ExportedAssets exportedAssets)
+        {
+            foreach (var (templateId, displayName) in displayNameCorrections)
+            {
+                if (exportedAssets.NamedItems.TryGetValue(templateId, out var item))
+                {
+                    item.DisplayName = displayName;
+                }
+            }
         }
     }
 }

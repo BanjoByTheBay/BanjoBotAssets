@@ -646,6 +646,15 @@ namespace BanjoBotAssets.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Processing {0} ({1} of {2}).
+        /// </summary>
+        internal static string Status_ProcessingFile {
+            get {
+                return ResourceManager.GetString("Status_ProcessingFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Processing {0} group {1} of {2}.
         /// </summary>
         internal static string Status_ProcessingTypeGroupNumOfNum {

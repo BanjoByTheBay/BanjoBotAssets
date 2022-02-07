@@ -208,6 +208,12 @@ namespace BanjoBotAssets
                 privateExport.CopyTo(exportedAssets, exportedRecipes, cancellationToken);
             }
 
+            foreach (var privateExport in allPrivateExports)
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                privateExport.ApplyDisplayNameCorrections(exportedAssets);
+            }
+
             allPrivateExports.Clear();
             return (exportedAssets, exportedRecipes);
         }

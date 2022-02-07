@@ -118,7 +118,7 @@ namespace BanjoBotAssets.Exporters.Groups
                         output.AddNamedItem(templateId, itemData);
                     }
                 }
-                catch (Exception ex)
+                catch (Exception ex) when (ex is not OperationCanceledException)
                 {
                     logger.LogError(ex, Resources.Error_ExceptionWhileProcessingAssetGroup, grouping.Key);
                 }

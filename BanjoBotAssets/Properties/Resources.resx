@@ -327,9 +327,13 @@
     <value>No cached AES keys found at {0}</value>
     <comment>0=filename</comment>
   </data>
+  <data name="Status_ProcessingFile" xml:space="preserve">
+    <value>Processing {0} ({1} of {2})</value>
+    <comment>0=filename, 1=number done, 2=total number</comment>
+  </data>
   <data name="Status_ProcessingTypeGroupNumOfNum" xml:space="preserve">
     <value>Processing {0} group {1} of {2}</value>
-    <comment>0=asset type, 1=number done, 3=total number</comment>
+    <comment>0=asset type, 1=number done, 2=total number</comment>
   </data>
   <data name="Status_ProcessingTypeNumOfNum" xml:space="preserve">
     <value>Processing {0} {1} of {2}</value>
