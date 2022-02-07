@@ -26,14 +26,14 @@ jobs:
     - name: Test
       run: dotnet test --no-build --verbosity normal
     - name: Publish
-      run: dotnet publish BanjoBotAssets -c Release
+      run: dotnet publish BanjoBotAssets -c Release -r win-x64 --self-contained false
     - name: Upload a Build Artifact
       uses: actions/upload-artifact@v2.3.1
       with:
         # Artifact name
-        name: banjobot-assets-bin
+        name: BanjoBotAssets-win-x64
         # A file, directory or wildcard pattern that describes what to upload
-        path: BanjoBotAssets/bin/Release/net6.0/publish/
+        path: BanjoBotAssets/bin/Release/net6.0/win-x64/publish/
         # The desired behavior if no files are found using the provided path.
         if-no-files-found: error
         # Duration after which artifact will expire in days. 0 means using default retention.
