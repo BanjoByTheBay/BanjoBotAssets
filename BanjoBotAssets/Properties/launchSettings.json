@@ -2,7 +2,7 @@
   "profiles": {
     "BanjoBotAssets": {
       "commandName": "Project",
-      "commandLineArgs": "/merge true /only SchematicExporter,AssetRegistryExporter",
+      "commandLineArgs": "/merge true /only QuestMapExporter",
       "workingDirectory": "D:\\working\\github\\BanjoBotAssets",
       "environmentVariables": {
         "DOTNET_ENVIRONMENT": "Development"

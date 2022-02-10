@@ -15,6 +15,9 @@ namespace BanjoBotAssets.Exporters.Helpers
         void AddCraftingRecipe(string name, IReadOnlyDictionary<string, int> ingredients);
         void AddDisplayNameCorrection(string schematicTemplateId, string v);
 
+        void AddMainQuestLine(string name, string[][] questPages);
+        void AddEventQuestLine(string name, string[][] questPages);
+
         void CopyTo(ExportedAssets exportedAssets, IList<ExportedRecipe> exportedRecipes, CancellationToken cancellationToken);
 
         void ApplyDisplayNameCorrections(ExportedAssets exportedAssets);

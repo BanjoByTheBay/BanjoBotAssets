@@ -13,6 +13,9 @@ namespace BanjoBotAssets.Exporters.Helpers
 
         private readonly ConcurrentDictionary<string, string> displayNameCorrections = new(StringComparer.OrdinalIgnoreCase);
 
+        private readonly ConcurrentDictionary<string, string[][]> mainQuestLines = new(StringComparer.OrdinalIgnoreCase);
+        private readonly ConcurrentDictionary<string, string[][]> eventQuestLines = new(StringComparer.OrdinalIgnoreCase);
+
         public void AddDefaultItemRatings(ItemRatingTable itemRatings)
         {
             defaultItemRatings = itemRatings;
@@ -63,8 +66,24 @@ namespace BanjoBotAssets.Exporters.Helpers
             if (leadSurvivorItemRatings != null)
                 exportedAssets.ItemRatings.LeadSurvivor = leadSurvivorItemRatings;
 
+            cancellationToken.ThrowIfCancellationRequested();
+
+            foreach (var (k, v) in mainQuestLines)
+            {
+                exportedAssets.MainQuestLines.TryAdd(k, v);
+            }
+
+            cancellationToken.ThrowIfCancellationRequested();
+
+            foreach (var (k, v) in eventQuestLines)
+            {
+                exportedAssets.EventQuestLines.TryAdd(k, v);
+            }
+
             foreach (var (templateId, recipe) in craftingRecipes)
             {
+                cancellationToken.ThrowIfCancellationRequested();
+
                 var ingredients = new Queue<KeyValuePair<string, int>>(recipe);
 
                 var exportedRecipe = new ExportedRecipe { ItemName = templateId };
@@ -81,14 +100,22 @@ namespace BanjoBotAssets.Exporters.Helpers
                     (exportedRecipe.Ingredient5, exportedRecipe.Quantity5!) = pair;
 
                 exportedRecipes.Add(exportedRecipe);
-
-                cancellationToken.ThrowIfCancellationRequested();
             }
         }
 
         public void AddCraftingRecipe(string name, IReadOnlyDictionary<string, int> ingredients)
         {
             craftingRecipes.TryAdd(name, ingredients);
+        }
+
+        public void AddMainQuestLine(string name, string[][] quests)
+        {
+            mainQuestLines.TryAdd(name, quests);
+        }
+
+        public void AddEventQuestLine(string name, string[][] quests)
+        {
+            eventQuestLines.TryAdd(name, quests);
         }
 
         public void AddDisplayNameCorrection(string templateId, string correctedName)

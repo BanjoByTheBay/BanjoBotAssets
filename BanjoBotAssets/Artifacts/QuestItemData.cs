@@ -2,6 +2,7 @@
 
 namespace BanjoBotAssets.Artifacts
 {
+    [NamedItemData("Quest")]
     internal class QuestItemData : NamedItemData
     {
         [DisallowNull]

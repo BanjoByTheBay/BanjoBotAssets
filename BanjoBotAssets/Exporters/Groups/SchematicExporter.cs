@@ -3,6 +3,7 @@ using BanjoBotAssets.Exporters.Helpers;
 using CUE4Parse.UE4.Objects.GameplayTags;
 
 // TODO: export weapon/trap stats
+// TODO: export alteration exclusions (e.g. flame grill traps shouldn't have Healing Amount perks)
 
 namespace BanjoBotAssets.Exporters.Groups
 {

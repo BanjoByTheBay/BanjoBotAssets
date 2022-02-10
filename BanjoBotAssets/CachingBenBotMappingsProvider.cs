@@ -52,7 +52,7 @@ namespace BanjoBotAssets
             _isWindows64Bit = Environment.Is64BitOperatingSystem && RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
             Reload();
         }
-        
+
         private HttpClient CreateHttpClient()
         {
             var client = httpClientFactory.CreateClient();
@@ -60,7 +60,7 @@ namespace BanjoBotAssets
             client.DefaultRequestHeaders.Add("User-Agent", "CUE4Parse");
             return client;
         }
-        
+
         public sealed override bool Reload()
         {
             return ReloadAsync().ConfigureAwait(false).GetAwaiter().GetResult();
@@ -135,7 +135,7 @@ namespace BanjoBotAssets
                 return false;
             }
         }
-        
+
         private async Task<string?> LoadEndpoint(string url)
         {
             try

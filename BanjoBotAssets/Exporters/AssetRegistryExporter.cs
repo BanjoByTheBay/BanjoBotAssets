@@ -29,40 +29,38 @@ namespace BanjoBotAssets.Exporters
 
                     Interlocked.Increment(ref assetsLoaded);
 
-                    using (var reader = file.CreateReader())
+                    using var reader = file.CreateReader();
+                    var assetRegistry = new FAssetRegistryState(reader);
+                    foreach (var buffer in assetRegistry.PreallocatedAssetDataBuffers)
                     {
-                        var assetRegistry = new FAssetRegistryState(reader);
-                        foreach (var buffer in assetRegistry.PreallocatedAssetDataBuffers)
-                        {
-                            cancellationToken.ThrowIfCancellationRequested();
+                        cancellationToken.ThrowIfCancellationRequested();
 
-                            if (buffer.ObjectPath.Text.Contains("/Athena/"))
+                        if (buffer.ObjectPath.Text.Contains("/Athena/"))
+                        {
+                            continue;
+                        }
+
+                        if (weaponOrTrapAssetClassRegex.IsMatch(buffer.AssetClass.Text))
+                        {
+                            var schematicTemplateId = $"Schematic:SID_{buffer.AssetName.Text[4..]}";
+                            var displayName = buffer.TagsAndValues.FirstOrDefault(pair => pair.Key.Text == "DisplayName").Value;
+
+                            // TODO: localize displayName
+
+                            if (displayName == null)
                             {
                                 continue;
                             }
 
-                            if (weaponOrTrapAssetClassRegex.IsMatch(buffer.AssetClass.Text))
+                            if (nsLocTextRegex.Match(displayName) is { Success: true, Groups: var g })
                             {
-                                var schematicTemplateId = $"Schematic:SID_{buffer.AssetName.Text[4..]}";
-                                var displayName = buffer.TagsAndValues.FirstOrDefault(pair => pair.Key.Text == "DisplayName").Value;
-                                
-                                // TODO: localize displayName
-
-                                if (displayName == null)
-                                {
-                                    continue;
-                                }
-
-                                if (nsLocTextRegex.Match(displayName) is { Success: true, Groups: var g })
-                                {
-                                    var goodName = g["text"].Value;
-                                    output.AddDisplayNameCorrection(schematicTemplateId, goodName.Trim());
-                                }
-                                else
-                                {
-                                    // shouldn't get here...
-                                    output.AddDisplayNameCorrection(schematicTemplateId, $"<{displayName.Trim()}>");
-                                }
+                                var goodName = g["text"].Value;
+                                output.AddDisplayNameCorrection(schematicTemplateId, goodName.Trim());
+                            }
+                            else
+                            {
+                                // shouldn't get here...
+                                output.AddDisplayNameCorrection(schematicTemplateId, $"<{displayName.Trim()}>");
                             }
                         }
                     }

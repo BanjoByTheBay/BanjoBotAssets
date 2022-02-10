@@ -1,7 +1,6 @@
-﻿using System.Diagnostics.CodeAnalysis;
-
-namespace BanjoBotAssets.Artifacts
+﻿namespace BanjoBotAssets.Artifacts
 {
+    [NamedItemData("Worker")]
     internal class SurvivorItemData : NamedItemData
     {
         public string? Personality { get; set; }

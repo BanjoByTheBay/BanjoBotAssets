@@ -547,6 +547,15 @@ namespace BanjoBotAssets.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Exported quest map.
+        /// </summary>
+        internal static string Status_ExportedQuestMap {
+            get {
+                return ResourceManager.GetString("Status_ExportedQuestMap", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Exported recipes.
         /// </summary>
         internal static string Status_ExportedRecipes {
@@ -570,6 +579,15 @@ namespace BanjoBotAssets.Properties {
         internal static string Status_ExportingItemRatings {
             get {
                 return ResourceManager.GetString("Status_ExportingItemRatings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Exporting quest map.
+        /// </summary>
+        internal static string Status_ExportingQuestMap {
+            get {
+                return ResourceManager.GetString("Status_ExportingQuestMap", resourceCulture);
             }
         }
         
@@ -853,6 +871,15 @@ namespace BanjoBotAssets.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to WARNING: Can&apos;t find campaign quest map data.
+        /// </summary>
+        internal static string Warning_MissingCampaignQuestMapData {
+            get {
+                return ResourceManager.GetString("Warning_MissingCampaignQuestMapData", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to WARNING: Can&apos;t find crafting row {0}.
         /// </summary>
         internal static string Warning_MissingCraftingTableRow {
@@ -867,6 +894,15 @@ namespace BanjoBotAssets.Properties {
         internal static string Warning_MissingCurveTableRow {
             get {
                 return ResourceManager.GetString("Warning_MissingCurveTableRow", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to WARNING: Can&apos;t find event quest map data.
+        /// </summary>
+        internal static string Warning_MissingEventQuestMapData {
+            get {
+                return ResourceManager.GetString("Warning_MissingEventQuestMapData", resourceCulture);
             }
         }
         

@@ -288,6 +288,9 @@
   <data name="Status_ExportedItemRatings" xml:space="preserve">
     <value>Exported item ratings</value>
   </data>
+  <data name="Status_ExportedQuestMap" xml:space="preserve">
+    <value>Exported quest map</value>
+  </data>
   <data name="Status_ExportedRecipes" xml:space="preserve">
     <value>Exported recipes</value>
   </data>
@@ -297,6 +300,9 @@
   </data>
   <data name="Status_ExportingItemRatings" xml:space="preserve">
     <value>Exporting item ratings</value>
+  </data>
+  <data name="Status_ExportingQuestMap" xml:space="preserve">
+    <value>Exporting quest map</value>
   </data>
   <data name="Status_ExportingRecipes" xml:space="preserve">
     <value>Exporting recipes</value>
@@ -415,6 +421,9 @@
   <data name="Warning_IgnoringUnknownModifyOperation" xml:space="preserve">
     <value>WARNING: Ignoring unknown modify operation {0}</value>
   </data>
+  <data name="Warning_MissingCampaignQuestMapData" xml:space="preserve">
+    <value>WARNING: Can't find campaign quest map data</value>
+  </data>
   <data name="Warning_MissingCraftingTableRow" xml:space="preserve">
     <value>WARNING: Can't find crafting row {0}</value>
     <comment>0=table row ID</comment>
@@ -422,6 +431,9 @@
   <data name="Warning_MissingCurveTableRow" xml:space="preserve">
     <value>WARNING: Curve table has no row {0}</value>
     <comment>0=row ID</comment>
+  </data>
+  <data name="Warning_MissingEventQuestMapData" xml:space="preserve">
+    <value>WARNING: Can't find event quest map data</value>
   </data>
   <data name="Warning_NoCraftingRowForSchematic" xml:space="preserve">
     <value>WARNING: No crafting row listed for schematic {0}</value>

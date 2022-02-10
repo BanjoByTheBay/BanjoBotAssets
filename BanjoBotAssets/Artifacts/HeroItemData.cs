@@ -2,6 +2,7 @@
 
 namespace BanjoBotAssets.Artifacts
 {
+    [NamedItemData("Hero")]
     internal class HeroItemData : NamedItemData
     {
         [DisallowNull]

@@ -234,14 +234,11 @@ namespace BanjoBotAssets
             }
         }
 
-
         private void LoadLocalization(CancellationToken cancellationToken)
         {
             logger.LogInformation(Resources.Status_LoadingLocalization);
             provider.LoadLocalization(GetLocalizationLanguage(), cancellationToken);
         }
-
-
 
         private ELanguage GetLocalizationLanguage()
         {

@@ -1,4 +1,6 @@
-﻿namespace BanjoBotAssets.Artifacts
+﻿using Newtonsoft.Json;
+
+namespace BanjoBotAssets.Artifacts
 {
     internal class ExportedAssets
     {
@@ -9,6 +11,10 @@
         public ItemRatingTables ItemRatings { get; } = new();
 
         public Dictionary<string, DifficultyInfo> DifficultyInfo { get; } = new(StringComparer.OrdinalIgnoreCase);
+
+        public Dictionary<string, string[][]> MainQuestLines { get; } = new();
+
+        public Dictionary<string, string[][]> EventQuestLines { get; } = new();
 
         /// <summary>
         /// Merges the contents of another <see cref="ExportedAssets"/> instance into this one.
@@ -43,6 +49,22 @@
                 foreach (var (k, v) in other.DifficultyInfo)
                 {
                     DifficultyInfo[k] = v;
+                }
+            }
+
+            if (other.MainQuestLines != null)
+            {
+                foreach (var (k, v) in other.MainQuestLines)
+                {
+                    MainQuestLines[k] = v;
+                }
+            }
+
+            if (other.EventQuestLines != null)
+            {
+                foreach (var (k, v) in other.EventQuestLines)
+                {
+                    EventQuestLines[k] = v;
                 }
             }
         }
