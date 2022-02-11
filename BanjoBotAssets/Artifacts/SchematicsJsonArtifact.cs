@@ -2,6 +2,8 @@
 using BanjoBotAssets.Exporters.Helpers;
 using Newtonsoft.Json;
 
+// TODO: sort recipes/ingredients when exporting to ensure stable order
+
 namespace BanjoBotAssets.Artifacts
 {
     internal sealed class SchematicsJsonArtifact : IExportArtifact

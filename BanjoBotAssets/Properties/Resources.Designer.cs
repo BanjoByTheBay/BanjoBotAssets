@@ -628,7 +628,7 @@ namespace BanjoBotAssets.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Loading localization.
+        ///   Looks up a localized string similar to Loading localization ({0}).
         /// </summary>
         internal static string Status_LoadingLocalization {
             get {

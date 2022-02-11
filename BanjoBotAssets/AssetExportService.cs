@@ -236,8 +236,9 @@ namespace BanjoBotAssets
 
         private void LoadLocalization(CancellationToken cancellationToken)
         {
-            logger.LogInformation(Resources.Status_LoadingLocalization);
-            provider.LoadLocalization(GetLocalizationLanguage(), cancellationToken);
+            var language = GetLocalizationLanguage();
+            logger.LogInformation(Resources.Status_LoadingLocalization, language.ToString());
+            provider.LoadLocalization(language, cancellationToken);
         }
 
         private ELanguage GetLocalizationLanguage()

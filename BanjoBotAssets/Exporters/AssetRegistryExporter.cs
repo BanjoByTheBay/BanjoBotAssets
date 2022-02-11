@@ -45,8 +45,6 @@ namespace BanjoBotAssets.Exporters
                             var schematicTemplateId = $"Schematic:SID_{buffer.AssetName.Text[4..]}";
                             var displayName = buffer.TagsAndValues.FirstOrDefault(pair => pair.Key.Text == "DisplayName").Value;
 
-                            // TODO: localize displayName
-
                             if (displayName == null)
                             {
                                 continue;
@@ -54,7 +52,7 @@ namespace BanjoBotAssets.Exporters
 
                             if (nsLocTextRegex.Match(displayName) is { Success: true, Groups: var g })
                             {
-                                var goodName = g["text"].Value;
+                                var goodName = provider.GetLocalizedString(g["ns"].Value, g["id"].Value, g["text"].Value);
                                 output.AddDisplayNameCorrection(schematicTemplateId, goodName.Trim());
                             }
                             else

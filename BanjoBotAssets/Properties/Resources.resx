@@ -320,7 +320,8 @@
     <comment>0=filename</comment>
   </data>
   <data name="Status_LoadingLocalization" xml:space="preserve">
-    <value>Loading localization</value>
+    <value>Loading localization ({0})</value>
+    <comment>0=language</comment>
   </data>
   <data name="Status_LoadingMappings" xml:space="preserve">
     <value>Loading mappings</value>
