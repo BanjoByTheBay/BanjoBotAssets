@@ -8,8 +8,8 @@ namespace BanjoBotAssets.Exporters
     /// </summary>
     internal class AssetRegistryExporter : BaseExporter
     {
-        private static readonly Regex weaponOrTrapAssetClassRegex = new("^Fort(?:Weapon(?:Ranged|Melee)|Trap)ItemDefinition$");
-        private static readonly Regex nsLocTextRegex = new(@"^NSLOCTEXT\(\s*""(?<ns>(?:[^""]|\"")*)""\s*,\s*""(?<id>(?:[^""]|\"")*)""\s*,\s*""(?<text>(?:[^""]|\"")*)""\s*\)");
+        private static readonly Regex weaponOrTrapAssetClassRegex = new("^Fort(?:Weapon(?:Ranged|Melee)|Trap)ItemDefinition$", RegexOptions.Compiled);
+        private static readonly Regex nsLocTextRegex = new(@"^NSLOCTEXT\(\s*""(?<ns>(?:[^""]|\"")*)""\s*,\s*""(?<id>(?:[^""]|\"")*)""\s*,\s*""(?<text>(?:[^""]|\"")*)""\s*\)", RegexOptions.Compiled);
 
         public override Task ExportAssetsAsync(IProgress<ExportProgress> progress, IAssetOutput output, CancellationToken cancellationToken)
         {

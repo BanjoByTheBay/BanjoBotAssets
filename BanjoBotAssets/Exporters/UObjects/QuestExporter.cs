@@ -92,7 +92,7 @@ namespace BanjoBotAssets.Exporters.UObjects
             if (questRewardsTable != null)
             {
                 // for Quest:daily_destroyarcademachines, we use the rows "Daily_DestroyArcadeMachines_001", "Daily_DestroyArcadeMachines_002", etc.
-                var regex = new Regex(@$"^{Regex.Escape(asset.Name)}_\d+$", RegexOptions.IgnoreCase);
+                var regex = new Regex(@$"^{Regex.Escape(asset.Name)}_\d+$", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
                 foreach (var (key, reward) in questRewardsTable.RowMap)
                 {

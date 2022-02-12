@@ -282,6 +282,9 @@
     <value>schematics.json</value>
     <comment>export filename for crafting recipes</comment>
   </data>
+  <data name="Status_AnalyzingFileList" xml:space="preserve">
+    <value>Analyzing file list</value>
+  </data>
   <data name="Status_DecryptingGameFiles" xml:space="preserve">
     <value>Decrypting game files</value>
   </data>
@@ -351,6 +354,12 @@
   </data>
   <data name="Status_RetryingMappings" xml:space="preserve">
     <value>Retrying mappings</value>
+  </data>
+  <data name="Status_RunningAllExporters" xml:space="preserve">
+    <value>Running all exporters</value>
+  </data>
+  <data name="Status_RunningSelectedExporters" xml:space="preserve">
+    <value>Running selected exporters</value>
   </data>
   <data name="Status_SavingAesToFile" xml:space="preserve">
     <value>Caching AES keys in {0}</value>

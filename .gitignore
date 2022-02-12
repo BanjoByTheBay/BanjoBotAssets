@@ -9,3 +9,4 @@ obj
 *.dll
 *.usmap
 *.old
+*.user

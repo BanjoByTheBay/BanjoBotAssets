@@ -529,6 +529,15 @@ namespace BanjoBotAssets.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Analyzing file list.
+        /// </summary>
+        internal static string Status_AnalyzingFileList {
+            get {
+                return ResourceManager.GetString("Status_AnalyzingFileList", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Decrypting game files.
         /// </summary>
         internal static string Status_DecryptingGameFiles {
@@ -705,6 +714,24 @@ namespace BanjoBotAssets.Properties {
         internal static string Status_RetryingMappings {
             get {
                 return ResourceManager.GetString("Status_RetryingMappings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Running all exporters.
+        /// </summary>
+        internal static string Status_RunningAllExporters {
+            get {
+                return ResourceManager.GetString("Status_RunningAllExporters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Running selected exporters.
+        /// </summary>
+        internal static string Status_RunningSelectedExporters {
+            get {
+                return ResourceManager.GetString("Status_RunningSelectedExporters", resourceCulture);
             }
         }
         

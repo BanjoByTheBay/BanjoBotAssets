@@ -183,8 +183,13 @@ namespace BanjoBotAssets
             IEnumerable<IExporter> exportersToRun = exporters;
             if (!string.IsNullOrWhiteSpace(scopeOptions.Value.Only))
             {
+                logger.LogInformation(Resources.Status_RunningSelectedExporters);
                 var wanted = scopeOptions.Value.Only.Split(',');
                 exportersToRun = exportersToRun.Where(e => wanted.Contains(e.GetType().Name, StringComparer.OrdinalIgnoreCase));
+            }
+            else
+            {
+                logger.LogInformation(Resources.Status_RunningAllExporters);
             }
 
             var progress = new Progress<ExportProgress>(_ =>
@@ -220,6 +225,8 @@ namespace BanjoBotAssets
 
         private void OfferFileListToExporters()
         {
+            logger.LogInformation(Resources.Status_AnalyzingFileList);
+
             foreach (var (name, file) in provider.Files)
             {
                 if (name.Contains("/Athena/"))
