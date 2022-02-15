@@ -54,6 +54,7 @@ namespace BanjoBotAssets.Exporters
             progress.Report(new ExportProgress { AssetsLoaded = assetsLoaded, CompletedSteps = processedSoFar, TotalSteps = numToProcess, CurrentItem = Resources.Status_ExportedRecipes });
         }
 
-        protected override bool InterestedInAsset(string name) => name.Contains("/CraftingRecipes_New");
+        protected override bool InterestedInAsset(string name) =>
+            name.Contains("/CraftingRecipes_New", StringComparison.OrdinalIgnoreCase);
     }
 }

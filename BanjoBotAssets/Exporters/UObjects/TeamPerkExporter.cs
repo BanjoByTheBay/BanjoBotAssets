@@ -9,7 +9,7 @@ namespace BanjoBotAssets.Exporters.UObjects
 
         protected override string Type => "TeamPerk";
 
-        protected override bool InterestedInAsset(string name) => name.Contains("/TPID_");
+        protected override bool InterestedInAsset(string name) => name.Contains("/TPID_", StringComparison.OrdinalIgnoreCase);
 
         protected override async Task<bool> ExportAssetAsync(UObject asset, NamedItemData namedItemData)
         {

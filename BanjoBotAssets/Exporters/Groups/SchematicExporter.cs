@@ -27,7 +27,7 @@ namespace BanjoBotAssets.Exporters.Groups
         protected override string Type => "Schematic";
 
         //private static readonly Regex craftingResultNameRegex = new("/Items(?!.*/Schematics/)(?:/.*)?/(?:WID_|TID_|G_|Ingredient_|AmmoData)[^/]+$", RegexOptions.IgnoreCase | RegexOptions.Compiled);
-        private static readonly Regex craftingResultNameRegex = new("(?<!/Schematics/.*)/(?:WID_|TID_|G_|Ingredient_|AmmoData)[^/]+$", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        private static readonly Regex craftingResultNameRegex = new(@"(?<!/Schematics/.*)/(?:WID_|TID_|G_|Ingredient_|AmmoData)[^/]+\.uasset$", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         protected override bool InterestedInAsset(string name)
         {
@@ -47,33 +47,33 @@ namespace BanjoBotAssets.Exporters.Groups
 
             switch (Path.GetFileName(name))
             {
-                case "CraftingRecipes_New.uasset":
+                case string s when s.Equals("CraftingRecipes_New.uasset", StringComparison.OrdinalIgnoreCase):
                     craftingPath = name;
                     break;
-                case "AlterationGroups.uasset":
+                case string s when s.Equals("AlterationGroups.uasset", StringComparison.OrdinalIgnoreCase):
                     alterationGroupPath = name;
                     break;
-                case "SlotDefs.uasset":
+                case string s when s.Equals("SlotDefs.uasset", StringComparison.OrdinalIgnoreCase):
                     slotDefsPath = name;
                     break;
-                case "SlotLoadouts.uasset":
+                case string s when s.Equals("SlotLoadouts.uasset", StringComparison.OrdinalIgnoreCase):
                     slotLoadoutsPath = name;
                     break;
-                case "MeleeWeapons.uasset":
+                case string s when s.Equals("MeleeWeapons.uasset", StringComparison.OrdinalIgnoreCase):
                     meleeWeaponsPath = name;
                     break;
-                case "RangedWeapons.uasset":
+                case string s when s.Equals("RangedWeapons.uasset", StringComparison.OrdinalIgnoreCase):
                     rangedWeaponsPath = name;
                     break;
-                case "Traps.uasset":
+                case string s when s.Equals("Traps.uasset", StringComparison.OrdinalIgnoreCase):
                     trapsPath = name;
                     break;
-                case "WeaponDurabilityRarity.uasset":
+                case string s when s.Equals("WeaponDurabilityRarity.uasset", StringComparison.OrdinalIgnoreCase):
                     durabilityPath = name;
                     break;
             }
 
-            return name.Contains("/SID_") || name.Contains("Schematics/Ammo/Ammo_");
+            return name.Contains("/SID_", StringComparison.OrdinalIgnoreCase) || name.Contains("Schematics/Ammo/Ammo_", StringComparison.OrdinalIgnoreCase);
         }
 
         public override async Task ExportAssetsAsync(IProgress<ExportProgress> progress, IAssetOutput output, CancellationToken cancellationToken)

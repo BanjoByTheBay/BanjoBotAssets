@@ -17,7 +17,7 @@ namespace BanjoBotAssets.Exporters.Groups
     {
         protected override string Type => "Hero";
 
-        protected override bool InterestedInAsset(string name) => name.Contains("/HID_");
+        protected override bool InterestedInAsset(string name) => name.Contains("/HID_", StringComparison.OrdinalIgnoreCase);
 
         protected override string SelectPrimaryAsset(IGrouping<string?, string> assetGroup)
         {
@@ -30,7 +30,7 @@ namespace BanjoBotAssets.Exporters.Groups
             return asset.AttributeInitKey?.AttributeInitCategory.PlainText != "AthenaHero";
         }
 
-        private static readonly Regex heroAssetNameRegex = new(@".*/([^/]+)_(C|UC|R|VR|SR|UR)_T(\d+)(?:\..*)?$");
+        private static readonly Regex heroAssetNameRegex = new(@".*/([^/]+)_(C|UC|R|VR|SR|UR)_T(\d+)(?:\..*)?$", RegexOptions.IgnoreCase);
 
         public HeroExporter(IExporterContext services) : base(services) { }
 
@@ -105,13 +105,13 @@ namespace BanjoBotAssets.Exporters.Groups
             foreach (var tag in gameplayTags)
             {
                 var text = tag.Text;
-                if (text.Contains("IsCommando"))
+                if (text.Contains("IsCommando", StringComparison.OrdinalIgnoreCase))
                     return Resources.Field_Hero_Soldier;
-                if (text.Contains("IsNinja"))
+                if (text.Contains("IsNinja", StringComparison.OrdinalIgnoreCase))
                     return Resources.Field_Hero_Ninja;
-                if (text.Contains("IsOutlander"))
+                if (text.Contains("IsOutlander", StringComparison.OrdinalIgnoreCase))
                     return Resources.Field_Hero_Outlander;
-                if (text.Contains("IsConstructor"))
+                if (text.Contains("IsConstructor", StringComparison.OrdinalIgnoreCase))
                     return Resources.Field_Hero_Constructor;
             }
 

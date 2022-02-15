@@ -9,6 +9,7 @@ namespace BanjoBotAssets.Exporters.UObjects
         protected override string Type => "GameplayModifier";
 
         protected override bool InterestedInAsset(string name) =>
-            name.Contains("/GM_") || name.Contains("/GMID_") || name.Contains("/UnlockModifiers/");
+            name.Contains("/GM_", StringComparison.OrdinalIgnoreCase) || name.Contains("/GMID_", StringComparison.OrdinalIgnoreCase) ||
+            name.Contains("/UnlockModifiers/", StringComparison.OrdinalIgnoreCase);
     }
 }

@@ -6,9 +6,10 @@ namespace BanjoBotAssets.Exporters.Groups
     {
         protected override string Type => "Defender";
 
-        protected override bool InterestedInAsset(string name) => name.Contains("Defenders/DID_");
+        protected override bool InterestedInAsset(string name) =>
+            name.Contains("Defenders/DID_", StringComparison.OrdinalIgnoreCase);
 
-        private static readonly Regex defenderAssetNameRegex = new(@".*/([^/]+)_(C|UC|R|VR|SR|UR)_T(\d+)(?:\..*)?$");
+        private static readonly Regex defenderAssetNameRegex = new(@".*/([^/]+)_(C|UC|R|VR|SR|UR)_T(\d+)(?:\..*)?$", RegexOptions.IgnoreCase);
 
         public DefenderExporter(IExporterContext services) : base(services) { }
 

@@ -9,7 +9,9 @@ namespace BanjoBotAssets.Exporters.UObjects
 
         protected override string Type => "Alteration";
 
-        protected override bool InterestedInAsset(string name) => name.Contains("/AID_") && (name.Contains("/Alteration_v2/") || name.Contains("/Defenders/"));
+        protected override bool InterestedInAsset(string name) =>
+            name.Contains("/AID_", StringComparison.OrdinalIgnoreCase) &&
+            (name.Contains("/Alteration_v2/", StringComparison.OrdinalIgnoreCase) || name.Contains("/Defenders/", StringComparison.OrdinalIgnoreCase));
 
         protected override Task<bool> ExportAssetAsync(UFortItemDefinition asset, NamedItemData namedItemData)
         {

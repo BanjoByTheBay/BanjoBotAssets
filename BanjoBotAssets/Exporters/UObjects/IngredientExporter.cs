@@ -9,6 +9,7 @@ namespace BanjoBotAssets.Exporters.UObjects
 
         protected override string Type => "Ingredient";
 
-        protected override bool InterestedInAsset(string name) => name.Contains("Items/Ingredients/Ingredient_");
+        protected override bool InterestedInAsset(string name) =>
+            name.Contains("Items/Ingredients/Ingredient_", StringComparison.OrdinalIgnoreCase);
     }
 }

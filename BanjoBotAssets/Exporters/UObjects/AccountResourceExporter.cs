@@ -8,6 +8,6 @@ namespace BanjoBotAssets.Exporters.UObjects
 
         protected override string Type => "AccountResource";
 
-        protected override bool InterestedInAsset(string name) => name.Contains("/PersistentResources/");
+        protected override bool InterestedInAsset(string name) => name.Contains("/PersistentResources/", StringComparison.OrdinalIgnoreCase);
     }
 }

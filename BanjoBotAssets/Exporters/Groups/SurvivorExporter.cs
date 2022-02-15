@@ -14,14 +14,14 @@ namespace BanjoBotAssets.Exporters.Groups
         protected override string Type => "Worker";
 
         protected override bool InterestedInAsset(string name) =>
-            name.Contains("Workers/Worker") || name.Contains("Managers/Manager");
+            name.Contains("Workers/Worker", StringComparison.OrdinalIgnoreCase) || name.Contains("Managers/Manager", StringComparison.OrdinalIgnoreCase);
 
         // regular survivor:    WorkerBasic_SR_T02
         // special survivor:    Worker_Leprechaun_VR_T01
         // mythic survivor:     Worker_Karolina_UR_T02
         // lead:                ManagerEngineer_R_T04
         // mythic lead:         ManagerMartialArtist_SR_samurai_T03
-        private static readonly Regex survivorAssetNameRegex = new(@".*/([^/]+)_(C|UC|R|VR|SR|UR)_([a-z]+_)?T(\d+)(?:\..*)?$");
+        private static readonly Regex survivorAssetNameRegex = new(@".*/([^/]+)_(C|UC|R|VR|SR|UR)_([a-z]+_)?T(\d+)(?:\..*)?$", RegexOptions.IgnoreCase);
 
         public SurvivorExporter(IExporterContext services) : base(services) { }
 
@@ -63,20 +63,29 @@ namespace BanjoBotAssets.Exporters.Groups
             return primaryAsset.bIsManager ? result + 1 : result;
         }
 
-        private static string GetManagerJob(UFortWorkerType worker) =>
-            worker.ManagerSynergyTag.First().Text switch
-            {
-                _ when !worker.bIsManager => throw new AssetFormatException(Resources.Error_NotAManager),
-                "Homebase.Manager.IsDoctor" => Resources.Field_Survivor_Doctor,
-                "Homebase.Manager.IsEngineer" => Resources.Field_Survivor_Engineer,
-                "Homebase.Manager.IsExplorer" => Resources.Field_Survivor_Explorer,
-                "Homebase.Manager.IsGadgeteer" => Resources.Field_Survivor_Gadgeteer,
-                "Homebase.Manager.IsInventor" => Resources.Field_Survivor_Inventor,
-                "Homebase.Manager.IsMartialArtist" => Resources.Field_Survivor_MartialArtist,
-                "Homebase.Manager.IsSoldier" => Resources.Field_Survivor_Marksman,
-                "Homebase.Manager.IsTrainer" => Resources.Field_Survivor_Trainer,
-                var other => throw new AssetFormatException(string.Format(CultureInfo.CurrentCulture, Resources.Error_UnexpectedManagerSynergy, other)),
-            };
+        private static readonly IReadOnlyDictionary<string, string> managerSynergyToJob = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+        {
+                { "Homebase.Manager.IsDoctor", Resources.Field_Survivor_Doctor },
+                { "Homebase.Manager.IsEngineer", Resources.Field_Survivor_Engineer },
+                { "Homebase.Manager.IsExplorer", Resources.Field_Survivor_Explorer },
+                { "Homebase.Manager.IsGadgeteer", Resources.Field_Survivor_Gadgeteer },
+                { "Homebase.Manager.IsInventor", Resources.Field_Survivor_Inventor },
+                { "Homebase.Manager.IsMartialArtist", Resources.Field_Survivor_MartialArtist },
+                { "Homebase.Manager.IsSoldier", Resources.Field_Survivor_Marksman },
+                { "Homebase.Manager.IsTrainer", Resources.Field_Survivor_Trainer },
+        };
+
+        private static string GetManagerJob(UFortWorkerType worker)
+        {
+            if (!worker.bIsManager)
+                throw new AssetFormatException(Resources.Error_NotAManager);
+
+            string synergyTag = worker.ManagerSynergyTag.First().Text;
+            if (managerSynergyToJob.TryGetValue(synergyTag, out var job))
+                return job;
+
+            throw new AssetFormatException(string.Format(CultureInfo.CurrentCulture, Resources.Error_UnexpectedManagerSynergy, synergyTag));
+        }
 
         private static string MakeSurvivorDisplayName(UFortWorkerType worker) =>
             worker.bIsManager ? string.Format(CultureInfo.CurrentCulture, Resources.Field_Survivor_LeadNameFormat, GetManagerJob(worker)) : Resources.Field_Survivor_DefaultName;

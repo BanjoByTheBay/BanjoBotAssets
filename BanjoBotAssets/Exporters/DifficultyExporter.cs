@@ -11,7 +11,7 @@ namespace BanjoBotAssets.Exporters
 
         public override async Task ExportAssetsAsync(IProgress<ExportProgress> progress, IAssetOutput output, CancellationToken cancellationToken)
         {
-            var growthBoundsPath = assetPaths.First(p => Path.GetFileNameWithoutExtension(p) == "GameDifficultyGrowthBounds");
+            var growthBoundsPath = assetPaths.First(p => Path.GetFileNameWithoutExtension(p).Equals("GameDifficultyGrowthBounds", StringComparison.OrdinalIgnoreCase));
 
             if (growthBoundsPath == null)
             {

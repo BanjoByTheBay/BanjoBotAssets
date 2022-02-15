@@ -117,10 +117,12 @@ namespace BanjoBotAssets.Extensions
                      {
                          throw new InvalidOperationException(Resources.Error_GameNotFound, ex);
                      }
-                     var provider = new DefaultFileProvider(
+                     var cache = sp.GetRequiredService<AssetCache>();
+                     var provider = new CachingFileProvider(
+                         cache,
                          gameDirectory,
                          SearchOption.TopDirectoryOnly,
-                         isCaseInsensitive: false,
+                         isCaseInsensitive: true,
                          new VersionContainer(EGame.GAME_UE5_LATEST));
                      provider.Initialize();
                      return provider;
@@ -132,6 +134,15 @@ namespace BanjoBotAssets.Extensions
                     options.ELanguage = "";
                     options.GameDirectories = Array.Empty<string>();
                     config.GetSection(nameof(GameFileOptions)).Bind(options);
+                });
+
+            services.AddSingleton<AssetCache>();
+
+            services.AddOptions<CacheOptions>()
+                .Configure<IConfiguration>((options, config) =>
+                {
+                    options.SizeLimit = 100 * 1024 * 1024;
+                    config.GetSection(nameof(CacheOptions)).Bind(options);
                 });
 
             return services;

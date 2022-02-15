@@ -106,9 +106,7 @@ namespace BanjoBotAssets.Exporters.Helpers
 
                 // format the value
                 var formatting = tokenDef.Get<FName>(RETURN_FORMATTING);
-                string formattedValue = ApplyFormatting(value, formatting);
-
-                tokens[tokenName] = formattedValue;
+                tokens[tokenName] = ApplyFormatting(value, formatting);
             }
         }
 

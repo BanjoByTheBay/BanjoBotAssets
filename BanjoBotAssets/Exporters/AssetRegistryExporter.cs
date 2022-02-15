@@ -9,7 +9,12 @@ namespace BanjoBotAssets.Exporters
     internal class AssetRegistryExporter : BaseExporter
     {
         private static readonly Regex weaponOrTrapAssetClassRegex = new("^Fort(?:Weapon(?:Ranged|Melee)|Trap)ItemDefinition$", RegexOptions.Compiled);
-        private static readonly Regex nsLocTextRegex = new(@"^NSLOCTEXT\(\s*""(?<ns>(?:[^""]|\"")*)""\s*,\s*""(?<id>(?:[^""]|\"")*)""\s*,\s*""(?<text>(?:[^""]|\"")*)""\s*\)", RegexOptions.Compiled);
+        private static readonly Regex nsLocTextRegex = new(@"
+            ^NSLOCTEXT\(
+            \s* ""(?<ns>   (?: [^""] | \\"" )* )"" \s*,
+            \s* ""(?<id>   (?: [^""] | \\"" )* )"" \s*,
+            \s* ""(?<text> (?: [^""] | \\"" )* )"" \s*
+            \)", RegexOptions.Compiled | RegexOptions.IgnorePatternWhitespace);
 
         public override Task ExportAssetsAsync(IProgress<ExportProgress> progress, IAssetOutput output, CancellationToken cancellationToken)
         {
@@ -35,7 +40,7 @@ namespace BanjoBotAssets.Exporters
                     {
                         cancellationToken.ThrowIfCancellationRequested();
 
-                        if (buffer.ObjectPath.Text.Contains("/Athena/"))
+                        if (buffer.ObjectPath.Text.Contains("/Athena/", StringComparison.OrdinalIgnoreCase))
                         {
                             continue;
                         }
@@ -52,7 +57,10 @@ namespace BanjoBotAssets.Exporters
 
                             if (nsLocTextRegex.Match(displayName) is { Success: true, Groups: var g })
                             {
-                                var goodName = provider.GetLocalizedString(g["ns"].Value, g["id"].Value, g["text"].Value);
+                                var goodName = provider.GetLocalizedString(
+                                    Regex.Unescape(g["ns"].Value),
+                                    Regex.Unescape(g["id"].Value),
+                                    Regex.Unescape(g["text"].Value));
                                 output.AddDisplayNameCorrection(schematicTemplateId, goodName.Trim());
                             }
                             else

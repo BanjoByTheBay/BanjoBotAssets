@@ -12,6 +12,7 @@ namespace BanjoBotAssets.Exporters.Blueprints
 
         protected override string? DescriptionProperty => "MissionDescription";
 
-        protected override bool InterestedInAsset(string name) => name.Contains("/MissionGens/") && name.Contains("/World/");
+        protected override bool InterestedInAsset(string name) =>
+            name.Contains("/MissionGens/", StringComparison.OrdinalIgnoreCase) && name.Contains("/World/", StringComparison.OrdinalIgnoreCase);
     }
 }

@@ -2,7 +2,6 @@
   "profiles": {
     "BanjoBotAssets": {
       "commandName": "Project",
-      "commandLineArgs": "/only SchematicExporter",
       "workingDirectory": "D:\\working\\github\\BanjoBotAssets",
       "environmentVariables": {
         "DOTNET_ENVIRONMENT": "Development"

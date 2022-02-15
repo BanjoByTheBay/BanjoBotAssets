@@ -31,7 +31,7 @@ namespace BanjoBotAssets.Exporters.UObjects
                 homebaseRatingDifficultyMappingPath = name;
             }
 
-            return name.Contains("/Content/Quests/");
+            return name.Contains("/Content/Quests/", StringComparison.OrdinalIgnoreCase);
         }
 
         public override async Task ExportAssetsAsync(IProgress<ExportProgress> progress, IAssetOutput output, CancellationToken cancellationToken)

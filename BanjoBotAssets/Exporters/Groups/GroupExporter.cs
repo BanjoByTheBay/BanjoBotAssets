@@ -156,7 +156,7 @@ namespace BanjoBotAssets.Exporters.Groups
         }
 
         protected virtual EFortRarity GetRarity(TParsedName parsedName, TAsset primaryAsset, TFields fields) =>
-            parsedName.Rarity switch
+            parsedName.Rarity.ToUpperInvariant() switch
             {
                 "C" => EFortRarity.Common,
                 "R" => EFortRarity.Rare,

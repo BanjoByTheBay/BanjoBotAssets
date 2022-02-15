@@ -9,6 +9,6 @@ namespace BanjoBotAssets.Exporters.UObjects
         protected override string Type => "WorldItem";
 
         protected override bool InterestedInAsset(string name) =>
-             name.Contains("Items/ResourcePickups/") && !name.Contains("/Athena");
+             name.Contains("Items/ResourcePickups/", StringComparison.OrdinalIgnoreCase) && !name.Contains("/Athena", StringComparison.OrdinalIgnoreCase);
     }
 }

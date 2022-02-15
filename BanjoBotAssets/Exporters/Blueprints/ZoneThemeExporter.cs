@@ -12,6 +12,7 @@ namespace BanjoBotAssets.Exporters.Blueprints
 
         protected override string? DescriptionProperty => "ZoneDescription";
 
-        protected override bool InterestedInAsset(string name) => name.Contains("/ZoneThemes/") && name.Contains("/BP_ZT_");
+        protected override bool InterestedInAsset(string name) =>
+            name.Contains("/ZoneThemes/", StringComparison.OrdinalIgnoreCase) && name.Contains("/BP_ZT_", StringComparison.OrdinalIgnoreCase);
     }
 }

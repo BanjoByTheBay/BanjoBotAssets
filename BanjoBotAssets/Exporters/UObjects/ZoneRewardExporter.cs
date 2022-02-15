@@ -8,6 +8,6 @@ namespace BanjoBotAssets.Exporters.UObjects
 
         protected override string Type => "CardPack";
 
-        protected override bool InterestedInAsset(string name) => name.Contains("/ZCP_");
+        protected override bool InterestedInAsset(string name) => name.Contains("/ZCP_", StringComparison.OrdinalIgnoreCase);
     }
 }

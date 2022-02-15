@@ -22,7 +22,7 @@ namespace BanjoBotAssets.Exporters
 
         private async Task ExportDefaultItemRatingsAsync(IAssetOutput output)
         {
-            var baseItemRatingPath = assetPaths.Find(p => Path.GetFileNameWithoutExtension(p) == "BaseItemRating");
+            var baseItemRatingPath = assetPaths.Find(p => Path.GetFileNameWithoutExtension(p).Equals("BaseItemRating", StringComparison.OrdinalIgnoreCase));
 
             if (baseItemRatingPath == null)
             {
@@ -46,7 +46,7 @@ namespace BanjoBotAssets.Exporters
 
         private async Task ExportSurvivorItemRatingsAsync(IAssetOutput output)
         {
-            var survivorItemRatingPath = assetPaths.Find(p => Path.GetFileNameWithoutExtension(p) == "SurvivorItemRating");
+            var survivorItemRatingPath = assetPaths.Find(p => Path.GetFileNameWithoutExtension(p).Equals("SurvivorItemRating", StringComparison.OrdinalIgnoreCase));
 
             if (survivorItemRatingPath == null)
             {

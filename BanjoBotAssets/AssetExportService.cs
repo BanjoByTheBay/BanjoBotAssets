@@ -93,6 +93,9 @@ namespace BanjoBotAssets
             // generate output artifacts
             await GenerateSelectedArtifactsAsync(exportedAssets, exportedRecipes, cancellationToken);
 
+            // report cache stats
+            (provider as CachingFileProvider)?.ReportCacheStats();
+
             // done!
             return 0;
         }
@@ -225,11 +228,15 @@ namespace BanjoBotAssets
 
         private void OfferFileListToExporters()
         {
+            // TODO: respect the /only flag and only offer file list to the selected exporters
+
             logger.LogInformation(Resources.Status_AnalyzingFileList);
 
             foreach (var (name, file) in provider.Files)
             {
-                if (name.Contains("/Athena/"))
+                if (name.Contains("/Athena/", StringComparison.OrdinalIgnoreCase) ||
+                    (!name.EndsWith(".uasset", StringComparison.OrdinalIgnoreCase) &&
+                     !name.EndsWith(".bin", StringComparison.OrdinalIgnoreCase)))
                 {
                     continue;
                 }

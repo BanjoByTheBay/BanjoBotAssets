@@ -130,6 +130,6 @@ namespace BanjoBotAssets.Exporters
                    select new QuestLine(g.Key, g.ToArray(), isMainCampaign);
         }
 
-        protected override bool InterestedInAsset(string name) => Path.GetFileName(name) == "QuestMapData.uasset";
+        protected override bool InterestedInAsset(string name) => Path.GetFileName(name).Equals("QuestMapData.uasset", StringComparison.OrdinalIgnoreCase);
     }
 }
