@@ -15,7 +15,7 @@ namespace BanjoBotAssets
     {
         private readonly ILogger<AssetExportService> logger;
         private readonly IHostApplicationLifetime lifetime;
-        private readonly IEnumerable<IExporter> exporters;
+        private readonly List<IExporter> exportersToRun;
         private readonly IOptions<GameFileOptions> options;
         private readonly IEnumerable<IAesProvider> aesProviders;
         private readonly IAesCacheUpdater aesCacheUpdater;
@@ -26,7 +26,7 @@ namespace BanjoBotAssets
 
         public AssetExportService(ILogger<AssetExportService> logger,
             IHostApplicationLifetime lifetime,
-            IEnumerable<IExporter> exporters,
+            IEnumerable<IExporter> allExporters,
             IOptions<GameFileOptions> options,
             IEnumerable<IAesProvider> aesProviders,
             IAesCacheUpdater aesCacheUpdater,
@@ -37,7 +37,6 @@ namespace BanjoBotAssets
         {
             this.logger = logger;
             this.lifetime = lifetime;
-            this.exporters = exporters;
             this.options = options;
             this.aesProviders = aesProviders;
             this.aesCacheUpdater = aesCacheUpdater;
@@ -45,6 +44,14 @@ namespace BanjoBotAssets
             this.provider = provider;
             this.typeMappingsProviderFactory = typeMappingsProviderFactory;
             this.scopeOptions = scopeOptions;
+
+            exportersToRun = new(allExporters);
+
+            if (!string.IsNullOrWhiteSpace(scopeOptions.Value.Only))
+            {
+                var wanted = scopeOptions.Value.Only.Split(',');
+                exportersToRun.RemoveAll(e => !wanted.Contains(e.GetType().Name, StringComparer.OrdinalIgnoreCase));
+            }
         }
 
         protected override async Task ExecuteAsync(CancellationToken cancellationToken)
@@ -180,15 +187,12 @@ namespace BanjoBotAssets
 
             // give each exporter its own output object to use,
             // we'll combine the results when the tasks all complete.
-            var allPrivateExports = new List<IAssetOutput>(exporters.Select(_ => new AssetOutput()));
+            var allPrivateExports = new List<IAssetOutput>(exportersToRun.Select(_ => new AssetOutput()));
 
             // run the exporters!
-            IEnumerable<IExporter> exportersToRun = exporters;
             if (!string.IsNullOrWhiteSpace(scopeOptions.Value.Only))
             {
-                logger.LogInformation(Resources.Status_RunningSelectedExporters);
-                var wanted = scopeOptions.Value.Only.Split(',');
-                exportersToRun = exportersToRun.Where(e => wanted.Contains(e.GetType().Name, StringComparer.OrdinalIgnoreCase));
+                logger.LogInformation(Resources.Status_RunningSelectedExporters, exportersToRun.Count, string.Join(", ", exportersToRun.Select(t => t.GetType().Name)));
             }
             else
             {
@@ -206,7 +210,7 @@ namespace BanjoBotAssets
 
             var exportedAssets = new ExportedAssets();
             var exportedRecipes = new List<ExportedRecipe>();
-            var assetsLoaded = exporters.Sum(e => e.AssetsLoaded);
+            var assetsLoaded = exportersToRun.Sum(e => e.AssetsLoaded);
 
             logger.LogInformation(Resources.Status_LoadedAssets, assetsLoaded, stopwatch.Elapsed, stopwatch.ElapsedMilliseconds / Math.Max(assetsLoaded, 1));
 
@@ -228,8 +232,6 @@ namespace BanjoBotAssets
 
         private void OfferFileListToExporters()
         {
-            // TODO: respect the /only flag and only offer file list to the selected exporters
-
             logger.LogInformation(Resources.Status_AnalyzingFileList);
 
             foreach (var (name, file) in provider.Files)
@@ -241,7 +243,7 @@ namespace BanjoBotAssets
                     continue;
                 }
 
-                foreach (var e in exporters)
+                foreach (var e in exportersToRun)
                 {
                     e.ObserveAsset(name);
                 }

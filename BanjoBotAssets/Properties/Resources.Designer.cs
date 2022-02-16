@@ -727,7 +727,7 @@ namespace BanjoBotAssets.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Running selected exporters.
+        ///   Looks up a localized string similar to Running {0} exporters: {1}.
         /// </summary>
         internal static string Status_RunningSelectedExporters {
             get {

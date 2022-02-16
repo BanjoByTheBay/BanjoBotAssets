@@ -21,8 +21,8 @@ namespace BanjoBotAssets.Exporters.Groups
     internal class SchematicExporter : GroupExporter<UObject, ParsedSchematicName, SchematicItemGroupFields, SchematicItemData>
     {
         private readonly Dictionary<string, string> craftingResultPaths = new(StringComparer.OrdinalIgnoreCase);
-        private string? craftingPath, alterationGroupPath, slotDefsPath, slotLoadoutsPath, meleeWeaponsPath, rangedWeaponsPath, trapsPath, durabilityPath;
-        private Dictionary<string, FStructFallback>? craftingTable, alterationGroupTable, slotDefsTable, slotLoadoutsTable, meleeWeaponsTable, rangedWeaponsTable, trapsTable, durabilityTable;
+        private string? craftingPath, alterationGroupPath, slotDefsPath, slotLoadoutsPath, meleeWeaponsPath, rangedWeaponsPath, trapsPath, durabilityPath, namedExclusionsPath;
+        private Dictionary<string, FStructFallback>? craftingTable, alterationGroupTable, slotDefsTable, slotLoadoutsTable, meleeWeaponsTable, rangedWeaponsTable, trapsTable, durabilityTable, namedExclusionsTable;
 
         protected override string Type => "Schematic";
 
@@ -33,12 +33,13 @@ namespace BanjoBotAssets.Exporters.Groups
         {
             // we only export SID_ assets directly, but we also want to keep track of:
             //   Assets that might be crafting results: WID_*, TID_*, G_*, Ingredient_*, AmmoData*
-            //   CraftingRecipes_New
             //   AlterationGroups
+            //   CraftingRecipes_New
+            //   MeleeWeapons
+            //   NamedExclusions
+            //   RangedWeapons
             //   SlotDefs
             //   SlotLoadouts
-            //   MeleeWeapons
-            //   RangedWeapons
             //   Traps
             //   WeaponDurabilityRarity
 
@@ -61,6 +62,9 @@ namespace BanjoBotAssets.Exporters.Groups
                     break;
                 case string s when s.Equals("MeleeWeapons.uasset", StringComparison.OrdinalIgnoreCase):
                     meleeWeaponsPath = name;
+                    break;
+                case string s when s.Equals("NamedExclusions.uasset", StringComparison.OrdinalIgnoreCase):
+                    namedExclusionsPath = name;
                     break;
                 case string s when s.Equals("RangedWeapons.uasset", StringComparison.OrdinalIgnoreCase):
                     rangedWeaponsPath = name;
@@ -86,6 +90,7 @@ namespace BanjoBotAssets.Exporters.Groups
             var rangedWeaponsTask = TryLoadTableAsync(rangedWeaponsPath);
             var trapsTask = TryLoadTableAsync(trapsPath);
             var durabilityTask = TryLoadTableAsync(durabilityPath);
+            var namedExclusionsTask = TryLoadTableAsync(namedExclusionsPath);
 
             craftingTable = (await craftingTask)?.ToDictionary();
             alterationGroupTable = (await alterationGroupTask)?.ToDictionary();
@@ -95,6 +100,7 @@ namespace BanjoBotAssets.Exporters.Groups
             rangedWeaponsTable = (await rangedWeaponsTask)?.ToDictionary();
             trapsTable = (await trapsTask)?.ToDictionary();
             durabilityTable = (await durabilityTask)?.ToDictionary();
+            namedExclusionsTable = (await namedExclusionsTask)?.ToDictionary();
 
             await base.ExportAssetsAsync(progress, output, cancellationToken);
         }
@@ -276,23 +282,7 @@ namespace BanjoBotAssets.Exporters.Groups
             itemData.EvoType = parsed.EvoType;
 
             var rarity = GetRarity(parsed, primaryAsset, fields);
-
-            if (slotLoadoutsTable?.TryGetValue(fields.AlterationSlotsLoadoutRow, out var slotLoadout) == true &&
-                slotLoadout.GetOrDefault<FStructFallback[]>("AlterationSlots") is FStructFallback[] slots)
-            {
-                var convertedSlots = new List<AlterationSlot>(slots.Length);
-
-                foreach (var slot in slots)
-                {
-                    if (slot.GetOrDefault("UnlockRarity", EFortRarity.Uncommon) <= rarity &&
-                        ConvertAlterationSlot(slot) is AlterationSlot converted)
-                    {
-                        convertedSlots.Add(converted);
-                    }
-                }
-
-                itemData.AlterationSlots = convertedSlots.ToArray();
-            }
+            string? namedWeightRow = null;
 
             if (fields.WeaponOrTrapStatRowPrefix is string prefix)
             {
@@ -302,6 +292,7 @@ namespace BanjoBotAssets.Exporters.Groups
                     if (rangedWeaponsTable.TryGetValue(weaponStatRow, out var weaponStats))
                     {
                         itemData.RangedWeaponStats = ConvertRangedWeaponStats(weaponStats, fields, rarity);
+                        namedWeightRow ??= weaponStats.GetOrDefault<FName>("NamedWeightRow").Text;
                     }
                 }
 
@@ -311,6 +302,7 @@ namespace BanjoBotAssets.Exporters.Groups
                     if (meleeWeaponsTable.TryGetValue(weaponStatRow, out var weaponStats))
                     {
                         itemData.MeleeWeaponStats = ConvertMeleeWeaponStats(weaponStats, rarity);
+                        namedWeightRow ??= weaponStats.GetOrDefault<FName>("NamedWeightRow").Text;
                     }
                 }
 
@@ -320,14 +312,42 @@ namespace BanjoBotAssets.Exporters.Groups
                     if (trapsTable.TryGetValue(trapStatRow, out var trapStats))
                     {
                         itemData.TrapStats = ConvertTrapStats(trapStats, rarity);
+                        namedWeightRow ??= trapStats.GetOrDefault<FName>("NamedWeightRow").Text;
                     }
                 }
+            }
+
+            if (slotLoadoutsTable?.TryGetValue(fields.AlterationSlotsLoadoutRow, out var slotLoadout) == true &&
+                slotLoadout.GetOrDefault<FStructFallback[]>("AlterationSlots") is FStructFallback[] slots)
+            {
+                ISet<string> namedExclusions;
+                if (namedWeightRow != null && namedExclusionsTable != null && namedExclusionsTable.TryGetValue(namedWeightRow, out var group))
+                {
+                    namedExclusions = new HashSet<string>(group.GetOrDefault<string[]>("ExclusionNames"));
+                }
+                else
+                {
+                    namedExclusions = new HashSet<string>(0);
+                }
+
+                var convertedSlots = new List<AlterationSlot>(slots.Length);
+
+                foreach (var slot in slots)
+                {
+                    if (slot.GetOrDefault("UnlockRarity", EFortRarity.Uncommon) <= rarity &&
+                        ConvertAlterationSlot(slot, namedExclusions) is AlterationSlot converted)
+                    {
+                        convertedSlots.Add(converted);
+                    }
+                }
+
+                itemData.AlterationSlots = convertedSlots.ToArray();
             }
 
             return Task.FromResult(true);
         }
 
-        private AlterationSlot? ConvertAlterationSlot(FStructFallback slot)
+        private AlterationSlot? ConvertAlterationSlot(FStructFallback slot, ISet<string> namedExclusions)
         {
             if (slotDefsTable == null || alterationGroupTable == null)
                 return null;
@@ -352,6 +372,7 @@ namespace BanjoBotAssets.Exporters.Groups
                     v?.GenericValue is UScriptStruct { StructType: FStructFallback weightedAlts })
                 {
                     var alts = weightedAlts.GetOrDefault<FStructFallback[]>("WeightData")
+                        .Where(wd => !namedExclusions.Overlaps(wd.GetOrDefault<string[]>("ExclusionNames")))
                         .Select(wd => wd.GetOrDefault<string>("AID"))
                         .ToArray();
                     alterationsByRarity.Add((rarity, alts));

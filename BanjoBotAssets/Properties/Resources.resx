@@ -359,7 +359,8 @@
     <value>Running all exporters</value>
   </data>
   <data name="Status_RunningSelectedExporters" xml:space="preserve">
-    <value>Running selected exporters</value>
+    <value>Running {0} exporters: {1}</value>
+    <comment>0=number, 1=class name list</comment>
   </data>
   <data name="Status_SavingAesToFile" xml:space="preserve">
     <value>Caching AES keys in {0}</value>
