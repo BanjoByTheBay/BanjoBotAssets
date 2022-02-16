@@ -4,8 +4,6 @@ using BanjoBotAssets.Extensions;
 using CUE4Parse.UE4.Objects.GameplayTags;
 using System.Collections.Concurrent;
 
-// TODO: export alteration exclusions (e.g. flame grill traps shouldn't have Healing Amount perks)
-
 namespace BanjoBotAssets.Exporters.Groups
 {
     internal record ParsedSchematicName(string BaseName, string Rarity, int Tier, string EvoType)
