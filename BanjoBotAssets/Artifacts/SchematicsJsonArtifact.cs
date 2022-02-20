@@ -32,7 +32,7 @@ namespace BanjoBotAssets.Artifacts
                 [Resources.Field_Schematic_Hardware] = Resources.Field_Recipe_Melee,
                 [Resources.Field_Schematic_Scythe] = Resources.Field_Recipe_Melee,
                 [Resources.Field_Schematic_Spear] = Resources.Field_Recipe_Melee,
-                [Resources.Field_Schematic_Sword] = Resources.Field_Schematic_Sword,
+                [Resources.Field_Schematic_Sword] = Resources.Field_Recipe_Melee,
 
                 [Resources.Field_Schematic_Assault] = Resources.Field_Recipe_Ranged,
                 [Resources.Field_Schematic_Explosive] = Resources.Field_Recipe_Ranged,
