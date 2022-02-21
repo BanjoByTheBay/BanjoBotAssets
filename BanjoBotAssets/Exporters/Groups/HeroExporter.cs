@@ -2,8 +2,6 @@
 using BanjoBotAssets.Exporters.Helpers;
 using CUE4Parse.UE4.Objects.GameplayTags;
 
-// TODO: export team perks each hero grants? FortniteGame/Plugins/GameFeatures/SaveTheWorld/Content/Quests/ItemToQuestTable.uasset
-
 namespace BanjoBotAssets.Exporters.Groups
 {
     internal record HeroItemGroupFields(string DisplayName, string? Description, string? SubType,
@@ -15,9 +13,25 @@ namespace BanjoBotAssets.Exporters.Groups
 
     internal sealed class HeroExporter : GroupExporter<UFortHeroType, BaseParsedItemName, HeroItemGroupFields, HeroItemData>
     {
+        private string? itemToQuestPath, questRewardsPath;
+        private readonly Dictionary<string, string> heroToTeamPerk = new(StringComparer.OrdinalIgnoreCase);
+
         protected override string Type => "Hero";
 
-        protected override bool InterestedInAsset(string name) => name.Contains("/HID_", StringComparison.OrdinalIgnoreCase);
+        protected override bool InterestedInAsset(string name)
+        {
+            if (name.EndsWith("/ItemToQuestTable.uasset", StringComparison.OrdinalIgnoreCase))
+            {
+                itemToQuestPath = name;
+            }
+
+            if (name.EndsWith("/QuestRewards.uasset", StringComparison.OrdinalIgnoreCase))
+            {
+                questRewardsPath = name;
+            }
+
+            return name.Contains("/HID_", StringComparison.OrdinalIgnoreCase);
+        }
 
         protected override string SelectPrimaryAsset(IGrouping<string?, string> assetGroup)
         {
@@ -90,12 +104,57 @@ namespace BanjoBotAssets.Exporters.Groups
             //    baseName, fields.DisplayName, fields.SubType, fields.HeroPerk, fields.CommanderPerk);
         }
 
+        public override async Task ExportAssetsAsync(IProgress<ExportProgress> progress, IAssetOutput output, CancellationToken cancellationToken)
+        {
+            if (itemToQuestPath != null && questRewardsPath != null)
+            {
+                var itemToQuestTask = provider.LoadObjectAsync<UDataTable>(provider.Files[itemToQuestPath].PathWithoutExtension);
+                var questRewardsTask = provider.LoadObjectAsync<UDataTable>(provider.Files[questRewardsPath].PathWithoutExtension);
+
+                var itemToQuestTable = await itemToQuestTask;
+                var questRewardsTable = await questRewardsTask;
+
+                InitHeroToTeamPerkMapping(itemToQuestTable, questRewardsTable);
+            }
+
+            await base.ExportAssetsAsync(progress, output, cancellationToken);
+        }
+
+        private void InitHeroToTeamPerkMapping(UDataTable itemToQuestTable, UDataTable questRewardsTable)
+        {
+            var questToTeamPerk = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+
+            foreach (var entry in questRewardsTable.RowMap.Values)
+            {
+                var reward = entry.Get<FName>("TemplateId").Text;
+
+                if (reward.StartsWith("TeamPerk:", StringComparison.OrdinalIgnoreCase))
+                {
+                    var quest = entry.Get<string>("QuestTemplateId");
+                    // one of the early story quests gives multiple team perks, so replace instead of Add
+                    questToTeamPerk[quest] = reward;
+                }
+            }
+
+            foreach (var entry in itemToQuestTable.RowMap.Values)
+            {
+                var hero = entry.Get<string>("ItemTemplateID");     // "ID" in uppercase
+                var quest = entry.Get<string>("QuestTemplateId");   // "Id" in title case
+                heroToTeamPerk.Add(hero, questToTeamPerk[quest]);
+            }
+        }
+
         protected override Task<bool> ExportAssetAsync(BaseParsedItemName parsed, UFortHeroType primaryAsset, HeroItemGroupFields fields, string path, HeroItemData itemData)
         {
             itemData.HeroPerk = fields.HeroPerk;
             itemData.HeroPerkDescription = fields.HeroPerkDescription;
             itemData.CommanderPerk = fields.CommanderPerk;
             itemData.CommanderPerkDescription = fields.CommanderPerkDescription;
+
+            if (heroToTeamPerk.TryGetValue($"Hero:{Path.GetFileNameWithoutExtension(path)}", out var teamPerk))
+            {
+                itemData.UnlocksTeamPerk = teamPerk;
+            }
 
             return Task.FromResult(true);
         }

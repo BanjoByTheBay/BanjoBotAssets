@@ -13,5 +13,6 @@ namespace BanjoBotAssets.Artifacts
         public string? CommanderPerk { get; set; }
         [DisallowNull]
         public string? CommanderPerkDescription { get; set; }
+        public string? UnlocksTeamPerk { get; set; }
     }
 }
