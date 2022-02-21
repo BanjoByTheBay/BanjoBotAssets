@@ -200,14 +200,12 @@ namespace BanjoBotAssets.Exporters.Helpers
             return value;
         }
 
+        private static readonly Regex tokenRegex = new(@"\[(Ability\.Line\d+)\]", RegexOptions.IgnoreCase);
+        private static readonly Regex tagRegex = new(@"<(?:\w+)>([^<]*)</>");
+
         private static string FormatMarkup(string markup, Dictionary<string, string> tokens)
         {
-            var tokenRegex = new Regex(@"\[(Ability\.Line\d+)\]", RegexOptions.IgnoreCase);
-
             markup = tokenRegex.Replace(markup, match => tokens.GetValueOrDefault(match.Groups[1].Value, match.Value));
-
-            var tagRegex = new Regex(@"<(?:\w+)>([^<]*)</>");
-
             return tagRegex.Replace(markup, match => match.Groups[1].Value);
         }
     }
