@@ -120,6 +120,20 @@ namespace BanjoBotAssets.Exporters.UObjects
                     }
 
                     output.AddNamedItem(templateId, itemData);
+
+                    var smallPreview = uobject.GetOrDefault<FSoftObjectPath>("SmallPreviewImage").AssetPathName;
+
+                    if (!smallPreview.IsNone)
+                    {
+                        output.AddImageForNamedItem(templateId, ImageType.SmallPreview, smallPreview.Text);
+                    }
+
+                    var largePreview = uobject.GetOrDefault<FSoftObjectPath>("LargePreviewImage").AssetPathName;
+
+                    if (!largePreview.IsNone)
+                    {
+                        output.AddImageForNamedItem(templateId, ImageType.LargePreview, largePreview.Text);
+                    }
                 }
                 catch (Exception ex) when (ex is not OperationCanceledException)
                 {

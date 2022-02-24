@@ -7,6 +7,7 @@ namespace BanjoBotAssets.Exporters.Helpers
     {
         private ItemRatingTable? defaultItemRatings, survivorItemRatings, leadSurvivorItemRatings;
         private readonly ConcurrentDictionary<string, NamedItemData> namedItems = new(StringComparer.OrdinalIgnoreCase);
+        private readonly ConcurrentDictionary<ImageType, ConcurrentDictionary<string, string>> namedItemImages = new();
         private readonly ConcurrentDictionary<string, DifficultyInfo> difficultyInfo = new(StringComparer.OrdinalIgnoreCase);
 
         private readonly ConcurrentDictionary<string, IReadOnlyDictionary<string, int>> craftingRecipes = new(StringComparer.OrdinalIgnoreCase);
@@ -34,6 +35,12 @@ namespace BanjoBotAssets.Exporters.Helpers
         public void AddNamedItem(string name, NamedItemData itemData)
         {
             namedItems.TryAdd(name, itemData);
+        }
+
+        public void AddImageForNamedItem(string name, ImageType type, string assetPath)
+        {
+            var dict = namedItemImages.GetOrAdd(type, _ => new(StringComparer.OrdinalIgnoreCase));
+            dict.TryAdd(name, assetPath);
         }
 
         public void AddSurvivorItemRatings(ItemRatingTable itemRatings)

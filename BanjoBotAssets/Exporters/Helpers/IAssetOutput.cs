@@ -6,6 +6,8 @@ namespace BanjoBotAssets.Exporters.Helpers
     {
         void AddNamedItem(string name, NamedItemData itemData);
 
+        void AddImageForNamedItem(string name, ImageType type, string assetPath);
+
         void AddDifficultyInfo(string name, DifficultyInfo difficultyInfo);
 
         void AddDefaultItemRatings(ItemRatingTable itemRatings);
