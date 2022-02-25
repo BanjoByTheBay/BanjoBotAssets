@@ -133,6 +133,15 @@ namespace BanjoBotAssets.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Can&apos;t find required asset: {0}.
+        /// </summary>
+        internal static string Error_SpecificAssetNotFound {
+            get {
+                return ResourceManager.GetString("Error_SpecificAssetNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Unexpected manager synergy {0}.
         /// </summary>
         internal static string Error_UnexpectedManagerSynergy {
@@ -957,15 +966,6 @@ namespace BanjoBotAssets.Properties {
         internal static string Warning_OverridePercentageNotImplemented {
             get {
                 return ResourceManager.GetString("Warning_OverridePercentageNotImplemented", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to WARNING: {0} not found.
-        /// </summary>
-        internal static string Warning_SpecificAssetNotFound {
-            get {
-                return ResourceManager.GetString("Warning_SpecificAssetNotFound", resourceCulture);
             }
         }
         

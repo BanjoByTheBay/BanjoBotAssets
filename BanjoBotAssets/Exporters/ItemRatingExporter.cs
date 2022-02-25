@@ -26,7 +26,7 @@ namespace BanjoBotAssets.Exporters
 
             if (baseItemRatingPath == null)
             {
-                logger.LogError(Resources.Warning_SpecificAssetNotFound, "BaseItemRating");
+                logger.LogError(Resources.Error_SpecificAssetNotFound, "BaseItemRating");
                 return;
             }
 
@@ -50,7 +50,7 @@ namespace BanjoBotAssets.Exporters
 
             if (survivorItemRatingPath == null)
             {
-                logger.LogError(Resources.Warning_SpecificAssetNotFound, "SurvivorItemRating");
+                logger.LogError(Resources.Error_SpecificAssetNotFound, "SurvivorItemRating");
                 return;
             }
 

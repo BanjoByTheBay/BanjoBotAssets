@@ -145,6 +145,10 @@
   <data name="Error_NotAManager" xml:space="preserve">
     <value>Not a manager</value>
   </data>
+  <data name="Error_SpecificAssetNotFound" xml:space="preserve">
+    <value>Can't find required asset: {0}</value>
+    <comment>0=asset ID</comment>
+  </data>
   <data name="Error_UnexpectedManagerSynergy" xml:space="preserve">
     <value>Unexpected manager synergy {0}</value>
   </data>
@@ -456,10 +460,6 @@
   </data>
   <data name="Warning_OverridePercentageNotImplemented" xml:space="preserve">
     <value>WARNING: I don't know how to Override Percentage</value>
-  </data>
-  <data name="Warning_SpecificAssetNotFound" xml:space="preserve">
-    <value>WARNING: {0} not found</value>
-    <comment>0=asset ID</comment>
   </data>
   <data name="Warning_UnindexedWeaponTrapPath" xml:space="preserve">
     <value>WARNING: No weapon/trap path indexed for {0}</value>

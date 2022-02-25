@@ -15,7 +15,7 @@ namespace BanjoBotAssets.Exporters
 
             if (growthBoundsPath == null)
             {
-                logger.LogError(Resources.Warning_SpecificAssetNotFound, "GameDifficultyGrowthBounds");
+                logger.LogError(Resources.Error_SpecificAssetNotFound, "GameDifficultyGrowthBounds");
                 return;
             }
 

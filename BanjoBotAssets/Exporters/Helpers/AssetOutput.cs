@@ -16,6 +16,15 @@ namespace BanjoBotAssets.Exporters.Helpers
         private readonly ConcurrentDictionary<string, string[][]> mainQuestLines = new(StringComparer.OrdinalIgnoreCase);
         private readonly ConcurrentDictionary<string, string[][]> eventQuestLines = new(StringComparer.OrdinalIgnoreCase);
 
+        private readonly ConcurrentDictionary<string, ConcurrentDictionary<int, XPRewardLevel>> venturesLevelRewards = new(StringComparer.OrdinalIgnoreCase);
+        private readonly ConcurrentDictionary<string, SeasonPastLevelData> venturesPastLevelRewards = new(StringComparer.OrdinalIgnoreCase);
+
+        private record SeasonPastLevelData()
+        {
+            public int XPStepAmount { get; set; } = 200_000;
+            public ConcurrentDictionary<int, XPRewardLevel> Rewards = new();
+        }
+
         public void AddDefaultItemRatings(ItemRatingTable itemRatings)
         {
             defaultItemRatings = itemRatings;
@@ -101,6 +110,52 @@ namespace BanjoBotAssets.Exporters.Helpers
 
                 exportedRecipes.Add(exportedRecipe);
             }
+
+            cancellationToken.ThrowIfCancellationRequested();
+
+            if (!venturesLevelRewards.IsEmpty)
+            {
+                foreach (var (eventTag, levels) in venturesLevelRewards)
+                {
+                    var season = new VenturesSeason { EventTag = eventTag };
+
+                    foreach (var (_, data) in levels)
+                    {
+                        var seasonLevel = new VenturesSeasonLevel()
+                        {
+                            IsMajorReward = data.IsMajorReward,
+                            TotalRequiredXP = data.TotalRequiredXP,
+                        };
+                        for (int i = 0; i < data.Rewards.Length; i++) {
+                            seasonLevel.Rewards.Add(data.Rewards[i]);
+                        }
+                        season.Levels.Add(seasonLevel);
+                    }
+
+                    if (!venturesPastLevelRewards.IsEmpty)
+                    {
+                        var seasonPastLevelData = venturesPastLevelRewards[eventTag];
+
+                        season.PastLevelXPRequirement = seasonPastLevelData.XPStepAmount;
+
+                        foreach (var (pastLevel, data) in seasonPastLevelData.Rewards)
+                        {
+                            var seasonLevel = new VenturesSeasonLevel()
+                            {
+                                IsMajorReward = data.IsMajorReward,
+                                TotalRequiredXP = data.TotalRequiredXP,
+                            };
+                            for (int i = 0; i < data.Rewards.Length; i++)
+                            {
+                                seasonLevel.Rewards.Add(data.Rewards[i]);
+                            }
+                            season.PastLevels.Add(seasonLevel.Rewards);
+                        }
+                    }
+
+                    exportedAssets.VenturesSeasons.Add(eventTag, season);
+                }
+            }
         }
 
         public void AddCraftingRecipe(string name, IReadOnlyDictionary<string, int> ingredients)
@@ -131,6 +186,35 @@ namespace BanjoBotAssets.Exporters.Helpers
                 {
                     item.DisplayName = displayName;
                 }
+            }
+        }
+
+        public void AddVenturesLevelReward(string eventTag, int level, int totalRequiredXP, bool isMajorReward, List<QuestReward> convertedRewards)
+        {
+            var dict = venturesLevelRewards.GetOrAdd(eventTag, _ => new());
+            dict.TryAdd(level, new()
+            {
+                IsMajorReward = isMajorReward,
+                TotalRequiredXP = totalRequiredXP,
+                Rewards = convertedRewards.ToArray(),
+            });
+        }
+
+        public void AddVenturesPastLevelReward(string eventTag, int pastLevel, QuestReward convertedReward)
+        {
+            var seasonPastLevelData = venturesPastLevelRewards.GetOrAdd(eventTag, _ => new());
+            seasonPastLevelData.Rewards.TryAdd(pastLevel, new()
+            {
+                IsMajorReward = false,
+                Rewards = new[] { convertedReward },
+            });
+        }
+
+        public void AddVenturesPastLevelXPRequirement(string eventTag, int xpAmount)
+        {
+            if (venturesPastLevelRewards.TryGetValue(eventTag, out var seasonPastLevelData))
+            {
+                seasonPastLevelData.XPStepAmount = xpAmount;
             }
         }
     }
