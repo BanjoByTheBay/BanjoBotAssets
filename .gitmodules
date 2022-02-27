@@ -1,6 +1,0 @@
-[submodule "external/CUE4Parse"]
-	path = external/CUE4Parse
-	url = ../CUE4Parse
-[submodule "external/CUE4Parse-FortniteTypes"]
-	path = external/CUE4Parse-FortniteTypes
-	url = ../CUE4Parse-FortniteTypes

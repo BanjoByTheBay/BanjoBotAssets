@@ -50,6 +50,10 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="CUE4Parse" Version="1.0.0-banjobythebay" />
+	<PackageReference Include="CUE4Parse-Conversion" Version="1.0.0-banjobythebay" />
+	<PackageReference Include="CUE4Parse-Fortnite" Version="1.0.0-banjobythebay" />
+	<PackageReference Include="CUE4Parse-FortniteTypes" Version="1.0.0-banjobythebay" />
     <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="6.0.1" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.1" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="6.0.0" />
@@ -57,13 +61,6 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\external\CUE4Parse-FortniteTypes\CUE4Parse-FortniteTypes.csproj" />
-    <ProjectReference Include="..\external\CUE4Parse\CUE4Parse-Conversion\CUE4Parse-Conversion.csproj" />
-    <ProjectReference Include="..\external\CUE4Parse\CUE4Parse-Fortnite\CUE4Parse-Fortnite.csproj" />
-    <ProjectReference Include="..\external\CUE4Parse\CUE4Parse\CUE4Parse.csproj" />
   </ItemGroup>
 
   <ItemGroup>

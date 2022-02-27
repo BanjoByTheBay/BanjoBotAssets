@@ -3,17 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31919.166
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CUE4Parse", "external\CUE4Parse\CUE4Parse\CUE4Parse.csproj", "{EC85DBCD-374E-455A-A14D-3A70C2F23CF5}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CUE4Parse-Conversion", "external\CUE4Parse\CUE4Parse-Conversion\CUE4Parse-Conversion.csproj", "{088ABEB7-D202-469B-87CE-5FA754E2F945}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CUE4Parse-Fortnite", "external\CUE4Parse\CUE4Parse-Fortnite\CUE4Parse-Fortnite.csproj", "{2DF77A76-84DC-4ED9-82DF-299013C74E60}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BanjoBotAssets", "BanjoBotAssets\BanjoBotAssets.csproj", "{BE443DAB-C3C2-4505-8DE0-0FBAD609481A}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "external", "external", "{B6FD6587-8277-4807-A32C-3084BBB3EBD4}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CUE4Parse-FortniteTypes", "external\CUE4Parse-FortniteTypes\CUE4Parse-FortniteTypes.csproj", "{6F8877A8-F84B-44DC-AACA-B27AFFF6912B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{386F1C96-2E96-496D-8D15-2DE60DA88D45}"
 	ProjectSection(SolutionItems) = preProject
@@ -26,35 +16,13 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{EC85DBCD-374E-455A-A14D-3A70C2F23CF5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{EC85DBCD-374E-455A-A14D-3A70C2F23CF5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{EC85DBCD-374E-455A-A14D-3A70C2F23CF5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{EC85DBCD-374E-455A-A14D-3A70C2F23CF5}.Release|Any CPU.Build.0 = Release|Any CPU
-		{088ABEB7-D202-469B-87CE-5FA754E2F945}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{088ABEB7-D202-469B-87CE-5FA754E2F945}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{088ABEB7-D202-469B-87CE-5FA754E2F945}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{088ABEB7-D202-469B-87CE-5FA754E2F945}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2DF77A76-84DC-4ED9-82DF-299013C74E60}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2DF77A76-84DC-4ED9-82DF-299013C74E60}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2DF77A76-84DC-4ED9-82DF-299013C74E60}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2DF77A76-84DC-4ED9-82DF-299013C74E60}.Release|Any CPU.Build.0 = Release|Any CPU
 		{BE443DAB-C3C2-4505-8DE0-0FBAD609481A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{BE443DAB-C3C2-4505-8DE0-0FBAD609481A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BE443DAB-C3C2-4505-8DE0-0FBAD609481A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BE443DAB-C3C2-4505-8DE0-0FBAD609481A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6F8877A8-F84B-44DC-AACA-B27AFFF6912B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6F8877A8-F84B-44DC-AACA-B27AFFF6912B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6F8877A8-F84B-44DC-AACA-B27AFFF6912B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6F8877A8-F84B-44DC-AACA-B27AFFF6912B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{EC85DBCD-374E-455A-A14D-3A70C2F23CF5} = {B6FD6587-8277-4807-A32C-3084BBB3EBD4}
-		{088ABEB7-D202-469B-87CE-5FA754E2F945} = {B6FD6587-8277-4807-A32C-3084BBB3EBD4}
-		{2DF77A76-84DC-4ED9-82DF-299013C74E60} = {B6FD6587-8277-4807-A32C-3084BBB3EBD4}
-		{6F8877A8-F84B-44DC-AACA-B27AFFF6912B} = {B6FD6587-8277-4807-A32C-3084BBB3EBD4}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {7B62D0D3-F583-4D09-9C80-C9644FD8B502}
