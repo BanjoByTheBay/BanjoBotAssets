@@ -211,7 +211,7 @@ namespace BanjoBotAssets.Exporters.Groups
             if (weaponOrTrapDef.Name.StartsWith("TID_", StringComparison.OrdinalIgnoreCase))
             {
                 var parts = rowName.Split('_');
-                return String.Join('_', parts[..^2]);
+                return string.Join('_', parts[..^2]);
             }
 
             return null;
@@ -312,6 +312,11 @@ namespace BanjoBotAssets.Exporters.Groups
                         itemData.TrapStats = ConvertTrapStats(trapStats, rarity);
                         namedWeightRow ??= trapStats.GetOrDefault<FName>("NamedWeightRow").Text;
                     }
+                }
+
+                if (itemData.RangedWeaponStats == null && itemData.MeleeWeaponStats == null && itemData.TrapStats == null)
+                {
+                    logger.LogWarning(Resources.Warning_NoStatsLocatedForSchematicUsingPrefix, Path.GetFileNameWithoutExtension(path), prefix);
                 }
             }
 

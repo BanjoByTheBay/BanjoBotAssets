@@ -6,6 +6,7 @@ assets.json
 schematics.json
 bin
 obj
+tmp
 *.dll
 *.usmap
 *.old

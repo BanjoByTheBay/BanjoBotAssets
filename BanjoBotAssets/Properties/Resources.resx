@@ -454,6 +454,10 @@
     <value>WARNING: No crafting row listed for schematic {0}</value>
     <comment>0=asset ID</comment>
   </data>
+  <data name="Warning_NoStatsLocatedForSchematicUsingPrefix" xml:space="preserve">
+    <value>WARNING: No stats located for schematic {0} (using prefix '{1}')</value>
+    <comment>0=schematic ID, 1=stat row name prefix</comment>
+  </data>
   <data name="Warning_NoWeaponTrapDefinitionForCraftingRow" xml:space="preserve">
     <value>WARNING: No weapon/trap definition for crafting row {0}</value>
     <comment>0=table row ID</comment>
