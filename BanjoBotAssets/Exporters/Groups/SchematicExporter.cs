@@ -136,7 +136,7 @@ namespace BanjoBotAssets.Exporters.Groups
         {
             if (craftingTable == null)
             {
-                logger.LogError(Resources.Warning_SpecificAssetNotFound, "CraftingRecipes_New");
+                logger.LogError(Resources.Error_SpecificAssetNotFound, "CraftingRecipes_New");
                 return null;
             }
 

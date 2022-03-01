@@ -214,6 +214,7 @@ namespace BanjoBotAssets
 
             logger.LogInformation(Resources.Status_LoadedAssets, assetsLoaded, stopwatch.Elapsed, stopwatch.ElapsedMilliseconds / Math.Max(assetsLoaded, 1));
 
+            // combine intermediate outputs
             foreach (var privateExport in allPrivateExports)
             {
                 cancellationToken.ThrowIfCancellationRequested();

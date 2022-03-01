@@ -23,7 +23,7 @@ namespace BanjoBotAssets.Exporters
 
             if (mapData == null)
             {
-                logger.LogError(Resources.Warning_SpecificAssetNotFound, assetPaths[0]);
+                logger.LogError(Resources.Error_SpecificAssetNotFound, assetPaths[0]);
                 return;
             }
 
