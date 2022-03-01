@@ -74,6 +74,7 @@ namespace BanjoBotAssets.Artifacts
                     {
                         "ore" => Resources.Field_Schematic_Ore,
                         "crystal" => Resources.Field_Schematic_Crystal,
+                        "" => "",
                         _ => $"<{evoType}>",
                     };
                 }
