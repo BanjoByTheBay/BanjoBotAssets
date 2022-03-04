@@ -119,7 +119,11 @@ namespace BanjoBotAssets.Exporters.Groups
             return await provider.LoadObjectAsync<UDataTable>(file.PathWithoutExtension);
         }
 
-        private static readonly Regex schematicAssetNameRegex = new(@".*/([^/]+?)(?:_(C|UC|R|VR|SR|UR))?(?:_(Ore|Crystal))?(?:_?T(\d+))?(?:\..*)?$", RegexOptions.IgnoreCase);
+        /* Directory name is included in group 1 so groups will be restricted to a single directory.
+         * For example, the Ski Cleaver and Claxe have the same filename pattern, and non-overlapping rarities,
+         * but they must be considered separate weapons because they have separate stats rows. Luckily, they
+         * also live in separate directories. */
+        private static readonly Regex schematicAssetNameRegex = new(@"^(.+?)(?:_(C|UC|R|VR|SR|UR))?(?:_(Ore|Crystal))?(?:_?T(\d+))?(?:\.[^/]*)?$", RegexOptions.IgnoreCase);
 
         protected override ParsedSchematicName? ParseAssetName(string name)
         {
