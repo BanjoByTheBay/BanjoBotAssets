@@ -78,6 +78,12 @@ namespace BanjoBotAssets.Exporters.Groups
             return name.Contains("/SID_", StringComparison.OrdinalIgnoreCase) || name.Contains("Schematics/Ammo/Ammo_", StringComparison.OrdinalIgnoreCase);
         }
 
+        protected override string SelectPrimaryAsset(IGrouping<string?, string> assetGroup)
+        {
+            return assetGroup.FirstOrDefault(p => ParseAssetName(p)?.Rarity.Equals("SR", StringComparison.OrdinalIgnoreCase) == true) ??
+                   assetGroup.First();
+        }
+
         public override async Task ExportAssetsAsync(IProgress<ExportProgress> progress, IAssetOutput output, CancellationToken cancellationToken)
         {
             var craftingTask = TryLoadTableAsync(craftingPath);
@@ -195,6 +201,27 @@ namespace BanjoBotAssets.Exporters.Groups
             };
         }
 
+        /**
+         * For mythic schematics, we want to use the display rarity stored in a property (mythic)
+         * instead of the rarity parsed from the asset filename (legendary). But we don't want to
+         * load every asset to read its properties.
+         *
+         * Instead, we rely on the knowledge that mythic items don't occur in any other rarities.
+         *
+         * We use a similar technique here and in <see cref="HeroExporter"/>: ensuring the primary asset has
+         * "sr" parsed rarity in <see cref="SelectPrimaryAsset"/>, and checking the primary asset's
+         * display rarity in <see cref="GetRarity"/>.
+         */
+
+        protected override EFortRarity GetRarity(ParsedSchematicName parsedName, UObject primaryAsset, SchematicItemGroupFields fields)
+        {
+            // SR weapons can be legendary or mythic
+            if (parsedName.Rarity.Equals("SR", StringComparison.OrdinalIgnoreCase) && primaryAsset.GetOrDefault("Rarity", EFortRarity.Uncommon) == EFortRarity.Mythic)
+                return EFortRarity.Mythic;
+
+            return base.GetRarity(parsedName, primaryAsset, fields);
+        }
+
         private static string? GetStatRowPrefix(UFortItemDefinition weaponOrTrapDef)
         {
             var rowName = weaponOrTrapDef.GetOrDefault<FDataTableRowHandle?>("WeaponStatHandle")?.RowName.Text;
@@ -282,11 +309,13 @@ namespace BanjoBotAssets.Exporters.Groups
             var rarity = GetRarity(parsed, primaryAsset, fields);
             string? namedWeightRow = null;
 
+            // use rarity.ToShortString() instead of parsed.Rarity to handle mythics correctly
+
             if (fields.WeaponOrTrapStatRowPrefix is string prefix)
             {
                 if (rangedWeaponsTable != null)
                 {
-                    var weaponStatRow = $"{prefix}_{parsed.Rarity}_{parsed.EvoType}_T{parsed.Tier:00}";
+                    var weaponStatRow = $"{prefix}_{rarity.ToShortString()}_{parsed.EvoType}_T{parsed.Tier:00}";
                     if (rangedWeaponsTable.TryGetValue(weaponStatRow, out var weaponStats))
                     {
                         itemData.RangedWeaponStats = ConvertRangedWeaponStats(weaponStats, fields, rarity);
@@ -296,7 +325,7 @@ namespace BanjoBotAssets.Exporters.Groups
 
                 if (meleeWeaponsTable != null)
                 {
-                    var weaponStatRow = $"{prefix}_{parsed.Rarity}_{parsed.EvoType}_T{parsed.Tier:00}";
+                    var weaponStatRow = $"{prefix}_{rarity.ToShortString()}_{parsed.EvoType}_T{parsed.Tier:00}";
                     if (meleeWeaponsTable.TryGetValue(weaponStatRow, out var weaponStats))
                     {
                         itemData.MeleeWeaponStats = ConvertMeleeWeaponStats(weaponStats, rarity);
@@ -306,7 +335,7 @@ namespace BanjoBotAssets.Exporters.Groups
 
                 if (trapsTable != null)
                 {
-                    var trapStatRow = $"{prefix}_{parsed.Rarity}_T{parsed.Tier:00}";
+                    var trapStatRow = $"{prefix}_{rarity.ToShortString()}_T{parsed.Tier:00}";
                     if (trapsTable.TryGetValue(trapStatRow, out var trapStats))
                     {
                         itemData.TrapStats = ConvertTrapStats(trapStats, rarity);
