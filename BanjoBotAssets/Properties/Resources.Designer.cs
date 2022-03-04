@@ -952,6 +952,15 @@ namespace BanjoBotAssets.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to WARNING: No stats located for schematic {0} (using prefix &apos;{1}&apos;).
+        /// </summary>
+        internal static string Warning_NoStatsLocatedForSchematicUsingPrefix {
+            get {
+                return ResourceManager.GetString("Warning_NoStatsLocatedForSchematicUsingPrefix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to WARNING: No weapon/trap definition for crafting row {0}.
         /// </summary>
         internal static string Warning_NoWeaponTrapDefinitionForCraftingRow {
