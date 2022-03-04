@@ -80,8 +80,18 @@ namespace BanjoBotAssets.Exporters.Groups
 
         protected override string SelectPrimaryAsset(IGrouping<string?, string> assetGroup)
         {
-            return assetGroup.FirstOrDefault(p => ParseAssetName(p)?.Rarity.Equals("SR", StringComparison.OrdinalIgnoreCase) == true) ??
-                   assetGroup.First();
+            /* Select the first schematic that:
+             *   (1) Appears legendary ("sr") in the filename, so we can check whether it's actually mythic
+             *   (2) Isn't crystal, because some crystal schematics are invalid (yet still exist)
+             *   (3) Doesn't have an unusual tier number
+             */
+            return assetGroup.FirstOrDefault(p =>
+            {
+                ParsedSchematicName? parsed = ParseAssetName(p);
+                return parsed?.Rarity.Equals("SR", StringComparison.OrdinalIgnoreCase) == true &&
+                       !parsed.EvoType.Equals("Crystal", StringComparison.OrdinalIgnoreCase) &&
+                       parsed.Tier >= 1 && parsed.Tier <= 5;
+            }) ?? assetGroup.First();
         }
 
         public override async Task ExportAssetsAsync(IProgress<ExportProgress> progress, IAssetOutput output, CancellationToken cancellationToken)
@@ -119,11 +129,20 @@ namespace BanjoBotAssets.Exporters.Groups
             return await provider.LoadObjectAsync<UDataTable>(file.PathWithoutExtension);
         }
 
-        /* Directory name is included in group 1 so groups will be restricted to a single directory.
+        /* Rarity is included in "key" so groups will be restricted to a single rarity.
          * For example, the Ski Cleaver and Claxe have the same filename pattern, and non-overlapping rarities,
-         * but they must be considered separate weapons because they have separate stats rows. Luckily, they
-         * also live in separate directories. */
-        private static readonly Regex schematicAssetNameRegex = new(@"^(.+?)(?:_(C|UC|R|VR|SR|UR))?(?:_(Ore|Crystal))?(?:_?T(\d+))?(?:\.[^/]*)?$", RegexOptions.IgnoreCase);
+         * but they must be considered separate weapons because they have separate stats rows. (They
+         * also live in separate directories.)
+         *
+         * The epic and legendary versions of the Walloper also have separate stats rows, but otherwise they're
+         * indistinguishable from other schematics.*/
+        private static readonly Regex schematicAssetNameRegex = new(
+            @"^ (?<key>.+?_(?<rarity>C|UC|R|VR|SR|UR))?     # key includes path and rarity
+                (?:_(?<evotype>Ore|Crystal))?               # evolution type for tier 4+
+                (?:_?T(?<tier>\d+))?                        # tier
+                (?:\.[^/]*)?                                # (ignored) extension
+            $",
+            RegexOptions.IgnorePatternWhitespace | RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         protected override ParsedSchematicName? ParseAssetName(string name)
         {
@@ -136,10 +155,10 @@ namespace BanjoBotAssets.Exporters.Groups
             }
 
             return new ParsedSchematicName(
-                BaseName: match.Groups[1].Value,
-                Rarity: match.Groups[2].Value,
-                Tier: match.Groups[4].Success ? int.Parse(match.Groups[4].Value, CultureInfo.InvariantCulture) : 0,
-                EvoType: match.Groups[3].Value);
+                BaseName: match.Groups["key"].Value,
+                Rarity: match.Groups["rarity"].Value,
+                Tier: match.Groups["tier"].Success ? int.Parse(match.Groups["tier"].Value, CultureInfo.InvariantCulture) : 0,
+                EvoType: match.Groups["evotype"].Value);
         }
 
         private async Task<UFortItemDefinition?> LoadWeaponOrTrapDefinitionAsync(FDataTableRowHandle craftingRowHandle)
