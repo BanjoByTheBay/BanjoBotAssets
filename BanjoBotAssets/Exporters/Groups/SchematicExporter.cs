@@ -78,6 +78,22 @@ namespace BanjoBotAssets.Exporters.Groups
             return name.Contains("/SID_", StringComparison.OrdinalIgnoreCase) || name.Contains("Schematics/Ammo/Ammo_", StringComparison.OrdinalIgnoreCase);
         }
 
+        protected override string SelectPrimaryAsset(IGrouping<string?, string> assetGroup)
+        {
+            /* Select the first schematic that:
+             *   (1) Appears legendary ("sr") in the filename, so we can check whether it's actually mythic
+             *   (2) Isn't crystal, because some crystal schematics are invalid (yet still exist)
+             *   (3) Doesn't have an unusual tier number
+             */
+            return assetGroup.FirstOrDefault(p =>
+            {
+                ParsedSchematicName? parsed = ParseAssetName(p);
+                return parsed?.Rarity.Equals("SR", StringComparison.OrdinalIgnoreCase) == true &&
+                       !parsed.EvoType.Equals("Crystal", StringComparison.OrdinalIgnoreCase) &&
+                       parsed.Tier >= 1 && parsed.Tier <= 5;
+            }) ?? assetGroup.First();
+        }
+
         public override async Task ExportAssetsAsync(IProgress<ExportProgress> progress, IAssetOutput output, CancellationToken cancellationToken)
         {
             var craftingTask = TryLoadTableAsync(craftingPath);
@@ -113,7 +129,20 @@ namespace BanjoBotAssets.Exporters.Groups
             return await provider.LoadObjectAsync<UDataTable>(file.PathWithoutExtension);
         }
 
-        private static readonly Regex schematicAssetNameRegex = new(@".*/([^/]+?)(?:_(C|UC|R|VR|SR|UR))?(?:_(Ore|Crystal))?(?:_?T(\d+))?(?:\..*)?$", RegexOptions.IgnoreCase);
+        /* Rarity is included in "key" so groups will be restricted to a single rarity.
+         * For example, the Ski Cleaver and Claxe have the same filename pattern, and non-overlapping rarities,
+         * but they must be considered separate weapons because they have separate stats rows. (They
+         * also live in separate directories.)
+         *
+         * The epic and legendary versions of the Walloper also have separate stats rows, but otherwise they're
+         * indistinguishable from other schematics.*/
+        private static readonly Regex schematicAssetNameRegex = new(
+            @"^ (?<key>.+?_(?<rarity>C|UC|R|VR|SR|UR))?     # key includes path and rarity
+                (?:_(?<evotype>Ore|Crystal))?               # evolution type for tier 4+
+                (?:_?T(?<tier>\d+))?                        # tier
+                (?:\.[^/]*)?                                # (ignored) extension
+            $",
+            RegexOptions.IgnorePatternWhitespace | RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         protected override ParsedSchematicName? ParseAssetName(string name)
         {
@@ -126,10 +155,10 @@ namespace BanjoBotAssets.Exporters.Groups
             }
 
             return new ParsedSchematicName(
-                BaseName: match.Groups[1].Value,
-                Rarity: match.Groups[2].Value,
-                Tier: match.Groups[4].Success ? int.Parse(match.Groups[4].Value, CultureInfo.InvariantCulture) : 0,
-                EvoType: match.Groups[3].Value);
+                BaseName: match.Groups["key"].Value,
+                Rarity: match.Groups["rarity"].Value,
+                Tier: match.Groups["tier"].Success ? int.Parse(match.Groups["tier"].Value, CultureInfo.InvariantCulture) : 0,
+                EvoType: match.Groups["evotype"].Value);
         }
 
         private async Task<UFortItemDefinition?> LoadWeaponOrTrapDefinitionAsync(FDataTableRowHandle craftingRowHandle)
@@ -195,6 +224,27 @@ namespace BanjoBotAssets.Exporters.Groups
             };
         }
 
+        /**
+         * For mythic schematics, we want to use the display rarity stored in a property (mythic)
+         * instead of the rarity parsed from the asset filename (legendary). But we don't want to
+         * load every asset to read its properties.
+         *
+         * Instead, we rely on the knowledge that mythic items don't occur in any other rarities.
+         *
+         * We use a similar technique here and in <see cref="HeroExporter"/>: ensuring the primary asset has
+         * "sr" parsed rarity in <see cref="SelectPrimaryAsset"/>, and checking the primary asset's
+         * display rarity in <see cref="GetRarity"/>.
+         */
+
+        protected override EFortRarity GetRarity(ParsedSchematicName parsedName, UObject primaryAsset, SchematicItemGroupFields fields)
+        {
+            // SR weapons can be legendary or mythic
+            if (parsedName.Rarity.Equals("SR", StringComparison.OrdinalIgnoreCase) && primaryAsset.GetOrDefault("Rarity", EFortRarity.Uncommon) == EFortRarity.Mythic)
+                return EFortRarity.Mythic;
+
+            return base.GetRarity(parsedName, primaryAsset, fields);
+        }
+
         private static string? GetStatRowPrefix(UFortItemDefinition weaponOrTrapDef)
         {
             var rowName = weaponOrTrapDef.GetOrDefault<FDataTableRowHandle?>("WeaponStatHandle")?.RowName.Text;
@@ -211,7 +261,7 @@ namespace BanjoBotAssets.Exporters.Groups
             if (weaponOrTrapDef.Name.StartsWith("TID_", StringComparison.OrdinalIgnoreCase))
             {
                 var parts = rowName.Split('_');
-                return String.Join('_', parts[..^2]);
+                return string.Join('_', parts[..^2]);
             }
 
             return null;
@@ -282,11 +332,13 @@ namespace BanjoBotAssets.Exporters.Groups
             var rarity = GetRarity(parsed, primaryAsset, fields);
             string? namedWeightRow = null;
 
+            // use rarity.ToShortString() instead of parsed.Rarity to handle mythics correctly
+
             if (fields.WeaponOrTrapStatRowPrefix is string prefix)
             {
                 if (rangedWeaponsTable != null)
                 {
-                    var weaponStatRow = $"{prefix}_{parsed.Rarity}_{parsed.EvoType}_T{parsed.Tier:00}";
+                    var weaponStatRow = $"{prefix}_{rarity.ToShortString()}_{parsed.EvoType}_T{parsed.Tier:00}";
                     if (rangedWeaponsTable.TryGetValue(weaponStatRow, out var weaponStats))
                     {
                         itemData.RangedWeaponStats = ConvertRangedWeaponStats(weaponStats, fields, rarity);
@@ -296,7 +348,7 @@ namespace BanjoBotAssets.Exporters.Groups
 
                 if (meleeWeaponsTable != null)
                 {
-                    var weaponStatRow = $"{prefix}_{parsed.Rarity}_{parsed.EvoType}_T{parsed.Tier:00}";
+                    var weaponStatRow = $"{prefix}_{rarity.ToShortString()}_{parsed.EvoType}_T{parsed.Tier:00}";
                     if (meleeWeaponsTable.TryGetValue(weaponStatRow, out var weaponStats))
                     {
                         itemData.MeleeWeaponStats = ConvertMeleeWeaponStats(weaponStats, rarity);
@@ -306,12 +358,17 @@ namespace BanjoBotAssets.Exporters.Groups
 
                 if (trapsTable != null)
                 {
-                    var trapStatRow = $"{prefix}_{parsed.Rarity}_T{parsed.Tier:00}";
+                    var trapStatRow = $"{prefix}_{rarity.ToShortString()}_T{parsed.Tier:00}";
                     if (trapsTable.TryGetValue(trapStatRow, out var trapStats))
                     {
                         itemData.TrapStats = ConvertTrapStats(trapStats, rarity);
                         namedWeightRow ??= trapStats.GetOrDefault<FName>("NamedWeightRow").Text;
                     }
+                }
+
+                if (itemData.RangedWeaponStats == null && itemData.MeleeWeaponStats == null && itemData.TrapStats == null)
+                {
+                    logger.LogWarning(Resources.Warning_NoStatsLocatedForSchematicUsingPrefix, Path.GetFileNameWithoutExtension(path), prefix);
                 }
             }
 

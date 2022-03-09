@@ -35,7 +35,7 @@ namespace BanjoBotAssets.Exporters.Groups
 
         protected override string SelectPrimaryAsset(IGrouping<string?, string> assetGroup)
         {
-            return assetGroup.FirstOrDefault(p => ParseAssetName(p)?.Rarity == "SR") ??
+            return assetGroup.FirstOrDefault(p => ParseAssetName(p)?.Rarity.Equals("SR", StringComparison.OrdinalIgnoreCase) == true) ??
                    assetGroup.First();
         }
 
@@ -82,7 +82,7 @@ namespace BanjoBotAssets.Exporters.Groups
         protected override EFortRarity GetRarity(BaseParsedItemName parsedName, UFortHeroType primaryAsset, HeroItemGroupFields fields)
         {
             // SR heroes can be legendary or mythic
-            if (parsedName.Rarity == "SR" && primaryAsset.Rarity == EFortRarity.Mythic)
+            if (parsedName.Rarity.Equals("SR", StringComparison.OrdinalIgnoreCase) && primaryAsset.Rarity == EFortRarity.Mythic)
                 return EFortRarity.Mythic;
 
             return base.GetRarity(parsedName, primaryAsset, fields);
