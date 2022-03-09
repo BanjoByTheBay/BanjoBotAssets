@@ -68,6 +68,18 @@ namespace BanjoBotAssets.Exporters.Helpers
 
             cancellationToken.ThrowIfCancellationRequested();
 
+            foreach (var (imageType, dict) in namedItemImages)
+            {
+                foreach (var (k, v) in dict)
+                {
+                    var ni = exportedAssets.NamedItems[k];
+                    ni.ImagePaths ??= new Dictionary<ImageType, string>();
+                    ni.ImagePaths.TryAdd(imageType, v);
+                }
+            }
+
+            cancellationToken.ThrowIfCancellationRequested();
+
             foreach (var (k, v) in difficultyInfo)
             {
                 exportedAssets.DifficultyInfo.TryAdd(k, v);

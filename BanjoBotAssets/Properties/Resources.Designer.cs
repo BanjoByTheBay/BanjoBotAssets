@@ -79,6 +79,24 @@ namespace BanjoBotAssets.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cannot decode texture to bitmap: {0}.
+        /// </summary>
+        internal static string Error_CannotDecodeTexture {
+            get {
+                return ResourceManager.GetString("Error_CannotDecodeTexture", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot encode bitmap for export: {0}.
+        /// </summary>
+        internal static string Error_CannotEncodeTexture {
+            get {
+                return ResourceManager.GetString("Error_CannotEncodeTexture", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Unable to merge because the previous artifact could not be read: {0}.
         /// </summary>
         internal static string Error_CannotReadPreviousArtifact {
@@ -529,6 +547,15 @@ namespace BanjoBotAssets.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to ExportedImages.
+        /// </summary>
+        internal static string File_ExportedImages {
+            get {
+                return ResourceManager.GetString("File_ExportedImages", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to schematics.json.
         /// </summary>
         internal static string File_schematics_json {
@@ -588,6 +615,15 @@ namespace BanjoBotAssets.Properties {
         internal static string Status_ExportingGroup {
             get {
                 return ResourceManager.GetString("Status_ExportingGroup", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Exporting images ({0}).
+        /// </summary>
+        internal static string Status_ExportingImagesType {
+            get {
+                return ResourceManager.GetString("Status_ExportingImagesType", resourceCulture);
             }
         }
         

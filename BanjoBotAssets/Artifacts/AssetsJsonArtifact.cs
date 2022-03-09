@@ -7,11 +7,13 @@ namespace BanjoBotAssets.Artifacts
     {
         private readonly ExportedFileOptions options;
         private readonly ILogger<AssetsJsonArtifact> logger;
+        private readonly IgnoreImagePathsContractResolver contractResolver;
 
-        public AssetsJsonArtifact(ExportedFileOptions options, ILogger<AssetsJsonArtifact> logger)
+        public AssetsJsonArtifact(ExportedFileOptions options, ILogger<AssetsJsonArtifact> logger, IgnoreImagePathsContractResolver contractResolver)
         {
             this.options = options;
             this.logger = logger;
+            this.contractResolver = contractResolver;
         }
 
         public Task RunAsync(ExportedAssets exportedAssets, IList<ExportedRecipe> exportedRecipes, CancellationToken cancellationToken = default)
@@ -21,7 +23,7 @@ namespace BanjoBotAssets.Artifacts
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            var settings = new JsonSerializerSettings { Formatting = Formatting.Indented };
+            var settings = new JsonSerializerSettings { Formatting = Formatting.Indented, ContractResolver = contractResolver };
             var serializer = JsonSerializer.CreateDefault(settings);
 
             if (options.Merge && File.Exists(path))

@@ -1,4 +1,4 @@
-﻿namespace BanjoBotAssets.Exporters.Helpers
+﻿namespace BanjoBotAssets.Artifacts
 {
     public enum ImageType
     {

@@ -3,7 +3,6 @@ using BanjoBotAssets.Artifacts;
 using BanjoBotAssets.Config;
 using BanjoBotAssets.Exporters;
 using BanjoBotAssets.Exporters.Helpers;
-using CUE4Parse.FileProvider;
 using CUE4Parse.UE4.Versions;
 using Microsoft.Extensions.Options;
 
@@ -71,6 +70,23 @@ namespace BanjoBotAssets.Extensions
                     options.Path = Resources.File_schematics_json;
                     options.Merge = scopeOptions.Value.Merge;
                     config.GetRequiredSection("ExportedSchematics").Bind(options);
+                });
+
+            // artifact generator for exported images and its options
+            services
+                .AddTransient<IExportArtifact, ImageFilesArtifact>()
+                .AddSingleton<IgnoreImagePathsContractResolver>()
+                .AddOptions<ImageExportOptions>()
+                .Configure<IConfiguration>((options, config) =>
+                {
+                    options.Type = new()
+                    {
+                        [ImageType.LargePreview] = WantImageExport.Yes,
+                        [ImageType.SmallPreview] = WantImageExport.Yes,
+                        [ImageType.Icon] = WantImageExport.Yes,
+                    };
+                    options.OutputDirectory = Resources.File_ExportedImages;
+                    config.GetSection(nameof(ImageExportOptions)).Bind(options);
                 });
 
             return services;

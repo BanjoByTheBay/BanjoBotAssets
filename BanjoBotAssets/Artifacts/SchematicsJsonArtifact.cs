@@ -1,5 +1,4 @@
 ﻿using BanjoBotAssets.Config;
-using BanjoBotAssets.Exporters.Helpers;
 using Newtonsoft.Json;
 
 // TODO: sort recipes/ingredients when exporting to ensure stable order
@@ -97,7 +96,7 @@ namespace BanjoBotAssets.Artifacts
             while (recipesToExclude.Count > 0)
                 exportedRecipes.RemoveAt(recipesToExclude.Pop());
 
-            var settings = new JsonSerializerSettings { ContractResolver = NullToEmptyStringResolver.Instance, Formatting = Formatting.Indented };
+            var settings = new JsonSerializerSettings { ContractResolver = NullToEmptyStringContractResolver.Instance, Formatting = Formatting.Indented };
             var serializer = JsonSerializer.CreateDefault(settings);
 
             string path = options.Path;

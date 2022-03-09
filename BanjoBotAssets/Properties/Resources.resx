@@ -124,6 +124,14 @@
   <data name="Error_AesFetchFailed" xml:space="preserve">
     <value>Couldn't load AES keys.</value>
   </data>
+  <data name="Error_CannotDecodeTexture" xml:space="preserve">
+    <value>Cannot decode texture to bitmap: {0}</value>
+    <comment>0=asset ID</comment>
+  </data>
+  <data name="Error_CannotEncodeTexture" xml:space="preserve">
+    <value>Cannot encode bitmap for export: {0}</value>
+    <comment>0=asset ID</comment>
+  </data>
   <data name="Error_CannotReadPreviousArtifact" xml:space="preserve">
     <value>Unable to merge because the previous artifact could not be read: {0}</value>
     <comment>0=filename</comment>
@@ -282,6 +290,9 @@
     <value>assets.json</value>
     <comment>main export filename</comment>
   </data>
+  <data name="File_ExportedImages" xml:space="preserve">
+    <value>ExportedImages</value>
+  </data>
   <data name="File_schematics_json" xml:space="preserve">
     <value>schematics.json</value>
     <comment>export filename for crafting recipes</comment>
@@ -304,6 +315,10 @@
   <data name="Status_ExportingGroup" xml:space="preserve">
     <value>Exporting {0}</value>
     <comment>0=asset type</comment>
+  </data>
+  <data name="Status_ExportingImagesType" xml:space="preserve">
+    <value>Exporting images ({0})</value>
+    <comment>0=image type</comment>
   </data>
   <data name="Status_ExportingItemRatings" xml:space="preserve">
     <value>Exporting item ratings</value>
