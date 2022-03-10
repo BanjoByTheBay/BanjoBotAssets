@@ -21,7 +21,7 @@ namespace BanjoBotAssets.Artifacts
         public string? SubType { get; set; }
         public string? Rarity { get; set; }
         public int? Tier { get; set; }
-        public IDictionary<ImageType, string>? ImagePaths { get; set; }
+        public SortedDictionary<ImageType, string>? ImagePaths { get; set; }
     }
 
     internal class NamedItemDataConverter : JsonConverter

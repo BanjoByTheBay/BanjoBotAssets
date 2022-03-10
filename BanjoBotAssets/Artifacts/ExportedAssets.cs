@@ -4,17 +4,17 @@
     {
         public DateTime ExportedAt { get; set; } = DateTime.Now;
 
-        public Dictionary<string, NamedItemData> NamedItems { get; } = new(StringComparer.OrdinalIgnoreCase);
+        public SortedDictionary<string, NamedItemData> NamedItems { get; } = new(StringComparer.OrdinalIgnoreCase);
 
         public ItemRatingTables ItemRatings { get; } = new();
 
-        public Dictionary<string, DifficultyInfo> DifficultyInfo { get; } = new(StringComparer.OrdinalIgnoreCase);
+        public SortedDictionary<string, DifficultyInfo> DifficultyInfo { get; } = new(StringComparer.OrdinalIgnoreCase);
 
-        public Dictionary<string, string[][]> MainQuestLines { get; } = new();
+        public SortedDictionary<string, string[][]> MainQuestLines { get; } = new();
 
-        public Dictionary<string, string[][]> EventQuestLines { get; } = new();
+        public SortedDictionary<string, string[][]> EventQuestLines { get; } = new();
 
-        public Dictionary<string, VenturesSeason> VenturesSeasons { get; } = new();
+        public SortedDictionary<string, VenturesSeason> VenturesSeasons { get; } = new();
 
         /// <summary>
         /// Merges the contents of another <see cref="ExportedAssets"/> instance into this one.

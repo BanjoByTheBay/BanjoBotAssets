@@ -73,7 +73,7 @@ namespace BanjoBotAssets.Exporters.Helpers
                 foreach (var (k, v) in dict)
                 {
                     var ni = exportedAssets.NamedItems[k];
-                    ni.ImagePaths ??= new Dictionary<ImageType, string>();
+                    ni.ImagePaths ??= new SortedDictionary<ImageType, string>();
                     ni.ImagePaths.TryAdd(imageType, v);
                 }
             }
