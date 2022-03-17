@@ -416,6 +416,10 @@
     <value>Writing artifact: {0}</value>
     <comment>0=filename</comment>
   </data>
+  <data name="Status_WroteImageFilesUpdatedPaths" xml:space="preserve">
+    <value>Wrote {0} image files, updated {1} paths</value>
+    <comment>0=number, 1=number</comment>
+  </data>
   <data name="Warning_CannotParseDefenderName" xml:space="preserve">
     <value>WARNING: Can't parse defender name: {0}</value>
     <comment>0=template ID</comment>

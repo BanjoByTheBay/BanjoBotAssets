@@ -862,6 +862,15 @@ namespace BanjoBotAssets.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Wrote {0} image files, updated {1} paths.
+        /// </summary>
+        internal static string Status_WroteImageFilesUpdatedPaths {
+            get {
+                return ResourceManager.GetString("Status_WroteImageFilesUpdatedPaths", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to WARNING: Can&apos;t parse defender name: {0}.
         /// </summary>
         internal static string Warning_CannotParseDefenderName {

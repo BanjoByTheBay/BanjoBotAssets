@@ -36,6 +36,7 @@ namespace BanjoBotAssets.PostExporters
                 IncrementFilenameSuffix,
                 StringComparer.OrdinalIgnoreCase,
                 StringComparer.OrdinalIgnoreCase);
+            int filesWritten = 0, pathsUpdated = 0;
 
             Directory.CreateDirectory(options.Value.OutputDirectory);
 
@@ -57,6 +58,7 @@ namespace BanjoBotAssets.PostExporters
                             // update the path in the NamedItem to point to the output file
                             var exportedPath = Path.Combine(options.Value.OutputDirectory, Path.ChangeExtension(transformedFilename, ".png"));
                             i.ImagePaths[imageType] = exportedPath;
+                            pathsUpdated++;
 
                             if (!novel)
                             {
@@ -77,10 +79,13 @@ namespace BanjoBotAssets.PostExporters
                             {
                                 logger.LogError(Resources.Error_CannotEncodeTexture, imagePath);
                             }
+                            filesWritten++;
                         }
                     }
                 }
             }
+
+            logger.LogInformation(Resources.Status_WroteImageFilesUpdatedPaths, filesWritten, pathsUpdated);
         }
 
         private static readonly Regex NumberSuffixedFilenameRegex = new(@"^(.*)_(\d+)(\..+)?$");
