@@ -200,6 +200,7 @@ namespace BanjoBotAssets
             ObjectTypeRegistry.RegisterClass("FortAlterationItemDefinition", typeof(UFortItemDefinition));
             ObjectTypeRegistry.RegisterClass("FortResourceItemDefinition", typeof(UFortWorldItemDefinition));
             ObjectTypeRegistry.RegisterClass("FortGameplayModifierItemDefinition", typeof(UFortItemDefinition));
+            ObjectTypeRegistry.RegisterClass("StWFortAccoladeItemDefinition", typeof(UFortItemDefinition));
         }
 
         private async Task GenerateSelectedArtifactsAsync(ExportedAssets exportedAssets, IList<ExportedRecipe> exportedRecipes, CancellationToken cancellationToken)
