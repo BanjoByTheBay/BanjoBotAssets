@@ -1,10 +1,11 @@
-﻿using BanjoBotAssets.Config;
+﻿using BanjoBotAssets.Artifacts.Models;
+using BanjoBotAssets.Config;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using System.Reflection;
 
-namespace BanjoBotAssets.Artifacts
+namespace BanjoBotAssets.Artifacts.Helpers
 {
     internal class IgnoreImagePathsContractResolver : DefaultContractResolver
     {

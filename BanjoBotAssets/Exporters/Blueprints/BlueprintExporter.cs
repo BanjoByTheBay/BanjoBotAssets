@@ -1,4 +1,4 @@
-﻿using BanjoBotAssets.Artifacts;
+﻿using BanjoBotAssets.Artifacts.Models;
 using BanjoBotAssets.Exporters.Helpers;
 using BanjoBotAssets.Extensions;
 using CUE4Parse.UE4.Objects.Engine;

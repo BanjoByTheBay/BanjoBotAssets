@@ -1,4 +1,4 @@
-﻿using BanjoBotAssets.Artifacts;
+﻿using BanjoBotAssets.Artifacts.Models;
 using BanjoBotAssets.Exporters.Helpers;
 
 namespace BanjoBotAssets.Exporters.Groups

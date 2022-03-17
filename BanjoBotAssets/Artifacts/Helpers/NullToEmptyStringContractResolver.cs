@@ -2,7 +2,7 @@
 using Newtonsoft.Json.Serialization;
 using System.Reflection;
 
-namespace BanjoBotAssets.Artifacts
+namespace BanjoBotAssets.Artifacts.Helpers
 {
     // https://stackoverflow.com/questions/23830206/json-convert-empty-string-instead-of-null
 

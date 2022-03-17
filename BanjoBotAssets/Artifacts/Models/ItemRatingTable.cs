@@ -1,4 +1,4 @@
-﻿namespace BanjoBotAssets.Artifacts
+﻿namespace BanjoBotAssets.Artifacts.Models
 {
     internal class ItemRatingTable
     {

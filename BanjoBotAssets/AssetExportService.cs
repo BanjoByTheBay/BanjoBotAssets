@@ -1,13 +1,15 @@
-﻿using BanjoBotAssets.Exporters;
+﻿using BanjoBotAssets.Aes;
+using BanjoBotAssets.Artifacts;
+using BanjoBotAssets.Artifacts.Models;
+using BanjoBotAssets.Config;
+using BanjoBotAssets.Exporters;
+using BanjoBotAssets.Exporters.Helpers;
+using BanjoBotAssets.PostExporters;
 using CUE4Parse.Encryption.Aes;
 using CUE4Parse.UE4.Objects.Core.Misc;
 using CUE4Parse.UE4.Versions;
-using System.Diagnostics;
 using Microsoft.Extensions.Options;
-using BanjoBotAssets.Aes;
-using BanjoBotAssets.Exporters.Helpers;
-using BanjoBotAssets.Artifacts;
-using BanjoBotAssets.Config;
+using System.Diagnostics;
 
 namespace BanjoBotAssets
 {
@@ -23,6 +25,7 @@ namespace BanjoBotAssets
         private readonly AbstractVfsFileProvider provider;
         private readonly ITypeMappingsProviderFactory typeMappingsProviderFactory;
         private readonly IOptions<ScopeOptions> scopeOptions;
+        private readonly IEnumerable<IPostExporter> allPostExporters;
 
         public AssetExportService(ILogger<AssetExportService> logger,
             IHostApplicationLifetime lifetime,
@@ -33,7 +36,8 @@ namespace BanjoBotAssets
             IEnumerable<IExportArtifact> exportArtifacts,
             AbstractVfsFileProvider provider,
             ITypeMappingsProviderFactory typeMappingsProviderFactory,
-            IOptions<ScopeOptions> scopeOptions)
+            IOptions<ScopeOptions> scopeOptions,
+            IEnumerable<IPostExporter> allPostExporters)
         {
             this.logger = logger;
             this.lifetime = lifetime;
@@ -44,7 +48,7 @@ namespace BanjoBotAssets
             this.provider = provider;
             this.typeMappingsProviderFactory = typeMappingsProviderFactory;
             this.scopeOptions = scopeOptions;
-
+            this.allPostExporters = allPostExporters;
             exportersToRun = new(allExporters);
 
             if (!string.IsNullOrWhiteSpace(scopeOptions.Value.Only))
@@ -75,6 +79,23 @@ namespace BanjoBotAssets
             }
         }
 
+        private struct AssetLoadingStats
+        {
+            public int AssetsLoaded { get; set; }
+            public TimeSpan Elapsed { get; set; }
+
+            public AssetLoadingStats(int assetsLoaded, TimeSpan elapsed)
+            {
+                AssetsLoaded = assetsLoaded;
+                Elapsed = elapsed;
+            }
+
+            public static AssetLoadingStats operator +(AssetLoadingStats a, AssetLoadingStats b)
+            {
+                return new(a.AssetsLoaded + b.AssetsLoaded, a.Elapsed + b.Elapsed);
+            }
+        }
+
         private async Task<int> RunAsync(CancellationToken cancellationToken)
         {
             // by the time this method is called, the CUE4Parse file provider has already been created,
@@ -95,7 +116,13 @@ namespace BanjoBotAssets
             OfferFileListToExporters();
 
             // run exporters and collect their intermediate results
-            var (exportedAssets, exportedRecipes) = await RunSelectedExportersAsync(cancellationToken);
+            var (exportedAssets, exportedRecipes, stats1) = await RunSelectedExportersAsync(cancellationToken);
+
+            // run post-exporters to refine the intermediate results
+            var stats2 = await RunSelectedPostExportersAsync(exportedAssets, exportedRecipes, cancellationToken);
+
+            // report assets loaded and time elapsed
+            ReportAssetLoadingStats(stats1 + stats2);
 
             // generate output artifacts
             await GenerateSelectedArtifactsAsync(exportedAssets, exportedRecipes, cancellationToken);
@@ -105,6 +132,11 @@ namespace BanjoBotAssets
 
             // done!
             return 0;
+        }
+
+        private void ReportAssetLoadingStats(AssetLoadingStats stats)
+        {
+            logger.LogInformation(Resources.Status_LoadedAssets, stats.AssetsLoaded, stats.Elapsed, stats.Elapsed.TotalMilliseconds / Math.Max(stats.AssetsLoaded, 1));
         }
 
         private async Task DecryptGameFilesAsync(CancellationToken cancellationToken)
@@ -179,11 +211,26 @@ namespace BanjoBotAssets
             }
         }
 
-        private async Task<(ExportedAssets, IList<ExportedRecipe>)> RunSelectedExportersAsync(CancellationToken cancellationToken)
+        private async Task<AssetLoadingStats> RunSelectedPostExportersAsync(ExportedAssets exportedAssets, IList<ExportedRecipe> exportedRecipes, CancellationToken cancellationToken)
+        {
+            var stopwatch = new Stopwatch();
+
+            var progress = new Progress<ExportProgress>(HandleProgressReport);
+            var postExporters = allPostExporters.ToList();
+
+            stopwatch.Start();
+
+            await Task.WhenAll(postExporters.Select(pe => pe.ProcessExportsAsync(exportedAssets, exportedRecipes, cancellationToken)));
+
+            stopwatch.Stop();
+
+            return new AssetLoadingStats(postExporters.Sum(pe => pe.AssetsLoaded), stopwatch.Elapsed);
+        }
+
+        private async Task<(ExportedAssets, IList<ExportedRecipe>, AssetLoadingStats)> RunSelectedExportersAsync(CancellationToken cancellationToken)
         {
             // run the exporters and collect their outputs
             var stopwatch = new Stopwatch();
-            stopwatch.Start();
 
             // give each exporter its own output object to use,
             // we'll combine the results when the tasks all complete.
@@ -199,10 +246,10 @@ namespace BanjoBotAssets
                 logger.LogInformation(Resources.Status_RunningAllExporters);
             }
 
-            var progress = new Progress<ExportProgress>(_ =>
-            {
-                // TODO: do something with progress reports
-            });
+            var progress = new Progress<ExportProgress>(HandleProgressReport);
+
+            stopwatch.Start();
+
             await Task.WhenAll(
                 exportersToRun.Zip(allPrivateExports, (e, r) => e.ExportAssetsAsync(progress, r, cancellationToken)));
 
@@ -211,8 +258,6 @@ namespace BanjoBotAssets
             var exportedAssets = new ExportedAssets();
             var exportedRecipes = new List<ExportedRecipe>();
             var assetsLoaded = exportersToRun.Sum(e => e.AssetsLoaded);
-
-            logger.LogInformation(Resources.Status_LoadedAssets, assetsLoaded, stopwatch.Elapsed, stopwatch.ElapsedMilliseconds / Math.Max(assetsLoaded, 1));
 
             // combine intermediate outputs
             foreach (var privateExport in allPrivateExports)
@@ -228,7 +273,12 @@ namespace BanjoBotAssets
             }
 
             allPrivateExports.Clear();
-            return (exportedAssets, exportedRecipes);
+            return (exportedAssets, exportedRecipes, new AssetLoadingStats { AssetsLoaded = assetsLoaded, Elapsed = stopwatch.Elapsed });
+        }
+
+        private void HandleProgressReport(ExportProgress progress)
+        {
+            // TODO: do something with progress reports
         }
 
         private void OfferFileListToExporters()

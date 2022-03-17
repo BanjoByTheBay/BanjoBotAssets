@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 
-namespace BanjoBotAssets.Artifacts
+namespace BanjoBotAssets.Artifacts.Models
 {
     internal class DifficultyInfo
     {

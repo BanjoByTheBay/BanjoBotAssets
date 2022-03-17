@@ -1,6 +1,7 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using BanjoBotAssets.Artifacts.Helpers;
+using System.Diagnostics.CodeAnalysis;
 
-namespace BanjoBotAssets.Artifacts
+namespace BanjoBotAssets.Artifacts.Models
 {
     [NamedItemData("Quest")]
     internal class QuestItemData : NamedItemData

@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System.Diagnostics.CodeAnalysis;
 
-namespace BanjoBotAssets.Artifacts
+namespace BanjoBotAssets.Artifacts.Models
 {
     [JsonObject(ItemNullValueHandling = NullValueHandling.Ignore)]
     internal class QuestObjective

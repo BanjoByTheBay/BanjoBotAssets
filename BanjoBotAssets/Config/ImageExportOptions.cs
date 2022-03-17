@@ -1,4 +1,4 @@
-﻿using BanjoBotAssets.Artifacts;
+﻿using BanjoBotAssets.Exporters.Helpers;
 
 namespace BanjoBotAssets.Config
 {

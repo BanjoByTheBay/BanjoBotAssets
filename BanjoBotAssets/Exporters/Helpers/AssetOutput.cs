@@ -1,4 +1,4 @@
-﻿using BanjoBotAssets.Artifacts;
+﻿using BanjoBotAssets.Artifacts.Models;
 using System.Collections.Concurrent;
 
 namespace BanjoBotAssets.Exporters.Helpers

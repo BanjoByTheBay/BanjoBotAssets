@@ -1,4 +1,6 @@
-﻿using BanjoBotAssets.Config;
+﻿using BanjoBotAssets.Artifacts.Helpers;
+using BanjoBotAssets.Artifacts.Models;
+using BanjoBotAssets.Config;
 using Newtonsoft.Json;
 
 namespace BanjoBotAssets.Artifacts

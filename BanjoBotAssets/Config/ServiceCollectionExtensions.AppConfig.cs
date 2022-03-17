@@ -1,8 +1,10 @@
 ﻿using BanjoBotAssets.Aes;
 using BanjoBotAssets.Artifacts;
+using BanjoBotAssets.Artifacts.Helpers;
 using BanjoBotAssets.Config;
 using BanjoBotAssets.Exporters;
 using BanjoBotAssets.Exporters.Helpers;
+using BanjoBotAssets.PostExporters;
 using CUE4Parse.UE4.Versions;
 using Microsoft.Extensions.Options;
 
@@ -47,6 +49,23 @@ namespace BanjoBotAssets.Extensions
                     config.GetRequiredSection("PerformanceOptions").Bind(options);
                 });
 
+            // post-exporter for image files and its options
+            services
+                .AddTransient<IPostExporter, ImageFilesPostExporter>()
+                .AddSingleton<IgnoreImagePathsContractResolver>()
+                .AddOptions<ImageExportOptions>()
+                .Configure<IConfiguration>((options, config) =>
+                {
+                    options.Type = new()
+                    {
+                        [ImageType.LargePreview] = WantImageExport.Yes,
+                        [ImageType.SmallPreview] = WantImageExport.Yes,
+                        [ImageType.Icon] = WantImageExport.Yes,
+                    };
+                    options.OutputDirectory = Resources.File_ExportedImages;
+                    config.GetSection(nameof(ImageExportOptions)).Bind(options);
+                });
+
             // all artifacts use global Merge option by default
             services
                 .ConfigureAll<ExportedFileOptions, IOptions<ScopeOptions>>(
@@ -70,23 +89,6 @@ namespace BanjoBotAssets.Extensions
                     options.Path = Resources.File_schematics_json;
                     options.Merge = scopeOptions.Value.Merge;
                     config.GetRequiredSection("ExportedSchematics").Bind(options);
-                });
-
-            // artifact generator for exported images and its options
-            services
-                .AddTransient<IExportArtifact, ImageFilesArtifact>()
-                .AddSingleton<IgnoreImagePathsContractResolver>()
-                .AddOptions<ImageExportOptions>()
-                .Configure<IConfiguration>((options, config) =>
-                {
-                    options.Type = new()
-                    {
-                        [ImageType.LargePreview] = WantImageExport.Yes,
-                        [ImageType.SmallPreview] = WantImageExport.Yes,
-                        [ImageType.Icon] = WantImageExport.Yes,
-                    };
-                    options.OutputDirectory = Resources.File_ExportedImages;
-                    config.GetSection(nameof(ImageExportOptions)).Bind(options);
                 });
 
             return services;

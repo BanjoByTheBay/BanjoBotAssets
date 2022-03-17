@@ -1,4 +1,6 @@
-﻿namespace BanjoBotAssets.Artifacts
+﻿using BanjoBotAssets.Artifacts.Models;
+
+namespace BanjoBotAssets.Artifacts.Helpers
 {
     /// <summary>
     /// Allows a subclass of <see cref="NamedItemData"/> to be deserialized polymorphically

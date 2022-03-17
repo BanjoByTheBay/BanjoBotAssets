@@ -1,7 +1,8 @@
-﻿using Newtonsoft.Json;
+﻿using BanjoBotAssets.Artifacts.Helpers;
+using Newtonsoft.Json;
 using System.Diagnostics.CodeAnalysis;
 
-namespace BanjoBotAssets.Artifacts
+namespace BanjoBotAssets.Artifacts.Models
 {
     [NamedItemData("Schematic")]
     internal class SchematicItemData : NamedItemData

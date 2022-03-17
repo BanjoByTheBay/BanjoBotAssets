@@ -1,9 +1,11 @@
-﻿using Newtonsoft.Json;
+﻿using BanjoBotAssets.Artifacts.Helpers;
+using BanjoBotAssets.Exporters.Helpers;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 
-namespace BanjoBotAssets.Artifacts
+namespace BanjoBotAssets.Artifacts.Models
 {
     [JsonObject(ItemNullValueHandling = NullValueHandling.Ignore)]
     [JsonConverter(typeof(NamedItemDataConverter))]
