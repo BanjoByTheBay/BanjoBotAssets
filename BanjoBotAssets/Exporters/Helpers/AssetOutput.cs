@@ -145,7 +145,8 @@ namespace BanjoBotAssets.Exporters.Helpers
                             IsMajorReward = data.IsMajorReward,
                             TotalRequiredXP = data.TotalRequiredXP,
                         };
-                        for (int i = 0; i < data.Rewards.Length; i++) {
+                        for (int i = 0; i < data.Rewards.Length; i++)
+                        {
                             seasonLevel.Rewards.Add(data.Rewards[i]);
                         }
                         season.Levels.Add(seasonLevel);

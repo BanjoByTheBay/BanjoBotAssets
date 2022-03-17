@@ -1,8 +1,8 @@
-﻿using System.Runtime.InteropServices;
-using BanjoBotAssets.Config;
+﻿using BanjoBotAssets.Config;
 using CUE4Parse.MappingsProvider;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json.Linq;
+using System.Runtime.InteropServices;
 
 namespace BanjoBotAssets
 {
@@ -88,7 +88,7 @@ namespace BanjoBotAssets
                     logger.LogError("Failed to get BenBot Mappings Endpoint");
                     return false;
                 }
-                var json =  JArray.Parse(jsonText);
+                var json = JArray.Parse(jsonText);
                 var preferredCompression = _isWindows64Bit ? "Oodle" : "Brotli";
 
                 if (!json.HasValues)
