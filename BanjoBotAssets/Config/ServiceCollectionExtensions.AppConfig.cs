@@ -7,6 +7,8 @@ using BanjoBotAssets.Exporters.Helpers;
 using BanjoBotAssets.PostExporters;
 using CUE4Parse.UE4.Versions;
 using Microsoft.Extensions.Options;
+using Serilog;
+using Serilog.Sinks.ILogger;
 
 namespace BanjoBotAssets.Extensions
 {
@@ -126,6 +128,7 @@ namespace BanjoBotAssets.Extensions
             services.AddSingleton((Func<IServiceProvider, AbstractVfsFileProvider>)(sp =>
                  {
                      var options = sp.GetRequiredService<IOptions<GameFileOptions>>();
+
                      string gameDirectory;
                      try
                      {
@@ -135,13 +138,21 @@ namespace BanjoBotAssets.Extensions
                      {
                          throw new InvalidOperationException(Resources.Error_GameNotFound, ex);
                      }
+
                      var cache = sp.GetRequiredService<AssetCache>();
+
+                     // set up Serilog global logger
+                     Log.Logger = new LoggerConfiguration()
+                        .WriteTo.ILogger(sp.GetRequiredService<ILogger<CachingFileProvider>>())
+                        .CreateLogger();
+
                      var provider = new CachingFileProvider(
                          cache,
                          gameDirectory,
                          SearchOption.TopDirectoryOnly,
                          isCaseInsensitive: true,
                          new VersionContainer(EGame.GAME_UE5_LATEST));
+
                      provider.Initialize();
                      return provider;
                  }));

@@ -20,7 +20,7 @@ namespace BanjoBotAssets.Exporters
             provider = services.Provider;
             performanceOptions = services.PerformanceOptions;
             scopeOptions = services.ScopeOptions;
-            logger = services.LoggerFactory.CreateLogger(GetType().FullName ?? "");
+            logger = services.LoggerFactory.CreateLogger(GetType());
             abilityDescription = services.AbilityDescription;
         }
 
