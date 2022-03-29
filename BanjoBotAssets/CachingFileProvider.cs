@@ -52,7 +52,8 @@ namespace BanjoBotAssets
 
         public void ReportCacheStats()
         {
-            System.Diagnostics.Debug.WriteLine("Cache hits: {0}. Misses: {1}. Hit ratio: {2:0.0%}.",
+            System.Diagnostics.Debug.WriteLine("Cache size: {0}. Hits: {1}. Misses: {2}. Hit ratio: {3:0.0%}.",
+                cache.Cache.Count,
                 cacheRequests - cacheMisses,
                 cacheMisses,
                 cacheRequests == 0 ? 0 : (cacheRequests - cacheMisses) / (float)cacheRequests);
