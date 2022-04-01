@@ -22,27 +22,6 @@ namespace BanjoBotAssets.Artifacts
         {
             var recipesToExclude = new Stack<int>();
 
-            var schematicSubTypeToRecipeType = new Dictionary<string, string>
-            {
-                [Resources.Field_Schematic_Ceiling] = Resources.Field_Recipe_Trap,
-                [Resources.Field_Schematic_Floor] = Resources.Field_Recipe_Trap,
-                [Resources.Field_Schematic_Wall] = Resources.Field_Recipe_Trap,
-
-                [Resources.Field_Schematic_Axe] = Resources.Field_Recipe_Melee,
-                [Resources.Field_Schematic_Club] = Resources.Field_Recipe_Melee,
-                [Resources.Field_Schematic_Hardware] = Resources.Field_Recipe_Melee,
-                [Resources.Field_Schematic_Scythe] = Resources.Field_Recipe_Melee,
-                [Resources.Field_Schematic_Spear] = Resources.Field_Recipe_Melee,
-                [Resources.Field_Schematic_Sword] = Resources.Field_Recipe_Melee,
-
-                [Resources.Field_Schematic_Assault] = Resources.Field_Recipe_Ranged,
-                [Resources.Field_Schematic_Explosive] = Resources.Field_Recipe_Ranged,
-                [Resources.Field_Schematic_Pistol] = Resources.Field_Recipe_Ranged,
-                [Resources.Field_Schematic_Shotgun] = Resources.Field_Recipe_Ranged,
-                [Resources.Field_Schematic_SMG] = Resources.Field_Recipe_Ranged,
-                [Resources.Field_Schematic_Sniper] = Resources.Field_Recipe_Ranged,
-            };
-
             cancellationToken.ThrowIfCancellationRequested();
 
             for (int i = 0; i < exportedRecipes.Count; i++)
@@ -56,7 +35,7 @@ namespace BanjoBotAssets.Artifacts
                 }
 
                 // change schematic ID to display name and fill in other fields
-                if (!exportedAssets.NamedItems.TryGetValue(recipe.ItemName, out var schematic))
+                if (!exportedAssets.NamedItems.TryGetValue(recipe.ItemName, out var itemData) || itemData is not SchematicItemData schematic)
                 {
                     logger.LogDebug(Resources.Warning_UnmatchedCraftingRecipe, recipe.ItemName);
                     recipesToExclude.Push(i);
@@ -64,7 +43,7 @@ namespace BanjoBotAssets.Artifacts
                 }
 
                 recipe.ItemName = schematic.DisplayName ?? "";
-                recipe.Type = schematic.SubType != null ? schematicSubTypeToRecipeType.GetValueOrDefault(schematic.SubType, "") : "";
+                recipe.Type = schematic.Category ?? "";
                 recipe.Subtype = schematic.SubType ?? "";
                 recipe.Rarity = schematic.Rarity ?? "";
                 recipe.Tier = schematic.Tier ?? 0;
