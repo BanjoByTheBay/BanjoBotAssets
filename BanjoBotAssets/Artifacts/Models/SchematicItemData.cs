@@ -7,9 +7,12 @@ namespace BanjoBotAssets.Artifacts.Models
     [NamedItemData("Schematic")]
     internal class SchematicItemData : NamedItemData
     {
+        public string? Category { get; set; }
         public string? EvoType { get; set; }
         [DisallowNull]
         public AlterationSlot[]? AlterationSlots { get; set; }
+        public string? TriggerType { get; set; }
+        public string? DisplayTier { get; set; }
 
         public RangedWeaponStats? RangedWeaponStats { get; set; }
         public MeleeWeaponStats? MeleeWeaponStats { get; set; }

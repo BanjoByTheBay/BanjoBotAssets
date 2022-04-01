@@ -1,6 +1,7 @@
 ﻿using BanjoBotAssets.Artifacts.Models;
 using BanjoBotAssets.Exporters.Helpers;
 using BanjoBotAssets.Extensions;
+using CUE4Parse.FN.Enums.FortniteGame;
 using CUE4Parse.UE4.Objects.GameplayTags;
 using System.Collections.Concurrent;
 
@@ -10,10 +11,10 @@ namespace BanjoBotAssets.Exporters.Groups
         : BaseParsedItemName(BaseName, Rarity, Tier);
 
     internal record SchematicItemGroupFields(string DisplayName, string? Description, string? SubType, string AlterationSlotsLoadoutRow,
-        string? AmmoType, string? WeaponOrTrapStatRowPrefix)
+        string? AmmoType, string? WeaponOrTrapStatRowPrefix, string? TriggerType, string? DisplayTier, string? Category)
         : BaseItemGroupFields(DisplayName, Description, SubType)
     {
-        public SchematicItemGroupFields() : this("", null, null, "", "", "") { }
+        public SchematicItemGroupFields() : this("", null, null, "", "", "", "", "", "") { }
     }
 
     internal class SchematicExporter : GroupExporter<UObject, ParsedSchematicName, SchematicItemGroupFields, SchematicItemData>
@@ -208,19 +209,24 @@ namespace BanjoBotAssets.Exporters.Groups
 
             var displayName = weaponOrTrapDef.DisplayName?.Text ?? $"<{grouping.Key}>";
             var description = weaponOrTrapDef.Description?.Text;
-            var subType = SubTypeFromTags(weaponOrTrapDef.GameplayTags);
+            var (category, subType) = CategoryAndSubTypeFromTags(weaponOrTrapDef.GameplayTags);
             var alterationSlotsLoadoutRow = weaponOrTrapDef.GetOrDefault<FName>("AlterationSlotsLoadoutRow").Text;
             var ammoType = await AmmoTypeFromPathAsync(weaponOrTrapDef.GetOrDefault<FSoftObjectPath>("AmmoData"));
             var statRowPrefix = GetStatRowPrefix(weaponOrTrapDef);
+            var triggerType = weaponOrTrapDef.GetOrDefault<EFortWeaponTriggerType>("TriggerType").ToString();
+            var displayTier = weaponOrTrapDef.GetOrDefault<EFortDisplayTier>("DisplayTier").ToString();
 
             return result with
             {
                 Description = description,
                 DisplayName = displayName,
+                Category = category,
                 SubType = subType,
                 AlterationSlotsLoadoutRow = alterationSlotsLoadoutRow,
                 AmmoType = ammoType,
                 WeaponOrTrapStatRowPrefix = statRowPrefix,
+                TriggerType = triggerType,
+                DisplayTier = displayTier,
             };
         }
 
@@ -273,7 +279,7 @@ namespace BanjoBotAssets.Exporters.Groups
         {
         }
 
-        private static string SubTypeFromTags(FGameplayTagContainer tags)
+        private static (string category, string subType) CategoryAndSubTypeFromTags(FGameplayTagContainer tags)
         {
             foreach (var tag in tags.GameplayTags)
             {
@@ -283,27 +289,27 @@ namespace BanjoBotAssets.Exporters.Groups
                 {
                     return match.Groups[1].Value.ToLower(CultureInfo.InvariantCulture) switch
                     {
-                        "hammer" => Resources.Field_Schematic_Hardware,
-                        "heavy" => Resources.Field_Schematic_Explosive,
-                        "improvised" => Resources.Field_Schematic_Club,
-                        "smg" => Resources.Field_Schematic_SMG,
-                        "assault" => Resources.Field_Schematic_Assault,
-                        "axe" => Resources.Field_Schematic_Axe,
-                        "ceiling" => Resources.Field_Schematic_Ceiling,
-                        "floor" => Resources.Field_Schematic_Floor,
-                        "pistol" => Resources.Field_Schematic_Pistol,
-                        "scythe" => Resources.Field_Schematic_Scythe,
-                        "shotgun" => Resources.Field_Schematic_Shotgun,
-                        "sniper" => Resources.Field_Schematic_Sniper,
-                        "spear" => Resources.Field_Schematic_Spear,
-                        "sword" => Resources.Field_Schematic_Sword,
-                        "wall" => Resources.Field_Schematic_Wall,
-                        _ => Resources.Field_Schematic_Unknown,
+                        "hammer" => (Resources.Field_Recipe_Melee, Resources.Field_Schematic_Hardware),
+                        "heavy" => (Resources.Field_Recipe_Melee, Resources.Field_Schematic_Explosive),
+                        "improvised" => (Resources.Field_Recipe_Melee, Resources.Field_Schematic_Club),
+                        "smg" => (Resources.Field_Recipe_Ranged, Resources.Field_Schematic_SMG),
+                        "assault" => (Resources.Field_Recipe_Ranged, Resources.Field_Schematic_Assault),
+                        "axe" => (Resources.Field_Recipe_Melee, Resources.Field_Schematic_Axe),
+                        "ceiling" => (Resources.Field_Recipe_Trap, Resources.Field_Schematic_Ceiling),
+                        "floor" => (Resources.Field_Recipe_Trap, Resources.Field_Schematic_Floor),
+                        "pistol" => (Resources.Field_Recipe_Ranged, Resources.Field_Schematic_Pistol),
+                        "scythe" => (Resources.Field_Recipe_Melee, Resources.Field_Schematic_Scythe),
+                        "shotgun" => (Resources.Field_Recipe_Ranged, Resources.Field_Schematic_Shotgun),
+                        "sniper" => (Resources.Field_Recipe_Ranged, Resources.Field_Schematic_Sniper),
+                        "spear" => (Resources.Field_Recipe_Melee, Resources.Field_Schematic_Spear),
+                        "sword" => (Resources.Field_Recipe_Melee, Resources.Field_Schematic_Sword),
+                        "wall" => (Resources.Field_Recipe_Trap, Resources.Field_Schematic_Wall),
+                        _ => ("", Resources.Field_Schematic_Unknown),
                     };
                 }
             }
 
-            return Resources.Field_Schematic_Unknown;
+            return ("", Resources.Field_Schematic_Unknown);
         }
 
         private readonly ConcurrentDictionary<string, Task<string?>> cachedAmmoTypesFromPaths = new();
@@ -328,6 +334,9 @@ namespace BanjoBotAssets.Exporters.Groups
         protected override Task<bool> ExportAssetAsync(ParsedSchematicName parsed, UObject primaryAsset, SchematicItemGroupFields fields, string path, SchematicItemData itemData)
         {
             itemData.EvoType = parsed.EvoType;
+            itemData.Category = fields.Category;
+            itemData.DisplayTier = fields.DisplayTier;
+            itemData.TriggerType = fields.TriggerType;
 
             var rarity = GetRarity(parsed, primaryAsset, fields);
             string? namedWeightRow = null;
@@ -363,6 +372,10 @@ namespace BanjoBotAssets.Exporters.Groups
                     {
                         itemData.TrapStats = ConvertTrapStats(trapStats, rarity);
                         namedWeightRow ??= trapStats.GetOrDefault<FName>("NamedWeightRow").Text;
+
+                        // DisplayTier and TriggerType are meaningless for traps, and always the same
+                        itemData.DisplayTier = "";
+                        itemData.TriggerType = "";
                     }
                 }
 
@@ -490,7 +503,6 @@ namespace BanjoBotAssets.Exporters.Groups
             var result = new RangedWeaponStats
             {
                 AmmoType = fields.AmmoType,
-
                 BulletsPerCartridge = row.GetOrDefault<int>("BulletsPerCartridge"),
                 FiringRate = row.GetOrDefault<float>("FiringRate"),
                 PointBlank = MakeDamageRange(row, "DmgPB", "EnvDmgPB", "ImpactDmgPB", "KnockbackMagnitude", "RngPB"),
