@@ -54,7 +54,6 @@ namespace BanjoBotAssets.Extensions
             // post-exporter for image files and its options
             services
                 .AddTransient<IPostExporter, ImageFilesPostExporter>()
-                .AddSingleton<IgnoreImagePathsContractResolver>()
                 .AddOptions<ImageExportOptions>()
                 .Configure<IConfiguration>((options, config) =>
                 {
@@ -92,6 +91,11 @@ namespace BanjoBotAssets.Extensions
                     options.Merge = scopeOptions.Value.Merge;
                     config.GetRequiredSection("ExportedSchematics").Bind(options);
                 });
+
+            // JSON contract resolvers used by the artifact generators
+            services
+                .AddSingleton<IgnoreImagePathsContractResolver>()
+                .AddSingleton<NullToEmptyStringContractResolver>();
 
             return services;
         }

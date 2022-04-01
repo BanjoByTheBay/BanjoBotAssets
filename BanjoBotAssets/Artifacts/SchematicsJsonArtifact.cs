@@ -11,11 +11,13 @@ namespace BanjoBotAssets.Artifacts
     {
         private readonly ExportedFileOptions options;
         private readonly ILogger<SchematicsJsonArtifact> logger;
+        private readonly NullToEmptyStringContractResolver contractResolver;
 
-        public SchematicsJsonArtifact(ExportedFileOptions options, ILogger<SchematicsJsonArtifact> logger)
+        public SchematicsJsonArtifact(ExportedFileOptions options, ILogger<SchematicsJsonArtifact> logger, NullToEmptyStringContractResolver contractResolver)
         {
             this.options = options;
             this.logger = logger;
+            this.contractResolver = contractResolver;
         }
 
         public Task RunAsync(ExportedAssets exportedAssets, IList<ExportedRecipe> exportedRecipes, CancellationToken cancellationToken = default)
@@ -77,7 +79,7 @@ namespace BanjoBotAssets.Artifacts
             while (recipesToExclude.Count > 0)
                 exportedRecipes.RemoveAt(recipesToExclude.Pop());
 
-            var settings = new JsonSerializerSettings { ContractResolver = NullToEmptyStringContractResolver.Instance, Formatting = Formatting.Indented };
+            var settings = new JsonSerializerSettings { ContractResolver = contractResolver, Formatting = Formatting.Indented };
             var serializer = JsonSerializer.CreateDefault(settings);
 
             string path = options.Path;

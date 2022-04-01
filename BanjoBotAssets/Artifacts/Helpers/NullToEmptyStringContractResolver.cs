@@ -8,8 +8,6 @@ namespace BanjoBotAssets.Artifacts.Helpers
 
     public class NullToEmptyStringContractResolver : DefaultContractResolver
     {
-        public static readonly NullToEmptyStringContractResolver Instance = new();
-
         protected override IList<JsonProperty> CreateProperties(Type type, MemberSerialization memberSerialization)
         {
             return type.GetProperties()
