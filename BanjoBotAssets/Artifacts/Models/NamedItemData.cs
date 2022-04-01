@@ -11,18 +11,20 @@ namespace BanjoBotAssets.Artifacts.Models
     [JsonConverter(typeof(NamedItemDataConverter))]
     internal class NamedItemData
     {
-        [DisallowNull]
+        [JsonProperty(Order = 2), DisallowNull]
         public string? Name { get; set; }
-        [DisallowNull]
+        [JsonProperty(Order = 1), DisallowNull]
         public string? Type { get; set; }
-        [DisallowNull]
+        [JsonProperty(Order = OrderedPropertiesContractResolver.DefaultOrder + 1), DisallowNull]
         public string? AssetPath { get; set; }
-        [DisallowNull]
+        [JsonProperty(Order = 3), DisallowNull]
         public string? DisplayName { get; set; }
         public string? Description { get; set; }
+        [JsonProperty(Order = 4)]
         public string? SubType { get; set; }
         public string? Rarity { get; set; }
         public int? Tier { get; set; }
+        [JsonProperty(Order = OrderedPropertiesContractResolver.DefaultOrder + 2)]
         public SortedDictionary<ImageType, string>? ImagePaths { get; set; }
     }
 

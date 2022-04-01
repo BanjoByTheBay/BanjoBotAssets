@@ -7,7 +7,7 @@ using System.Reflection;
 
 namespace BanjoBotAssets.Artifacts.Helpers
 {
-    internal class IgnoreImagePathsContractResolver : DefaultContractResolver
+    internal class IgnoreImagePathsContractResolver : OrderedPropertiesContractResolver
     {
         private readonly IOptions<ImageExportOptions> options;
 

@@ -1,9 +1,13 @@
-﻿namespace BanjoBotAssets.Artifacts.Models
+﻿using Newtonsoft.Json;
+
+namespace BanjoBotAssets.Artifacts.Models
 {
     internal class ExportedAssets
     {
+        [JsonProperty(Order = 1)]
         public DateTime ExportedAt { get; set; } = DateTime.Now;
 
+        [JsonProperty(Order = 2)]
         public SortedDictionary<string, NamedItemData> NamedItems { get; } = new(StringComparer.OrdinalIgnoreCase);
 
         public ItemRatingTables ItemRatings { get; } = new();

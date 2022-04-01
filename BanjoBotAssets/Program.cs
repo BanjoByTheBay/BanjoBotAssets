@@ -2,7 +2,6 @@
 using BanjoBotAssets.Extensions;
 using System.Reflection;
 
-// TODO: export Ventures reward/level tables (PhoenixLevelRewardsTable, PostMaxPhoenixLevelRewardsTable)
 // TODO: export per-difficulty stat clamp tables (GameDifficultyGrowthBounds, CombatStatClampsPerTheater)
 // TODO: export collection book categories and recruitment/research/voucher options (CollectionBookSlots)
 

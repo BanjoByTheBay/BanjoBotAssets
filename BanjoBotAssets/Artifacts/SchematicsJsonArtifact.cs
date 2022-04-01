@@ -3,8 +3,6 @@ using BanjoBotAssets.Artifacts.Models;
 using BanjoBotAssets.Config;
 using Newtonsoft.Json;
 
-// TODO: sort recipes/ingredients when exporting to ensure stable order
-
 namespace BanjoBotAssets.Artifacts
 {
     internal sealed class SchematicsJsonArtifact : IExportArtifact
@@ -103,6 +101,15 @@ namespace BanjoBotAssets.Artifacts
             {
                 logger.LogInformation(Resources.Status_WritingFreshArtifact, path);
             }
+
+            exportedRecipes = exportedRecipes
+                .OrderBy(r => r.ItemName)
+                .ThenBy(r => r.Type)
+                .ThenBy(r => r.Subtype)
+                .ThenBy(r => r.Rarity)
+                .ThenBy(r => r.Tier)
+                .ThenBy(r => r.Material)
+                .ToList();
 
             using (var file = File.CreateText(path))
             {
