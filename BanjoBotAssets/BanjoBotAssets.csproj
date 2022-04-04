@@ -8,9 +8,9 @@
 		<NeutralLanguage>en-US</NeutralLanguage>
 		<AnalysisLevel>latest-recommended</AnalysisLevel>
 		<EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
-		<RepositoryUrl>https://github.com/taradinoc/BanjoBotAssets.git</RepositoryUrl>
+		<RepositoryUrl>https://github.com/BanjoByTheBay/BanjoBotAssets.git</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
-		<PackageProjectUrl>https://github.com/taradinoc/BanjoBotAssets</PackageProjectUrl>
+		<PackageProjectUrl>https://github.com/BanjoByTheBay/BanjoBotAssets</PackageProjectUrl>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -50,7 +50,7 @@
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="BanjoByTheBay.CUE4Parse" Version="1.0.2-unofficial"  />
+		<PackageReference Include="BanjoByTheBay.CUE4Parse" Version="1.0.3-unofficial"  />
 		<PackageReference Include="BanjoByTheBay.CUE4Parse.Conversion" Version="1.0.0-unofficial" />
 		<PackageReference Include="BanjoByTheBay.CUE4Parse.Fortnite" Version="1.0.0-unofficial" />
 		<PackageReference Include="BanjoByTheBay.CUE4Parse.FortniteTypes" Version="1.0.0-unofficial" />
