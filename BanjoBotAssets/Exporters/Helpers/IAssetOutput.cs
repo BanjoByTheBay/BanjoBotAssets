@@ -6,6 +6,13 @@ namespace BanjoBotAssets.Exporters.Helpers
     {
         void AddNamedItem(string name, NamedItemData itemData);
 
+        /// <summary>
+        /// Adds an image for a named item.
+        /// </summary>
+        /// <param name="name">The item's name, as provided to <see cref="AddNamedItem(string, NamedItemData)"/>.
+        /// The named item does not have to be added before calling this method.</param>
+        /// <param name="type">The type of image being added.</param>
+        /// <param name="assetPath">The path of the image asset.</param>
         void AddImageForNamedItem(string name, ImageType type, string assetPath);
 
         void AddDifficultyInfo(string name, DifficultyInfo difficultyInfo);

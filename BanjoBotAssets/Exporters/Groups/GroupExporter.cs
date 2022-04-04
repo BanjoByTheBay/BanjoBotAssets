@@ -8,6 +8,9 @@ namespace BanjoBotAssets.Exporters.Groups
     internal record BaseItemGroupFields(string DisplayName, string? Description, string? SubType)
     {
         public BaseItemGroupFields() : this("", null, null) { }
+
+        public string? SmallPreviewImagePath { get; set; }
+        public string? LargePreviewImagePath { get; set; }
     }
 
     internal abstract class GroupExporter<TAsset, TParsedName, TFields, TItemData> : BaseExporter
@@ -116,6 +119,16 @@ namespace BanjoBotAssets.Exporters.Groups
                         }
 
                         output.AddNamedItem(templateId, itemData);
+
+                        if (fields.SmallPreviewImagePath != null)
+                        {
+                            output.AddImageForNamedItem(templateId, ImageType.SmallPreview, fields.SmallPreviewImagePath);
+                        }
+
+                        if (fields.LargePreviewImagePath != null)
+                        {
+                            output.AddImageForNamedItem(templateId, ImageType.LargePreview, fields.LargePreviewImagePath);
+                        }
                     }
                 }
                 catch (Exception ex) when (ex is not OperationCanceledException)
@@ -142,11 +155,18 @@ namespace BanjoBotAssets.Exporters.Groups
 
         protected virtual Task<TFields> ExtractCommonFieldsAsync(TAsset asset, IGrouping<string?, string> grouping)
         {
+            var smallPreview = asset.GetOrDefault<FSoftObjectPath>("SmallPreviewImage").AssetPathName;
+            var smallPreviewPath = smallPreview.IsNone ? null : smallPreview.Text;
+            var largePreview = asset.GetOrDefault<FSoftObjectPath>("LargePreviewImage").AssetPathName;
+            var largePreviewPath = largePreview.IsNone ? null : largePreview.Text;
+
             return Task.FromResult(new TFields() with
             {
                 Description = asset.GetOrDefault<FText>("Description")?.Text,
                 DisplayName = asset.GetOrDefault<FText>("DisplayName")?.Text ?? $"<{grouping.Key}>",
                 SubType = null,
+                SmallPreviewImagePath = smallPreviewPath,
+                LargePreviewImagePath = largePreviewPath,
             });
         }
 
