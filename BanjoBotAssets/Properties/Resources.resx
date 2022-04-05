@@ -327,6 +327,19 @@
   <data name="Status_AnalyzingFileList" xml:space="preserve">
     <value>Analyzing file list</value>
   </data>
+  <data name="Status_CacheMiss" xml:space="preserve">
+    <value>Cache miss: {Path}</value>
+  </data>
+  <data name="Status_CacheStats" xml:space="preserve">
+    <value>Cache size: {0}. Hits: {1}. Misses: {2}. Hit ratio: {3:0.0%}.</value>
+    <comment>{CacheSize}: size in bytes. {Hits}, {Misses}: numbers. {Ratio}: percentage.</comment>
+  </data>
+  <data name="Status_CacheTopMisses_Entry" xml:space="preserve">
+    <value>- ({Count}) {Path}</value>
+  </data>
+  <data name="Status_CacheTopMisses_Heading" xml:space="preserve">
+    <value>Top paths for cache misses:</value>
+  </data>
   <data name="Status_DecryptingGameFiles" xml:space="preserve">
     <value>Decrypting game files</value>
   </data>

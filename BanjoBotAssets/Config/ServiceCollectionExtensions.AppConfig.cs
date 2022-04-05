@@ -144,6 +144,7 @@ namespace BanjoBotAssets.Extensions
                      }
 
                      var cache = sp.GetRequiredService<AssetCache>();
+                     var logger = sp.GetRequiredService<ILogger<CachingFileProvider>>();
 
                      // set up Serilog global logger
                      Log.Logger = new LoggerConfiguration()
@@ -151,11 +152,12 @@ namespace BanjoBotAssets.Extensions
                         .CreateLogger();
 
                      var provider = new CachingFileProvider(
-                         cache,
-                         gameDirectory,
-                         SearchOption.TopDirectoryOnly,
+                         cache: cache,
+                         logger: logger,
+                         directory: gameDirectory,
+                         searchOption: SearchOption.TopDirectoryOnly,
                          isCaseInsensitive: true,
-                         new VersionContainer(EGame.GAME_UE5_LATEST));
+                         versions: new VersionContainer(EGame.GAME_UE5_LATEST));
 
                      provider.Initialize();
                      return provider;

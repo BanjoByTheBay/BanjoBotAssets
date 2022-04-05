@@ -1,27 +1,33 @@
 ﻿using CUE4Parse.FileProvider;
 using CUE4Parse.UE4.Versions;
 using Microsoft.Extensions.Caching.Memory;
+using System.Collections.Concurrent;
 
 namespace BanjoBotAssets
 {
     internal class CachingFileProvider : DefaultFileProvider
     {
         private readonly AssetCache cache;
+        private readonly ILogger<CachingFileProvider> logger;
         private int cacheRequests, cacheMisses;
+        private readonly ConcurrentDictionary<string, int> cacheMissesByPath = new();
 
-        public CachingFileProvider(AssetCache cache, string directory, SearchOption searchOption, bool isCaseInsensitive = false, VersionContainer? versions = null) : base(directory, searchOption, isCaseInsensitive, versions)
+        public CachingFileProvider(AssetCache cache, ILogger<CachingFileProvider> logger, string directory, SearchOption searchOption, bool isCaseInsensitive = false, VersionContainer? versions = null) : base(directory, searchOption, isCaseInsensitive, versions)
         {
             this.cache = cache;
+            this.logger = logger;
         }
 
-        public CachingFileProvider(AssetCache cache, DirectoryInfo directory, SearchOption searchOption, bool isCaseInsensitive = false, VersionContainer? versions = null) : base(directory, searchOption, isCaseInsensitive, versions)
+        public CachingFileProvider(AssetCache cache, ILogger<CachingFileProvider> logger, DirectoryInfo directory, SearchOption searchOption, bool isCaseInsensitive = false, VersionContainer? versions = null) : base(directory, searchOption, isCaseInsensitive, versions)
         {
             this.cache = cache;
+            this.logger = logger;
         }
 
-        public CachingFileProvider(AssetCache cache, DirectoryInfo mainDirectory, List<DirectoryInfo> extraDirectories, SearchOption searchOption, bool isCaseInsensitive = false, VersionContainer? versions = null) : base(mainDirectory, extraDirectories, searchOption, isCaseInsensitive, versions)
+        public CachingFileProvider(AssetCache cache, ILogger<CachingFileProvider> logger, DirectoryInfo mainDirectory, List<DirectoryInfo> extraDirectories, SearchOption searchOption, bool isCaseInsensitive = false, VersionContainer? versions = null) : base(mainDirectory, extraDirectories, searchOption, isCaseInsensitive, versions)
         {
             this.cache = cache;
+            this.logger = logger;
         }
 
         public override Task<IPackage> LoadPackageAsync(GameFile file)
@@ -31,6 +37,9 @@ namespace BanjoBotAssets
             return cache.Cache.GetOrCreateAsync(file, async cacheEntry =>
             {
                 Interlocked.Increment(ref cacheMisses);
+
+                cacheMissesByPath.AddOrUpdate(file.Path, 1, (_, i) => i + 1);
+                logger.LogDebug(Resources.Status_CacheMiss, file.Path);
 
                 cacheEntry.SetSize(file.Size);
                 return await base.LoadPackageAsync(file);
@@ -45,6 +54,9 @@ namespace BanjoBotAssets
             {
                 Interlocked.Increment(ref cacheMisses);
 
+                cacheMissesByPath.AddOrUpdate(file.Path, 1, (_, i) => i + 1);
+                logger.LogDebug(Resources.Status_CacheMiss, file.Path);
+
                 cacheEntry.SetSize(file.Size);
                 return await base.TryLoadPackageAsync(file);
             });
@@ -52,11 +64,22 @@ namespace BanjoBotAssets
 
         public void ReportCacheStats()
         {
-            System.Diagnostics.Debug.WriteLine("Cache size: {0}. Hits: {1}. Misses: {2}. Hit ratio: {3:0.0%}.",
+            logger.LogInformation(Resources.Status_CacheStats,
                 cache.Cache.Count,
                 cacheRequests - cacheMisses,
                 cacheMisses,
                 cacheRequests == 0 ? 0 : (cacheRequests - cacheMisses) / (float)cacheRequests);
+
+            const int MaxTops = 10;
+
+            var topMisses = (from pair in cacheMissesByPath
+                             orderby pair.Value descending
+                             select pair).Take(MaxTops);
+            logger.LogDebug(Resources.Status_CacheTopMisses_Heading);
+            foreach (var (path, count) in topMisses)
+            {
+                logger.LogDebug(Resources.Status_CacheTopMisses_Entry, count, path);
+            }
         }
     }
 }

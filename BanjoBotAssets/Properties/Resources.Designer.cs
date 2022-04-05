@@ -655,6 +655,42 @@ namespace BanjoBotAssets.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cache miss: {Path}.
+        /// </summary>
+        internal static string Status_CacheMiss {
+            get {
+                return ResourceManager.GetString("Status_CacheMiss", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cache size: {0}. Hits: {1}. Misses: {2}. Hit ratio: {3:0.0%}..
+        /// </summary>
+        internal static string Status_CacheStats {
+            get {
+                return ResourceManager.GetString("Status_CacheStats", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to - ({Count}) {Path}.
+        /// </summary>
+        internal static string Status_CacheTopMisses_Entry {
+            get {
+                return ResourceManager.GetString("Status_CacheTopMisses_Entry", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Top paths for cache misses:.
+        /// </summary>
+        internal static string Status_CacheTopMisses_Heading {
+            get {
+                return ResourceManager.GetString("Status_CacheTopMisses_Heading", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Decrypting game files.
         /// </summary>
         internal static string Status_DecryptingGameFiles {
