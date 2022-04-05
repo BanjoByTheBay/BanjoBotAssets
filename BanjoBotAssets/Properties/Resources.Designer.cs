@@ -304,6 +304,15 @@ namespace BanjoBotAssets.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Brightcore.
+        /// </summary>
+        internal static string Field_Schematic_Brightcore {
+            get {
+                return ResourceManager.GetString("Field_Schematic_Brightcore", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Ceiling.
         /// </summary>
         internal static string Field_Schematic_Ceiling {
@@ -318,6 +327,15 @@ namespace BanjoBotAssets.Properties {
         internal static string Field_Schematic_Club {
             get {
                 return ResourceManager.GetString("Field_Schematic_Club", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Copper.
+        /// </summary>
+        internal static string Field_Schematic_Copper {
+            get {
+                return ResourceManager.GetString("Field_Schematic_Copper", resourceCulture);
             }
         }
         
@@ -349,11 +367,47 @@ namespace BanjoBotAssets.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Handmade.
+        /// </summary>
+        internal static string Field_Schematic_Handmade {
+            get {
+                return ResourceManager.GetString("Field_Schematic_Handmade", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Hardware.
         /// </summary>
         internal static string Field_Schematic_Hardware {
             get {
                 return ResourceManager.GetString("Field_Schematic_Hardware", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid.
+        /// </summary>
+        internal static string Field_Schematic_Invalid {
+            get {
+                return ResourceManager.GetString("Field_Schematic_Invalid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Malachite.
+        /// </summary>
+        internal static string Field_Schematic_Malachite {
+            get {
+                return ResourceManager.GetString("Field_Schematic_Malachite", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Obsidian.
+        /// </summary>
+        internal static string Field_Schematic_Obsidian {
+            get {
+                return ResourceManager.GetString("Field_Schematic_Obsidian", resourceCulture);
             }
         }
         
@@ -385,11 +439,29 @@ namespace BanjoBotAssets.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Shadowshard.
+        /// </summary>
+        internal static string Field_Schematic_Shadowshard {
+            get {
+                return ResourceManager.GetString("Field_Schematic_Shadowshard", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Shotgun.
         /// </summary>
         internal static string Field_Schematic_Shotgun {
             get {
                 return ResourceManager.GetString("Field_Schematic_Shotgun", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Silver.
+        /// </summary>
+        internal static string Field_Schematic_Silver {
+            get {
+                return ResourceManager.GetString("Field_Schematic_Silver", resourceCulture);
             }
         }
         
@@ -417,6 +489,15 @@ namespace BanjoBotAssets.Properties {
         internal static string Field_Schematic_Spear {
             get {
                 return ResourceManager.GetString("Field_Schematic_Spear", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sunbeam.
+        /// </summary>
+        internal static string Field_Schematic_Sunbeam {
+            get {
+                return ResourceManager.GetString("Field_Schematic_Sunbeam", resourceCulture);
             }
         }
         

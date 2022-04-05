@@ -11,10 +11,10 @@ namespace BanjoBotAssets.Exporters.Groups
         : BaseParsedItemName(BaseName, Rarity, Tier);
 
     internal record SchematicItemGroupFields(string DisplayName, string? Description, string? SubType, string AlterationSlotsLoadoutRow,
-        string? AmmoType, string? WeaponOrTrapStatRowPrefix, string? TriggerType, string? DisplayTier, string? Category)
+        string? AmmoType, string? WeaponOrTrapStatRowPrefix, string? TriggerType, string? Category)
         : BaseItemGroupFields(DisplayName, Description, SubType)
     {
-        public SchematicItemGroupFields() : this("", null, null, "", "", "", "", "", "") { }
+        public SchematicItemGroupFields() : this("", null, null, "", "", "", "", "") { }
     }
 
     internal class SchematicExporter : GroupExporter<UObject, ParsedSchematicName, SchematicItemGroupFields, SchematicItemData>
@@ -214,7 +214,6 @@ namespace BanjoBotAssets.Exporters.Groups
             var ammoType = await AmmoTypeFromPathAsync(weaponOrTrapDef.GetOrDefault<FSoftObjectPath>("AmmoData"));
             var statRowPrefix = GetStatRowPrefix(weaponOrTrapDef);
             var triggerType = weaponOrTrapDef.GetOrDefault<EFortWeaponTriggerType>("TriggerType").ToString();
-            var displayTier = weaponOrTrapDef.GetOrDefault<EFortDisplayTier>("DisplayTier").ToString();
 
             var smallPreview = weaponOrTrapDef.GetOrDefault<FSoftObjectPath>("SmallPreviewImage").AssetPathName;
             var smallPreviewPath = smallPreview.IsNone ? null : smallPreview.Text;
@@ -231,7 +230,6 @@ namespace BanjoBotAssets.Exporters.Groups
                 AmmoType = ammoType,
                 WeaponOrTrapStatRowPrefix = statRowPrefix,
                 TriggerType = triggerType,
-                DisplayTier = displayTier,
                 SmallPreviewImagePath = smallPreviewPath,
                 LargePreviewImagePath = largePreviewPath,
             };
@@ -342,7 +340,7 @@ namespace BanjoBotAssets.Exporters.Groups
         {
             itemData.EvoType = parsed.EvoType;
             itemData.Category = fields.Category;
-            itemData.DisplayTier = fields.DisplayTier;
+            itemData.DisplayTier = GetDisplayTier(parsed.Tier, parsed.EvoType);
             itemData.TriggerType = fields.TriggerType;
 
             var rarity = GetRarity(parsed, primaryAsset, fields);
@@ -421,6 +419,22 @@ namespace BanjoBotAssets.Exporters.Groups
 
             return Task.FromResult(true);
         }
+
+        private static string? GetDisplayTier(int tier, string? evoType) => (tier, evoType) switch
+        {
+            (_, "" or null) => null,
+
+            (0, _) => Resources.Field_Schematic_Handmade,
+            (1, _) => Resources.Field_Schematic_Copper,
+            (2, _) => Resources.Field_Schematic_Silver,
+            (3, _) => Resources.Field_Schematic_Malachite,
+            (4, "ore") => Resources.Field_Schematic_Obsidian,
+            (4, "crystal") => Resources.Field_Schematic_Shadowshard,
+            (5, "ore") => Resources.Field_Schematic_Brightcore,
+            (5, "crystal") => Resources.Field_Schematic_Sunbeam,
+
+            _ => Resources.Field_Schematic_Invalid,
+        };
 
         private AlterationSlot? ConvertAlterationSlot(FStructFallback slot, ISet<string> namedExclusions)
         {

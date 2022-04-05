@@ -207,11 +207,17 @@
   <data name="Field_Schematic_Axe" xml:space="preserve">
     <value>Axe</value>
   </data>
+  <data name="Field_Schematic_Brightcore" xml:space="preserve">
+    <value>Brightcore</value>
+  </data>
   <data name="Field_Schematic_Ceiling" xml:space="preserve">
     <value>Ceiling</value>
   </data>
   <data name="Field_Schematic_Club" xml:space="preserve">
     <value>Club</value>
+  </data>
+  <data name="Field_Schematic_Copper" xml:space="preserve">
+    <value>Copper</value>
   </data>
   <data name="Field_Schematic_Crystal" xml:space="preserve">
     <value>Crystal</value>
@@ -222,8 +228,20 @@
   <data name="Field_Schematic_Floor" xml:space="preserve">
     <value>Floor</value>
   </data>
+  <data name="Field_Schematic_Handmade" xml:space="preserve">
+    <value>Handmade</value>
+  </data>
   <data name="Field_Schematic_Hardware" xml:space="preserve">
     <value>Hardware</value>
+  </data>
+  <data name="Field_Schematic_Invalid" xml:space="preserve">
+    <value>Invalid</value>
+  </data>
+  <data name="Field_Schematic_Malachite" xml:space="preserve">
+    <value>Malachite</value>
+  </data>
+  <data name="Field_Schematic_Obsidian" xml:space="preserve">
+    <value>Obsidian</value>
   </data>
   <data name="Field_Schematic_Ore" xml:space="preserve">
     <value>Ore</value>
@@ -234,8 +252,14 @@
   <data name="Field_Schematic_Scythe" xml:space="preserve">
     <value>Scythe</value>
   </data>
+  <data name="Field_Schematic_Shadowshard" xml:space="preserve">
+    <value>Shadowshard</value>
+  </data>
   <data name="Field_Schematic_Shotgun" xml:space="preserve">
     <value>Shotgun</value>
+  </data>
+  <data name="Field_Schematic_Silver" xml:space="preserve">
+    <value>Silver</value>
   </data>
   <data name="Field_Schematic_SMG" xml:space="preserve">
     <value>SMG</value>
@@ -245,6 +269,9 @@
   </data>
   <data name="Field_Schematic_Spear" xml:space="preserve">
     <value>Spear</value>
+  </data>
+  <data name="Field_Schematic_Sunbeam" xml:space="preserve">
+    <value>Sunbeam</value>
   </data>
   <data name="Field_Schematic_Sword" xml:space="preserve">
     <value>Sword</value>
