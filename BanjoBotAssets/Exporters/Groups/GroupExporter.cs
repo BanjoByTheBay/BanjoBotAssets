@@ -44,7 +44,7 @@ namespace BanjoBotAssets.Exporters.Groups
             var uniqueAssets = assetPaths.ToLookup(path => ParseAssetName(path)?.BaseName, StringComparer.OrdinalIgnoreCase);
             numToProcess = uniqueAssets.Count;
 
-            Report(progress, string.Format(CultureInfo.CurrentCulture, Resources.Status_ExportingGroup, Type));
+            Report(progress, string.Format(CultureInfo.CurrentCulture, Resources.FormatString_Status_ExportingGroup, Type));
 
             var opts = new ParallelOptions { CancellationToken = cancellationToken, MaxDegreeOfParallelism = performanceOptions.Value.MaxParallelism };
 

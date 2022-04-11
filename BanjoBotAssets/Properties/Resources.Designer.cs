@@ -79,7 +79,7 @@ namespace BanjoBotAssets.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Cannot decode texture to bitmap: {0}.
+        ///   Looks up a localized string similar to Cannot decode texture to bitmap: {Asset}.
         /// </summary>
         internal static string Error_CannotDecodeTexture {
             get {
@@ -88,7 +88,7 @@ namespace BanjoBotAssets.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Cannot encode bitmap for export: {0}.
+        ///   Looks up a localized string similar to Cannot encode bitmap for export: {Asset}.
         /// </summary>
         internal static string Error_CannotEncodeTexture {
             get {
@@ -97,16 +97,7 @@ namespace BanjoBotAssets.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Unable to merge because the previous artifact could not be read: {0}.
-        /// </summary>
-        internal static string Error_CannotReadPreviousArtifact {
-            get {
-                return ResourceManager.GetString("Error_CannotReadPreviousArtifact", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Exception while processing asset {0}.
+        ///   Looks up a localized string similar to Exception while processing asset {Asset}.
         /// </summary>
         internal static string Error_ExceptionWhileProcessingAsset {
             get {
@@ -115,7 +106,7 @@ namespace BanjoBotAssets.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Exception while processing asset group {0}.
+        ///   Looks up a localized string similar to Exception while processing asset group {AssetGroup}.
         /// </summary>
         internal static string Error_ExceptionWhileProcessingAssetGroup {
             get {
@@ -124,7 +115,7 @@ namespace BanjoBotAssets.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Failed to download usmap from {0}.
+        ///   Looks up a localized string similar to Failed to download usmap from {URL}.
         /// </summary>
         internal static string Error_FailedToDownloadUsmap {
             get {
@@ -178,7 +169,7 @@ namespace BanjoBotAssets.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Can&apos;t find required asset: {0}.
+        ///   Looks up a localized string similar to Can&apos;t find required asset: {Asset}.
         /// </summary>
         internal static string Error_SpecificAssetNotFound {
             get {
@@ -196,38 +187,11 @@ namespace BanjoBotAssets.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Unexpected manager synergy {0}.
-        /// </summary>
-        internal static string Error_UnexpectedManagerSynergy {
-            get {
-                return ResourceManager.GetString("Error_UnexpectedManagerSynergy", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Defender.
         /// </summary>
         internal static string Field_Defender_DefaultName {
             get {
                 return ResourceManager.GetString("Field_Defender_DefaultName", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to {0} {1}.
-        /// </summary>
-        internal static string Field_Defender_DisplayNameFormat {
-            get {
-                return ResourceManager.GetString("Field_Defender_DisplayNameFormat", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to {0} Defender.
-        /// </summary>
-        internal static string Field_Defender_NameFormat {
-            get {
-                return ResourceManager.GetString("Field_Defender_NameFormat", resourceCulture);
             }
         }
         
@@ -619,15 +583,6 @@ namespace BanjoBotAssets.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Lead {0}.
-        /// </summary>
-        internal static string Field_Survivor_LeadNameFormat {
-            get {
-                return ResourceManager.GetString("Field_Survivor_LeadNameFormat", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Marksman.
         /// </summary>
         internal static string Field_Survivor_Marksman {
@@ -682,6 +637,60 @@ namespace BanjoBotAssets.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Unable to merge because the previous artifact could not be read: {0}.
+        /// </summary>
+        internal static string FormatString_Error_CannotReadPreviousArtifact {
+            get {
+                return ResourceManager.GetString("FormatString_Error_CannotReadPreviousArtifact", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unexpected manager synergy {0}.
+        /// </summary>
+        internal static string FormatString_Error_UnexpectedManagerSynergy {
+            get {
+                return ResourceManager.GetString("FormatString_Error_UnexpectedManagerSynergy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} {1}.
+        /// </summary>
+        internal static string FormatString_Field_Defender_DisplayNameFormat {
+            get {
+                return ResourceManager.GetString("FormatString_Field_Defender_DisplayNameFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} Defender.
+        /// </summary>
+        internal static string FormatString_Field_Defender_NameFormat {
+            get {
+                return ResourceManager.GetString("FormatString_Field_Defender_NameFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Lead {0}.
+        /// </summary>
+        internal static string FormatString_Field_Survivor_LeadNameFormat {
+            get {
+                return ResourceManager.GetString("FormatString_Field_Survivor_LeadNameFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Exporting {0}.
+        /// </summary>
+        internal static string FormatString_Status_ExportingGroup {
+            get {
+                return ResourceManager.GetString("FormatString_Status_ExportingGroup", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Analyzing file list.
         /// </summary>
         internal static string Status_AnalyzingFileList {
@@ -691,7 +700,7 @@ namespace BanjoBotAssets.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Cached mappings to {0}.
+        ///   Looks up a localized string similar to Cached mappings to {File}.
         /// </summary>
         internal static string Status_CachedMappingsToFile {
             get {
@@ -709,7 +718,7 @@ namespace BanjoBotAssets.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Cache size: {0}. Hits: {1}. Misses: {2}. Hit ratio: {3:0.0%}..
+        ///   Looks up a localized string similar to Cache size: {Size}. Hits: {Hits}. Misses: {Misses}. Hit ratio: {Ratio:0.0%}..
         /// </summary>
         internal static string Status_CacheStats {
             get {
@@ -772,16 +781,7 @@ namespace BanjoBotAssets.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Exporting {0}.
-        /// </summary>
-        internal static string Status_ExportingGroup {
-            get {
-                return ResourceManager.GetString("Status_ExportingGroup", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Exporting images ({0}).
+        ///   Looks up a localized string similar to Exporting images ({ImageType}).
         /// </summary>
         internal static string Status_ExportingImagesType {
             get {
@@ -817,7 +817,7 @@ namespace BanjoBotAssets.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Fetching AES keys from external API: {0}.
+        ///   Looks up a localized string similar to Fetching AES keys from external API: {URL}.
         /// </summary>
         internal static string Status_FetchingAesFromApi {
             get {
@@ -826,7 +826,7 @@ namespace BanjoBotAssets.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Loaded {0} assets in {1} ({2} ms per asset).
+        ///   Looks up a localized string similar to Loaded {Count} assets in {TotalDuration} ({AverageDuration} ms per asset).
         /// </summary>
         internal static string Status_LoadedAssets {
             get {
@@ -835,7 +835,7 @@ namespace BanjoBotAssets.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Loaded cached mappings from {0}.
+        ///   Looks up a localized string similar to Loaded cached mappings from {File}.
         /// </summary>
         internal static string Status_LoadedCachedMappings {
             get {
@@ -844,7 +844,7 @@ namespace BanjoBotAssets.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Loading AES keys from {0}.
+        ///   Looks up a localized string similar to Loading AES keys from {File}.
         /// </summary>
         internal static string Status_LoadingAesFromFile {
             get {
@@ -853,7 +853,7 @@ namespace BanjoBotAssets.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Loading localization ({0}).
+        ///   Looks up a localized string similar to Loading localization ({Language}).
         /// </summary>
         internal static string Status_LoadingLocalization {
             get {
@@ -871,7 +871,7 @@ namespace BanjoBotAssets.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Merging into existing artifact: {0}.
+        ///   Looks up a localized string similar to Merging into existing artifact: {File}.
         /// </summary>
         internal static string Status_MergingIntoExistingArtifact {
             get {
@@ -880,7 +880,7 @@ namespace BanjoBotAssets.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to No cached AES keys found at {0}.
+        ///   Looks up a localized string similar to No cached AES keys found at {File}.
         /// </summary>
         internal static string Status_MissingAesCache {
             get {
@@ -889,7 +889,7 @@ namespace BanjoBotAssets.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Processing {0} ({1} of {2}).
+        ///   Looks up a localized string similar to Processing {File} ({Number} of {Total}).
         /// </summary>
         internal static string Status_ProcessingFile {
             get {
@@ -898,7 +898,7 @@ namespace BanjoBotAssets.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Processing {0} group {1} of {2}.
+        ///   Looks up a localized string similar to Processing {AssetType} group {Number} of {Total}.
         /// </summary>
         internal static string Status_ProcessingTypeGroupNumOfNum {
             get {
@@ -907,7 +907,7 @@ namespace BanjoBotAssets.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Processing {0} {1} of {2}.
+        ///   Looks up a localized string similar to Processing {AssetType} {Number} of {Total}.
         /// </summary>
         internal static string Status_ProcessingTypeNumOfNum {
             get {
@@ -943,7 +943,7 @@ namespace BanjoBotAssets.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Running {0} exporters: {1}.
+        ///   Looks up a localized string similar to Running {Count} exporters: {ExporterClasses}.
         /// </summary>
         internal static string Status_RunningSelectedExporters {
             get {
@@ -952,7 +952,7 @@ namespace BanjoBotAssets.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Caching AES keys in {0}.
+        ///   Looks up a localized string similar to Caching AES keys in {File}.
         /// </summary>
         internal static string Status_SavingAesToFile {
             get {
@@ -961,7 +961,7 @@ namespace BanjoBotAssets.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Skipping {0} early as instructed..
+        ///   Looks up a localized string similar to Skipping {Asset} early as instructed..
         /// </summary>
         internal static string Status_SkippingEarlyAsInstructed {
             get {
@@ -970,7 +970,7 @@ namespace BanjoBotAssets.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Skipping gadget with no gameplay ability: {0}.
+        ///   Looks up a localized string similar to Skipping gadget with no gameplay ability: {Asset}.
         /// </summary>
         internal static string Status_SkippingGadgetWithoutAbility {
             get {
@@ -979,7 +979,7 @@ namespace BanjoBotAssets.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Skipping {0} late as instructed..
+        ///   Looks up a localized string similar to Skipping {Asset} late as instructed..
         /// </summary>
         internal static string Status_SkippingLateAsInstructed {
             get {
@@ -988,7 +988,7 @@ namespace BanjoBotAssets.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Skipping null {0} group containing {1} items..
+        ///   Looks up a localized string similar to Skipping null {AssetType} group containing {Count} items..
         /// </summary>
         internal static string Status_SkippingNullGroup {
             get {
@@ -997,7 +997,7 @@ namespace BanjoBotAssets.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Cached AES keys in {0} are older than game files, ignoring.
+        ///   Looks up a localized string similar to Cached AES keys in {File} are older than game files, ignoring.
         /// </summary>
         internal static string Status_SkippingOutdatedCachedAes {
             get {
@@ -1006,7 +1006,7 @@ namespace BanjoBotAssets.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Cached mappings in {0} are older than game files, ignoring.
+        ///   Looks up a localized string similar to Cached mappings in {File} are older than game files, ignoring.
         /// </summary>
         internal static string Status_SkippingOutdatedCachedMappings {
             get {
@@ -1015,7 +1015,7 @@ namespace BanjoBotAssets.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Skipping group member that failed to parse: {0} ({1}).
+        ///   Looks up a localized string similar to Skipping group member that failed to parse: {TemplateId} ({Metadata}).
         /// </summary>
         internal static string Status_SkippingUnparsable {
             get {
@@ -1024,7 +1024,7 @@ namespace BanjoBotAssets.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Submitting key for {0}.
+        ///   Looks up a localized string similar to Submitting key for {File}.
         /// </summary>
         internal static string Status_SubmittingDynamicKey {
             get {
@@ -1042,7 +1042,7 @@ namespace BanjoBotAssets.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Writing artifact: {0}.
+        ///   Looks up a localized string similar to Writing artifact: {File}.
         /// </summary>
         internal static string Status_WritingFreshArtifact {
             get {
@@ -1051,7 +1051,7 @@ namespace BanjoBotAssets.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Wrote {0} image files, updated {1} paths.
+        ///   Looks up a localized string similar to Wrote {FileCount} image files, updated {UpdatedPathCount} paths.
         /// </summary>
         internal static string Status_WroteImageFilesUpdatedPaths {
             get {
@@ -1060,7 +1060,7 @@ namespace BanjoBotAssets.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to WARNING: Can&apos;t parse defender name: {0}.
+        ///   Looks up a localized string similar to WARNING: Can&apos;t parse defender name: {TemplateId}.
         /// </summary>
         internal static string Warning_CannotParseDefenderName {
             get {
@@ -1069,7 +1069,7 @@ namespace BanjoBotAssets.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to WARNING: Can&apos;t determine PL requirement from objective condition: {0}.
+        ///   Looks up a localized string similar to WARNING: Can&apos;t determine PL requirement from objective condition: {Expression}.
         /// </summary>
         internal static string Warning_CannotParseDifficultyCondition {
             get {
@@ -1078,7 +1078,7 @@ namespace BanjoBotAssets.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to WARNING: Can&apos;t parse hero name: {0}.
+        ///   Looks up a localized string similar to WARNING: Can&apos;t parse hero name: {TemplateId}.
         /// </summary>
         internal static string Warning_CannotParseHeroName {
             get {
@@ -1087,7 +1087,7 @@ namespace BanjoBotAssets.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to WARNING: Can&apos;t parse schematic name {0}.
+        ///   Looks up a localized string similar to WARNING: Can&apos;t parse schematic name: {TemplateId}.
         /// </summary>
         internal static string Warning_CannotParseSchematicName {
             get {
@@ -1096,7 +1096,7 @@ namespace BanjoBotAssets.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to WARNING: Can&apos;t parse survivor name: {0}.
+        ///   Looks up a localized string similar to WARNING: Can&apos;t parse survivor name: {TemplateId}.
         /// </summary>
         internal static string Warning_CannotParseSurvivorName {
             get {
@@ -1105,7 +1105,7 @@ namespace BanjoBotAssets.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to WARNING: Could not load {0}.
+        ///   Looks up a localized string similar to WARNING: Could not load {Asset}.
         /// </summary>
         internal static string Warning_CouldNotLoadAsset {
             get {
@@ -1114,7 +1114,7 @@ namespace BanjoBotAssets.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to WARNING: Could not find curve {0}.
+        ///   Looks up a localized string similar to WARNING: Could not find curve {TableRow}.
         /// </summary>
         internal static string Warning_CouldNotLoadCurveTableRow {
             get {
@@ -1123,7 +1123,7 @@ namespace BanjoBotAssets.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to WARNING: Failed to load {0}.
+        ///   Looks up a localized string similar to WARNING: Failed to load {File}.
         /// </summary>
         internal static string Warning_FailedToLoadFile {
             get {
@@ -1132,7 +1132,7 @@ namespace BanjoBotAssets.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to WARNING: Ignoring unknown modify operation {0}.
+        ///   Looks up a localized string similar to WARNING: Ignoring unknown modify operation {ModifyOperation}.
         /// </summary>
         internal static string Warning_IgnoringUnknownModifyOperation {
             get {
@@ -1150,7 +1150,7 @@ namespace BanjoBotAssets.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to WARNING: Can&apos;t find crafting row {0}.
+        ///   Looks up a localized string similar to WARNING: Can&apos;t find crafting row {TableRow}.
         /// </summary>
         internal static string Warning_MissingCraftingTableRow {
             get {
@@ -1159,7 +1159,7 @@ namespace BanjoBotAssets.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to WARNING: Curve table has no row {0}.
+        ///   Looks up a localized string similar to WARNING: Curve table has no row {TableRow}.
         /// </summary>
         internal static string Warning_MissingCurveTableRow {
             get {
@@ -1177,7 +1177,7 @@ namespace BanjoBotAssets.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to WARNING: No crafting row listed for schematic {0}.
+        ///   Looks up a localized string similar to WARNING: No crafting row listed for schematic {Asset}.
         /// </summary>
         internal static string Warning_NoCraftingRowForSchematic {
             get {
@@ -1186,7 +1186,7 @@ namespace BanjoBotAssets.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to WARNING: No stats located for schematic {0} (using prefix &apos;{1}&apos;).
+        ///   Looks up a localized string similar to WARNING: No stats located for schematic {SchematicId} (using prefix &apos;{TableRowPrefix}&apos;).
         /// </summary>
         internal static string Warning_NoStatsLocatedForSchematicUsingPrefix {
             get {
@@ -1195,7 +1195,7 @@ namespace BanjoBotAssets.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to WARNING: No weapon/trap definition for crafting row {0}.
+        ///   Looks up a localized string similar to WARNING: No weapon/trap definition for crafting row {TableRow}.
         /// </summary>
         internal static string Warning_NoWeaponTrapDefinitionForCraftingRow {
             get {
@@ -1213,7 +1213,7 @@ namespace BanjoBotAssets.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to WARNING: No weapon/trap path indexed for {0}.
+        ///   Looks up a localized string similar to WARNING: No weapon/trap path indexed for {Asset}.
         /// </summary>
         internal static string Warning_UnindexedWeaponTrapPath {
             get {
@@ -1222,7 +1222,7 @@ namespace BanjoBotAssets.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to WARNING: Unknown formatting style {0}.
+        ///   Looks up a localized string similar to WARNING: Unknown formatting style {FormattingStyle}.
         /// </summary>
         internal static string Warning_UnknownFormattingStyle {
             get {
@@ -1231,7 +1231,7 @@ namespace BanjoBotAssets.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to WARNING: Crafting recipe with no matching schematic: {0}.
+        ///   Looks up a localized string similar to WARNING: Crafting recipe with no matching schematic: {CraftingRecipeId}.
         /// </summary>
         internal static string Warning_UnmatchedCraftingRecipe {
             get {

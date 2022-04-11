@@ -91,7 +91,7 @@ namespace BanjoBotAssets.Artifacts
                 {
                     var rdr = new JsonTextReader(stream);
                     previous = serializer.Deserialize<IList<ExportedRecipe>>(rdr)
-                        ?? throw new InvalidOperationException(string.Format(CultureInfo.CurrentCulture, Resources.Error_CannotReadPreviousArtifact, path));
+                        ?? throw new InvalidOperationException(string.Format(CultureInfo.CurrentCulture, Resources.FormatString_Error_CannotReadPreviousArtifact, path));
                 }
 
                 Merge(previous, exportedRecipes);

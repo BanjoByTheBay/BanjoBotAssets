@@ -84,10 +84,10 @@ namespace BanjoBotAssets.Exporters.Groups
             if (managerSynergyToJob.TryGetValue(synergyTag, out var job))
                 return job;
 
-            throw new AssetFormatException(string.Format(CultureInfo.CurrentCulture, Resources.Error_UnexpectedManagerSynergy, synergyTag));
+            throw new AssetFormatException(string.Format(CultureInfo.CurrentCulture, Resources.FormatString_Error_UnexpectedManagerSynergy, synergyTag));
         }
 
         private static string MakeSurvivorDisplayName(UFortWorkerType worker) =>
-            worker.bIsManager ? string.Format(CultureInfo.CurrentCulture, Resources.Field_Survivor_LeadNameFormat, GetManagerJob(worker)) : Resources.Field_Survivor_DefaultName;
+            worker.bIsManager ? string.Format(CultureInfo.CurrentCulture, Resources.FormatString_Field_Survivor_LeadNameFormat, GetManagerJob(worker)) : Resources.Field_Survivor_DefaultName;
     }
 }

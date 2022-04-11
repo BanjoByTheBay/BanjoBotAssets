@@ -125,27 +125,23 @@
     <value>Couldn't load AES keys.</value>
   </data>
   <data name="Error_CannotDecodeTexture" xml:space="preserve">
-    <value>Cannot decode texture to bitmap: {0}</value>
+    <value>Cannot decode texture to bitmap: {Asset}</value>
     <comment>0=asset ID</comment>
   </data>
   <data name="Error_CannotEncodeTexture" xml:space="preserve">
-    <value>Cannot encode bitmap for export: {0}</value>
+    <value>Cannot encode bitmap for export: {Asset}</value>
     <comment>0=asset ID</comment>
   </data>
-  <data name="Error_CannotReadPreviousArtifact" xml:space="preserve">
-    <value>Unable to merge because the previous artifact could not be read: {0}</value>
-    <comment>0=filename</comment>
-  </data>
   <data name="Error_ExceptionWhileProcessingAsset" xml:space="preserve">
-    <value>Exception while processing asset {0}</value>
+    <value>Exception while processing asset {Asset}</value>
     <comment>0=asset ID</comment>
   </data>
   <data name="Error_ExceptionWhileProcessingAssetGroup" xml:space="preserve">
-    <value>Exception while processing asset group {0}</value>
+    <value>Exception while processing asset group {AssetGroup}</value>
     <comment>0=asset group ID</comment>
   </data>
   <data name="Error_FailedToDownloadUsmap" xml:space="preserve">
-    <value>Failed to download usmap from {0}</value>
+    <value>Failed to download usmap from {URL}</value>
     <comment>0=URL</comment>
   </data>
   <data name="Error_FailedToGetMappingsEndpoint" xml:space="preserve">
@@ -164,25 +160,14 @@
     <value>Not a manager</value>
   </data>
   <data name="Error_SpecificAssetNotFound" xml:space="preserve">
-    <value>Can't find required asset: {0}</value>
+    <value>Can't find required asset: {Asset}</value>
     <comment>0=asset ID</comment>
   </data>
   <data name="Error_UncaughtExceptionWhileReloadingMappings" xml:space="preserve">
     <value>Uncaught exception while reloading mappings from BenBot</value>
   </data>
-  <data name="Error_UnexpectedManagerSynergy" xml:space="preserve">
-    <value>Unexpected manager synergy {0}</value>
-  </data>
   <data name="Field_Defender_DefaultName" xml:space="preserve">
     <value>Defender</value>
-  </data>
-  <data name="Field_Defender_DisplayNameFormat" xml:space="preserve">
-    <value>{0} {1}</value>
-    <comment>0=rarity, 1=formatted defender name</comment>
-  </data>
-  <data name="Field_Defender_NameFormat" xml:space="preserve">
-    <value>{0} Defender</value>
-    <comment>0=weapon type</comment>
   </data>
   <data name="Field_Hero_Constructor" xml:space="preserve">
     <value>Constructor</value>
@@ -313,10 +298,6 @@
   <data name="Field_Survivor_Inventor" xml:space="preserve">
     <value>Inventor</value>
   </data>
-  <data name="Field_Survivor_LeadNameFormat" xml:space="preserve">
-    <value>Lead {0}</value>
-    <comment>0=job name</comment>
-  </data>
   <data name="Field_Survivor_Marksman" xml:space="preserve">
     <value>Marksman</value>
   </data>
@@ -337,18 +318,41 @@
     <value>schematics.json</value>
     <comment>export filename for crafting recipes</comment>
   </data>
+  <data name="FormatString_Error_CannotReadPreviousArtifact" xml:space="preserve">
+    <value>Unable to merge because the previous artifact could not be read: {0}</value>
+    <comment>0=filename</comment>
+  </data>
+  <data name="FormatString_Error_UnexpectedManagerSynergy" xml:space="preserve">
+    <value>Unexpected manager synergy {0}</value>
+  </data>
+  <data name="FormatString_Field_Defender_DisplayNameFormat" xml:space="preserve">
+    <value>{0} {1}</value>
+    <comment>0=rarity, 1=formatted defender name</comment>
+  </data>
+  <data name="FormatString_Field_Defender_NameFormat" xml:space="preserve">
+    <value>{0} Defender</value>
+    <comment>0=weapon type</comment>
+  </data>
+  <data name="FormatString_Field_Survivor_LeadNameFormat" xml:space="preserve">
+    <value>Lead {0}</value>
+    <comment>0=job name</comment>
+  </data>
+  <data name="FormatString_Status_ExportingGroup" xml:space="preserve">
+    <value>Exporting {0}</value>
+    <comment>0=asset type</comment>
+  </data>
   <data name="Status_AnalyzingFileList" xml:space="preserve">
     <value>Analyzing file list</value>
   </data>
   <data name="Status_CachedMappingsToFile" xml:space="preserve">
-    <value>Cached mappings to {0}</value>
+    <value>Cached mappings to {File}</value>
     <comment>0=filename</comment>
   </data>
   <data name="Status_CacheMiss" xml:space="preserve">
     <value>Cache miss: {Path}</value>
   </data>
   <data name="Status_CacheStats" xml:space="preserve">
-    <value>Cache size: {0}. Hits: {1}. Misses: {2}. Hit ratio: {3:0.0%}.</value>
+    <value>Cache size: {Size}. Hits: {Hits}. Misses: {Misses}. Hit ratio: {Ratio:0.0%}.</value>
     <comment>{CacheSize}: size in bytes. {Hits}, {Misses}: numbers. {Ratio}: percentage.</comment>
   </data>
   <data name="Status_CacheTopMisses_Entry" xml:space="preserve">
@@ -369,12 +373,8 @@
   <data name="Status_ExportedRecipes" xml:space="preserve">
     <value>Exported recipes</value>
   </data>
-  <data name="Status_ExportingGroup" xml:space="preserve">
-    <value>Exporting {0}</value>
-    <comment>0=asset type</comment>
-  </data>
   <data name="Status_ExportingImagesType" xml:space="preserve">
-    <value>Exporting images ({0})</value>
+    <value>Exporting images ({ImageType})</value>
     <comment>0=image type</comment>
   </data>
   <data name="Status_ExportingItemRatings" xml:space="preserve">
@@ -387,46 +387,46 @@
     <value>Exporting recipes</value>
   </data>
   <data name="Status_FetchingAesFromApi" xml:space="preserve">
-    <value>Fetching AES keys from external API: {0}</value>
+    <value>Fetching AES keys from external API: {URL}</value>
     <comment>0=URL</comment>
   </data>
   <data name="Status_LoadedAssets" xml:space="preserve">
-    <value>Loaded {0} assets in {1} ({2} ms per asset)</value>
+    <value>Loaded {Count} assets in {TotalDuration} ({AverageDuration} ms per asset)</value>
     <comment>0=number loaded, 1=formatted time duration, 2=number of milliseconds</comment>
   </data>
   <data name="Status_LoadedCachedMappings" xml:space="preserve">
-    <value>Loaded cached mappings from {0}</value>
+    <value>Loaded cached mappings from {File}</value>
     <comment>0=filename</comment>
   </data>
   <data name="Status_LoadingAesFromFile" xml:space="preserve">
-    <value>Loading AES keys from {0}</value>
+    <value>Loading AES keys from {File}</value>
     <comment>0=filename</comment>
   </data>
   <data name="Status_LoadingLocalization" xml:space="preserve">
-    <value>Loading localization ({0})</value>
+    <value>Loading localization ({Language})</value>
     <comment>0=language</comment>
   </data>
   <data name="Status_LoadingMappings" xml:space="preserve">
     <value>Loading mappings</value>
   </data>
   <data name="Status_MergingIntoExistingArtifact" xml:space="preserve">
-    <value>Merging into existing artifact: {0}</value>
+    <value>Merging into existing artifact: {File}</value>
     <comment>0=filename</comment>
   </data>
   <data name="Status_MissingAesCache" xml:space="preserve">
-    <value>No cached AES keys found at {0}</value>
+    <value>No cached AES keys found at {File}</value>
     <comment>0=filename</comment>
   </data>
   <data name="Status_ProcessingFile" xml:space="preserve">
-    <value>Processing {0} ({1} of {2})</value>
+    <value>Processing {File} ({Number} of {Total})</value>
     <comment>0=filename, 1=number done, 2=total number</comment>
   </data>
   <data name="Status_ProcessingTypeGroupNumOfNum" xml:space="preserve">
-    <value>Processing {0} group {1} of {2}</value>
+    <value>Processing {AssetType} group {Number} of {Total}</value>
     <comment>0=asset type, 1=number done, 2=total number</comment>
   </data>
   <data name="Status_ProcessingTypeNumOfNum" xml:space="preserve">
-    <value>Processing {0} {1} of {2}</value>
+    <value>Processing {AssetType} {Number} of {Total}</value>
     <comment>0=item type, 1=number done, 2=total number</comment>
   </data>
   <data name="Status_RegisteringExportTypes" xml:space="preserve">
@@ -439,129 +439,129 @@
     <value>Running all exporters</value>
   </data>
   <data name="Status_RunningSelectedExporters" xml:space="preserve">
-    <value>Running {0} exporters: {1}</value>
+    <value>Running {Count} exporters: {ExporterClasses}</value>
     <comment>0=number, 1=class name list</comment>
   </data>
   <data name="Status_SavingAesToFile" xml:space="preserve">
-    <value>Caching AES keys in {0}</value>
+    <value>Caching AES keys in {File}</value>
     <comment>0=filename</comment>
   </data>
   <data name="Status_SkippingEarlyAsInstructed" xml:space="preserve">
-    <value>Skipping {0} early as instructed.</value>
+    <value>Skipping {Asset} early as instructed.</value>
     <comment>0=asset ID</comment>
   </data>
   <data name="Status_SkippingGadgetWithoutAbility" xml:space="preserve">
-    <value>Skipping gadget with no gameplay ability: {0}</value>
+    <value>Skipping gadget with no gameplay ability: {Asset}</value>
     <comment>0=asset ID</comment>
   </data>
   <data name="Status_SkippingLateAsInstructed" xml:space="preserve">
-    <value>Skipping {0} late as instructed.</value>
+    <value>Skipping {Asset} late as instructed.</value>
     <comment>0=template ID</comment>
   </data>
   <data name="Status_SkippingNullGroup" xml:space="preserve">
-    <value>Skipping null {0} group containing {1} items.</value>
+    <value>Skipping null {AssetType} group containing {Count} items.</value>
     <comment>0=asset type, 1=number</comment>
   </data>
   <data name="Status_SkippingOutdatedCachedAes" xml:space="preserve">
-    <value>Cached AES keys in {0} are older than game files, ignoring</value>
+    <value>Cached AES keys in {File} are older than game files, ignoring</value>
     <comment>0=filename</comment>
   </data>
   <data name="Status_SkippingOutdatedCachedMappings" xml:space="preserve">
-    <value>Cached mappings in {0} are older than game files, ignoring</value>
+    <value>Cached mappings in {File} are older than game files, ignoring</value>
     <comment>0=filename</comment>
   </data>
   <data name="Status_SkippingUnparsable" xml:space="preserve">
-    <value>Skipping group member that failed to parse: {0} ({1})</value>
+    <value>Skipping group member that failed to parse: {TemplateId} ({Metadata})</value>
     <comment>0=template ID, 1=metadata</comment>
   </data>
   <data name="Status_SubmittingDynamicKey" xml:space="preserve">
-    <value>Submitting key for {0}</value>
+    <value>Submitting key for {File}</value>
     <comment>0=filename</comment>
   </data>
   <data name="Status_SubmittingMainKey" xml:space="preserve">
     <value>Submitting main key</value>
   </data>
   <data name="Status_WritingFreshArtifact" xml:space="preserve">
-    <value>Writing artifact: {0}</value>
+    <value>Writing artifact: {File}</value>
     <comment>0=filename</comment>
   </data>
   <data name="Status_WroteImageFilesUpdatedPaths" xml:space="preserve">
-    <value>Wrote {0} image files, updated {1} paths</value>
+    <value>Wrote {FileCount} image files, updated {UpdatedPathCount} paths</value>
     <comment>0=number, 1=number</comment>
   </data>
   <data name="Warning_CannotParseDefenderName" xml:space="preserve">
-    <value>WARNING: Can't parse defender name: {0}</value>
+    <value>WARNING: Can't parse defender name: {TemplateId}</value>
     <comment>0=template ID</comment>
   </data>
   <data name="Warning_CannotParseDifficultyCondition" xml:space="preserve">
-    <value>WARNING: Can't determine PL requirement from objective condition: {0}</value>
+    <value>WARNING: Can't determine PL requirement from objective condition: {Expression}</value>
     <comment>0=conditional expression</comment>
   </data>
   <data name="Warning_CannotParseHeroName" xml:space="preserve">
-    <value>WARNING: Can't parse hero name: {0}</value>
+    <value>WARNING: Can't parse hero name: {TemplateId}</value>
     <comment>0=template ID</comment>
   </data>
   <data name="Warning_CannotParseSchematicName" xml:space="preserve">
-    <value>WARNING: Can't parse schematic name {0}</value>
+    <value>WARNING: Can't parse schematic name: {TemplateId}</value>
     <comment>0=template ID</comment>
   </data>
   <data name="Warning_CannotParseSurvivorName" xml:space="preserve">
-    <value>WARNING: Can't parse survivor name: {0}</value>
+    <value>WARNING: Can't parse survivor name: {TemplateId}</value>
     <comment>0=template ID</comment>
   </data>
   <data name="Warning_CouldNotLoadAsset" xml:space="preserve">
-    <value>WARNING: Could not load {0}</value>
+    <value>WARNING: Could not load {Asset}</value>
     <comment>0=asset ID</comment>
   </data>
   <data name="Warning_CouldNotLoadCurveTableRow" xml:space="preserve">
-    <value>WARNING: Could not find curve {0}</value>
+    <value>WARNING: Could not find curve {TableRow}</value>
     <comment>0=table row ID</comment>
   </data>
   <data name="Warning_FailedToLoadFile" xml:space="preserve">
-    <value>WARNING: Failed to load {0}</value>
+    <value>WARNING: Failed to load {File}</value>
     <comment>0=filename</comment>
   </data>
   <data name="Warning_IgnoringUnknownModifyOperation" xml:space="preserve">
-    <value>WARNING: Ignoring unknown modify operation {0}</value>
+    <value>WARNING: Ignoring unknown modify operation {ModifyOperation}</value>
   </data>
   <data name="Warning_MissingCampaignQuestMapData" xml:space="preserve">
     <value>WARNING: Can't find campaign quest map data</value>
   </data>
   <data name="Warning_MissingCraftingTableRow" xml:space="preserve">
-    <value>WARNING: Can't find crafting row {0}</value>
+    <value>WARNING: Can't find crafting row {TableRow}</value>
     <comment>0=table row ID</comment>
   </data>
   <data name="Warning_MissingCurveTableRow" xml:space="preserve">
-    <value>WARNING: Curve table has no row {0}</value>
+    <value>WARNING: Curve table has no row {TableRow}</value>
     <comment>0=row ID</comment>
   </data>
   <data name="Warning_MissingEventQuestMapData" xml:space="preserve">
     <value>WARNING: Can't find event quest map data</value>
   </data>
   <data name="Warning_NoCraftingRowForSchematic" xml:space="preserve">
-    <value>WARNING: No crafting row listed for schematic {0}</value>
+    <value>WARNING: No crafting row listed for schematic {Asset}</value>
     <comment>0=asset ID</comment>
   </data>
   <data name="Warning_NoStatsLocatedForSchematicUsingPrefix" xml:space="preserve">
-    <value>WARNING: No stats located for schematic {0} (using prefix '{1}')</value>
+    <value>WARNING: No stats located for schematic {SchematicId} (using prefix '{TableRowPrefix}')</value>
     <comment>0=schematic ID, 1=stat row name prefix</comment>
   </data>
   <data name="Warning_NoWeaponTrapDefinitionForCraftingRow" xml:space="preserve">
-    <value>WARNING: No weapon/trap definition for crafting row {0}</value>
+    <value>WARNING: No weapon/trap definition for crafting row {TableRow}</value>
     <comment>0=table row ID</comment>
   </data>
   <data name="Warning_OverridePercentageNotImplemented" xml:space="preserve">
     <value>WARNING: I don't know how to Override Percentage</value>
   </data>
   <data name="Warning_UnindexedWeaponTrapPath" xml:space="preserve">
-    <value>WARNING: No weapon/trap path indexed for {0}</value>
+    <value>WARNING: No weapon/trap path indexed for {Asset}</value>
     <comment>0=asset ID</comment>
   </data>
   <data name="Warning_UnknownFormattingStyle" xml:space="preserve">
-    <value>WARNING: Unknown formatting style {0}</value>
+    <value>WARNING: Unknown formatting style {FormattingStyle}</value>
   </data>
   <data name="Warning_UnmatchedCraftingRecipe" xml:space="preserve">
-    <value>WARNING: Crafting recipe with no matching schematic: {0}</value>
+    <value>WARNING: Crafting recipe with no matching schematic: {CraftingRecipeId}</value>
     <comment>0=crafting recipe ID</comment>
   </data>
 </root>
