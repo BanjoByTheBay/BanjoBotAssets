@@ -53,7 +53,7 @@ namespace BanjoBotAssets.Exporters.UObjects
             return await provider.LoadObjectAsync<UDataTable>(file.PathWithoutExtension);
         }
 
-        protected override Task<bool> ExportAssetAsync(UFortQuestItemDefinition asset, QuestItemData namedItemData)
+        protected override Task<bool> ExportAssetAsync(UFortQuestItemDefinition asset, QuestItemData namedItemData, Dictionary<ImageType, string> imagePaths)
         {
             var objectives = new List<QuestObjective>();
 

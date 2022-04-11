@@ -57,12 +57,7 @@ namespace BanjoBotAssets.Extensions
                 .AddOptions<ImageExportOptions>()
                 .Configure<IConfiguration>((options, config) =>
                 {
-                    options.Type = new()
-                    {
-                        [ImageType.LargePreview] = WantImageExport.Yes,
-                        [ImageType.SmallPreview] = WantImageExport.Yes,
-                        [ImageType.Icon] = WantImageExport.Yes,
-                    };
+                    options.Type = Enum.GetValues<ImageType>().ToDictionary(t => t, _ => WantImageExport.Yes);
                     options.OutputDirectory = Resources.File_ExportedImages;
                     config.GetSection(nameof(ImageExportOptions)).Bind(options);
                 });

@@ -18,7 +18,7 @@ namespace BanjoBotAssets.Exporters.Blueprints
         protected abstract string DisplayNameProperty { get; }
         protected abstract string? DescriptionProperty { get; }
 
-        protected virtual Task<bool> ExportAssetAsync(UBlueprintGeneratedClass bpClass, UObject classDefaultObject, NamedItemData namedItemData)
+        protected virtual Task<bool> ExportAssetAsync(UBlueprintGeneratedClass bpClass, UObject classDefaultObject, NamedItemData namedItemData, Dictionary<ImageType, string> imagePaths)
         {
             return Task.FromResult(true);
         }
@@ -65,12 +65,19 @@ namespace BanjoBotAssets.Exporters.Blueprints
                         Type = Type,
                     };
 
-                    if (!await ExportAssetAsync(bpClass, cdo, namedItemData))
+                    var imagePaths = new Dictionary<ImageType, string>();
+
+                    if (!await ExportAssetAsync(bpClass, cdo, namedItemData, imagePaths))
                     {
                         return;
                     }
 
                     output.AddNamedItem(bpClassPath, namedItemData);
+
+                    foreach (var (t, p) in imagePaths)
+                    {
+                        output.AddImageForNamedItem(bpClassPath, t, p);
+                    }
                 }
                 catch (Exception ex) when (ex is not OperationCanceledException)
                 {

@@ -12,7 +12,7 @@ namespace BanjoBotAssets.Exporters.UObjects
         protected override bool InterestedInAsset(string name) =>
             name.Contains("/Gadgets/", StringComparison.OrdinalIgnoreCase) && name.Contains("/G_", StringComparison.OrdinalIgnoreCase);
 
-        protected override async Task<bool> ExportAssetAsync(UFortGadgetItemDefinition asset, NamedItemData namedItemData)
+        protected override async Task<bool> ExportAssetAsync(UFortGadgetItemDefinition asset, NamedItemData namedItemData, Dictionary<ImageType, string> imagePaths)
         {
             if (asset.GameplayAbility.AssetPathName.IsNone)
             {

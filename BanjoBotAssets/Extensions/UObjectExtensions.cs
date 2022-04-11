@@ -22,5 +22,17 @@ namespace BanjoBotAssets.Extensions
 
             return default;
         }
+
+        public static string? GetResourceObjectPath(this UObject obj, string property)
+        {
+            if (obj.GetOrDefault<FStructFallback>(property) is FStructFallback brush &&
+                brush.GetOrDefault<FPackageIndex?>("ResourceObject") is FPackageIndex resobj &&
+                resobj.ResolvedObject?.GetPathName() is string path)
+            {
+                return path;
+            }
+
+            return null;
+        }
     }
 }

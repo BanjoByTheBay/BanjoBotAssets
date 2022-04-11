@@ -13,7 +13,7 @@ namespace BanjoBotAssets.Exporters.UObjects
             name.Contains("/AID_", StringComparison.OrdinalIgnoreCase) &&
             (name.Contains("/Alteration_v2/", StringComparison.OrdinalIgnoreCase) || name.Contains("/Defenders/", StringComparison.OrdinalIgnoreCase));
 
-        protected override Task<bool> ExportAssetAsync(UFortItemDefinition asset, NamedItemData namedItemData)
+        protected override Task<bool> ExportAssetAsync(UFortItemDefinition asset, NamedItemData namedItemData, Dictionary<ImageType, string> imagePaths)
         {
             namedItemData.DisplayName = asset.Description?.Text ?? $"<Alteration:{asset.Name}>";
             namedItemData.Description = null;

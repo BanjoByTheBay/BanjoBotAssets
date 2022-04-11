@@ -5,5 +5,6 @@
         SmallPreview,
         LargePreview,
         Icon,
+        LoadingScreen,
     }
 }

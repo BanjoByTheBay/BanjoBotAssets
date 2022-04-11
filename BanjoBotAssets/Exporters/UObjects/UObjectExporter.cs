@@ -27,7 +27,7 @@ namespace BanjoBotAssets.Exporters.UObjects
 
         protected virtual bool IgnoreLoadFailures => false;
 
-        protected virtual Task<bool> ExportAssetAsync(TAsset asset, TItemData itemData)
+        protected virtual Task<bool> ExportAssetAsync(TAsset asset, TItemData itemData, Dictionary<ImageType, string> imagePaths)
         {
             return Task.FromResult(true);
         }
@@ -114,25 +114,24 @@ namespace BanjoBotAssets.Exporters.UObjects
 
                     cancellationToken.ThrowIfCancellationRequested();
 
-                    if (!await ExportAssetAsync(uobject, itemData))
+                    var imagePaths = new Dictionary<ImageType, string>();
+
+                    if (uobject.GetOrDefault<FSoftObjectPath>("SmallPreviewImage").AssetPathName is { IsNone: false, Text: var t1 })
+                        imagePaths.Add(ImageType.SmallPreview, t1);
+
+                    if (uobject.GetOrDefault<FSoftObjectPath>("LargePreviewImage").AssetPathName is { IsNone: false, Text: var t2 })
+                        imagePaths.Add(ImageType.LargePreview, t2);
+
+                    if (!await ExportAssetAsync(uobject, itemData, imagePaths))
                     {
                         return;
                     }
 
                     output.AddNamedItem(templateId, itemData);
 
-                    var smallPreview = uobject.GetOrDefault<FSoftObjectPath>("SmallPreviewImage").AssetPathName;
-
-                    if (!smallPreview.IsNone)
+                    foreach (var (t, p) in imagePaths)
                     {
-                        output.AddImageForNamedItem(templateId, ImageType.SmallPreview, smallPreview.Text);
-                    }
-
-                    var largePreview = uobject.GetOrDefault<FSoftObjectPath>("LargePreviewImage").AssetPathName;
-
-                    if (!largePreview.IsNone)
-                    {
-                        output.AddImageForNamedItem(templateId, ImageType.LargePreview, largePreview.Text);
+                        output.AddImageForNamedItem(templateId, t, p);
                     }
                 }
                 catch (Exception ex) when (ex is not OperationCanceledException)
