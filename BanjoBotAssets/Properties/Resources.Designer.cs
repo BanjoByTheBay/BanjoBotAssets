@@ -709,7 +709,7 @@ namespace BanjoBotAssets.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Cache miss: {Path}.
+        ///   Looks up a localized string similar to Cache miss: {Path} ({Size}).
         /// </summary>
         internal static string Status_CacheMiss {
             get {

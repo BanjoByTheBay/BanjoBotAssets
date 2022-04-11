@@ -34,38 +34,42 @@ namespace BanjoBotAssets
         {
             Interlocked.Increment(ref cacheRequests);
 
-            return cache.Cache.GetOrCreateAsync(file, async cacheEntry =>
-            {
-                Interlocked.Increment(ref cacheMisses);
+            return cache.Cache.GetOrAddAsync(
+                file.Path,
+                async _ =>
+                {
+                    Interlocked.Increment(ref cacheMisses);
 
-                cacheMissesByPath.AddOrUpdate(file.Path, 1, (_, i) => i + 1);
-                logger.LogDebug(Resources.Status_CacheMiss, file.Path);
+                    cacheMissesByPath.AddOrUpdate(file.Path, 1, (_, i) => i + 1);
+                    logger.LogDebug(Resources.Status_CacheMiss, file.Path, file.Size);
 
-                cacheEntry.SetSize(file.Size);
-                return await base.LoadPackageAsync(file);
-            });
+                    return await base.LoadPackageAsync(file);
+                },
+                new MemoryCacheEntryOptions { Size = file.Size });
         }
 
         public override Task<IPackage?> TryLoadPackageAsync(GameFile file)
         {
             Interlocked.Increment(ref cacheRequests);
 
-            return cache.Cache.GetOrCreateAsync(file, async cacheEntry =>
-            {
-                Interlocked.Increment(ref cacheMisses);
+            return cache.Cache.GetOrAddAsync(
+                file.Path,
+                async _ =>
+                {
+                    Interlocked.Increment(ref cacheMisses);
 
-                cacheMissesByPath.AddOrUpdate(file.Path, 1, (_, i) => i + 1);
-                logger.LogDebug(Resources.Status_CacheMiss, file.Path);
+                    cacheMissesByPath.AddOrUpdate(file.Path, 1, (_, i) => i + 1);
+                    logger.LogDebug(Resources.Status_CacheMiss, file.Path, file.Size);
 
-                cacheEntry.SetSize(file.Size);
-                return await base.TryLoadPackageAsync(file);
-            });
+                    return await base.TryLoadPackageAsync(file);
+                },
+                new MemoryCacheEntryOptions { Size = file.Size });
         }
 
         public void ReportCacheStats()
         {
             logger.LogInformation(Resources.Status_CacheStats,
-                cache.Cache.Count,
+                cache.CachedItemCount,
                 cacheRequests - cacheMisses,
                 cacheMisses,
                 cacheRequests == 0 ? 0 : (cacheRequests - cacheMisses) / (float)cacheRequests);

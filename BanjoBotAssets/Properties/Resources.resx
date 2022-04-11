@@ -349,7 +349,7 @@
     <comment>0=filename</comment>
   </data>
   <data name="Status_CacheMiss" xml:space="preserve">
-    <value>Cache miss: {Path}</value>
+    <value>Cache miss: {Path} ({Size})</value>
   </data>
   <data name="Status_CacheStats" xml:space="preserve">
     <value>Cache size: {Size}. Hits: {Hits}. Misses: {Misses}. Hit ratio: {Ratio:0.0%}.</value>

@@ -50,10 +50,11 @@
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="BanjoByTheBay.CUE4Parse" Version="1.0.3-unofficial"  />
+		<PackageReference Include="BanjoByTheBay.CUE4Parse" Version="1.0.3-unofficial" />
 		<PackageReference Include="BanjoByTheBay.CUE4Parse.Conversion" Version="1.0.0-unofficial" />
 		<PackageReference Include="BanjoByTheBay.CUE4Parse.Fortnite" Version="1.0.0-unofficial" />
 		<PackageReference Include="BanjoByTheBay.CUE4Parse.FortniteTypes" Version="1.0.0-unofficial" />
+		<PackageReference Include="LazyCache" Version="2.4.0" />
 		<PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="6.0.1" />
 		<PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.1" />
 		<PackageReference Include="Microsoft.Extensions.Http" Version="6.0.0" />
