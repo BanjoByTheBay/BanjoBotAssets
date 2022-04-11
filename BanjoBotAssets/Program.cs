@@ -15,6 +15,10 @@ await Host.CreateDefaultBuilder(args)
         logging
             .ClearProviders()
             .AddSimpleConsole(console => console.SingleLine = true);
+
+#if DEBUG
+        logging.SetMinimumLevel(LogLevel.Debug);
+#endif
     })
     .ConfigureServices(services =>
     {

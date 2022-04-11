@@ -144,11 +144,21 @@
     <value>Exception while processing asset group {0}</value>
     <comment>0=asset group ID</comment>
   </data>
+  <data name="Error_FailedToDownloadUsmap" xml:space="preserve">
+    <value>Failed to download usmap from {0}</value>
+    <comment>0=URL</comment>
+  </data>
+  <data name="Error_FailedToGetMappingsEndpoint" xml:space="preserve">
+    <value>Failed to get BenBot Mappings Endpoint</value>
+  </data>
   <data name="Error_GameNotFound" xml:space="preserve">
     <value>Couldn't find game directory. Add it to the GameDirectories setting.</value>
   </data>
   <data name="Error_MappingsFetchFailed" xml:space="preserve">
     <value>Couldn't load mappings.</value>
+  </data>
+  <data name="Error_MissingMappingsJsonArray" xml:space="preserve">
+    <value>Couldn't reload mappings, json array was empty</value>
   </data>
   <data name="Error_NotAManager" xml:space="preserve">
     <value>Not a manager</value>
@@ -156,6 +166,9 @@
   <data name="Error_SpecificAssetNotFound" xml:space="preserve">
     <value>Can't find required asset: {0}</value>
     <comment>0=asset ID</comment>
+  </data>
+  <data name="Error_UncaughtExceptionWhileReloadingMappings" xml:space="preserve">
+    <value>Uncaught exception while reloading mappings from BenBot</value>
   </data>
   <data name="Error_UnexpectedManagerSynergy" xml:space="preserve">
     <value>Unexpected manager synergy {0}</value>
@@ -327,6 +340,10 @@
   <data name="Status_AnalyzingFileList" xml:space="preserve">
     <value>Analyzing file list</value>
   </data>
+  <data name="Status_CachedMappingsToFile" xml:space="preserve">
+    <value>Cached mappings to {0}</value>
+    <comment>0=filename</comment>
+  </data>
   <data name="Status_CacheMiss" xml:space="preserve">
     <value>Cache miss: {Path}</value>
   </data>
@@ -376,6 +393,10 @@
   <data name="Status_LoadedAssets" xml:space="preserve">
     <value>Loaded {0} assets in {1} ({2} ms per asset)</value>
     <comment>0=number loaded, 1=formatted time duration, 2=number of milliseconds</comment>
+  </data>
+  <data name="Status_LoadedCachedMappings" xml:space="preserve">
+    <value>Loaded cached mappings from {0}</value>
+    <comment>0=filename</comment>
   </data>
   <data name="Status_LoadingAesFromFile" xml:space="preserve">
     <value>Loading AES keys from {0}</value>
@@ -440,6 +461,14 @@
   <data name="Status_SkippingNullGroup" xml:space="preserve">
     <value>Skipping null {0} group containing {1} items.</value>
     <comment>0=asset type, 1=number</comment>
+  </data>
+  <data name="Status_SkippingOutdatedCachedAes" xml:space="preserve">
+    <value>Cached AES keys in {0} are older than game files, ignoring</value>
+    <comment>0=filename</comment>
+  </data>
+  <data name="Status_SkippingOutdatedCachedMappings" xml:space="preserve">
+    <value>Cached mappings in {0} are older than game files, ignoring</value>
+    <comment>0=filename</comment>
   </data>
   <data name="Status_SkippingUnparsable" xml:space="preserve">
     <value>Skipping group member that failed to parse: {0} ({1})</value>

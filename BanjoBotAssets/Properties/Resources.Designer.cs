@@ -124,6 +124,24 @@ namespace BanjoBotAssets.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Failed to download usmap from {0}.
+        /// </summary>
+        internal static string Error_FailedToDownloadUsmap {
+            get {
+                return ResourceManager.GetString("Error_FailedToDownloadUsmap", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to get BenBot Mappings Endpoint.
+        /// </summary>
+        internal static string Error_FailedToGetMappingsEndpoint {
+            get {
+                return ResourceManager.GetString("Error_FailedToGetMappingsEndpoint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Couldn&apos;t find game directory. Add it to the GameDirectories setting..
         /// </summary>
         internal static string Error_GameNotFound {
@@ -142,6 +160,15 @@ namespace BanjoBotAssets.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Couldn&apos;t reload mappings, json array was empty.
+        /// </summary>
+        internal static string Error_MissingMappingsJsonArray {
+            get {
+                return ResourceManager.GetString("Error_MissingMappingsJsonArray", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Not a manager.
         /// </summary>
         internal static string Error_NotAManager {
@@ -156,6 +183,15 @@ namespace BanjoBotAssets.Properties {
         internal static string Error_SpecificAssetNotFound {
             get {
                 return ResourceManager.GetString("Error_SpecificAssetNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Uncaught exception while reloading mappings from BenBot.
+        /// </summary>
+        internal static string Error_UncaughtExceptionWhileReloadingMappings {
+            get {
+                return ResourceManager.GetString("Error_UncaughtExceptionWhileReloadingMappings", resourceCulture);
             }
         }
         
@@ -655,6 +691,15 @@ namespace BanjoBotAssets.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cached mappings to {0}.
+        /// </summary>
+        internal static string Status_CachedMappingsToFile {
+            get {
+                return ResourceManager.GetString("Status_CachedMappingsToFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cache miss: {Path}.
         /// </summary>
         internal static string Status_CacheMiss {
@@ -786,6 +831,15 @@ namespace BanjoBotAssets.Properties {
         internal static string Status_LoadedAssets {
             get {
                 return ResourceManager.GetString("Status_LoadedAssets", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Loaded cached mappings from {0}.
+        /// </summary>
+        internal static string Status_LoadedCachedMappings {
+            get {
+                return ResourceManager.GetString("Status_LoadedCachedMappings", resourceCulture);
             }
         }
         
@@ -939,6 +993,24 @@ namespace BanjoBotAssets.Properties {
         internal static string Status_SkippingNullGroup {
             get {
                 return ResourceManager.GetString("Status_SkippingNullGroup", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cached AES keys in {0} are older than game files, ignoring.
+        /// </summary>
+        internal static string Status_SkippingOutdatedCachedAes {
+            get {
+                return ResourceManager.GetString("Status_SkippingOutdatedCachedAes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cached mappings in {0} are older than game files, ignoring.
+        /// </summary>
+        internal static string Status_SkippingOutdatedCachedMappings {
+            get {
+                return ResourceManager.GetString("Status_SkippingOutdatedCachedMappings", resourceCulture);
             }
         }
         

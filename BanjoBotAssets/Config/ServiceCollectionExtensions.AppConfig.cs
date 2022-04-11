@@ -129,19 +129,12 @@ namespace BanjoBotAssets.Extensions
 
         public static IServiceCollection AddGameFileProvider(this IServiceCollection services)
         {
-            services.AddSingleton((Func<IServiceProvider, AbstractVfsFileProvider>)(sp =>
+            services
+                .AddSingleton<GameDirectoryProvider>()
+                .AddSingleton((Func<IServiceProvider, AbstractVfsFileProvider>)(sp =>
                  {
-                     var options = sp.GetRequiredService<IOptions<GameFileOptions>>();
-
-                     string gameDirectory;
-                     try
-                     {
-                         gameDirectory = options.Value.GameDirectories.First(Directory.Exists);
-                     }
-                     catch (InvalidOperationException ex)
-                     {
-                         throw new InvalidOperationException(Resources.Error_GameNotFound, ex);
-                     }
+                     var gd = sp.GetRequiredService<GameDirectoryProvider>();
+                     string gameDirectory = gd.GetGameDirectory().Path;
 
                      var cache = sp.GetRequiredService<AssetCache>();
                      var logger = sp.GetRequiredService<ILogger<CachingFileProvider>>();

@@ -27,26 +27,27 @@ namespace BanjoBotAssets
 
         public ITypeMappingsProvider Create(string gameName, string? specificVersion = null)
         {
-            //return ActivatorUtilities.CreateInstance<CachingBenBotMappingsProvider>(serviceProvider, gameName, specificVersion!);
             return (ITypeMappingsProvider)objectFactory.Invoke(serviceProvider, new[] { gameName, specificVersion });
         }
     }
 
-    public class CachingBenBotMappingsProvider : UsmapTypeMappingsProvider
+    internal sealed class CachingBenBotMappingsProvider : UsmapTypeMappingsProvider
     {
         private readonly IHttpClientFactory httpClientFactory;
         private readonly ILogger<CachingBenBotMappingsProvider> logger;
         private readonly IOptions<MappingsOptions> options;
+        private readonly GameDirectoryProvider gameDirectoryProvider;
         private readonly string? _specificVersion;
         private readonly string _gameName;
         private readonly bool _isWindows64Bit;
 
         public CachingBenBotMappingsProvider(IHttpClientFactory httpClientFactory, ILogger<CachingBenBotMappingsProvider> logger,
-            IOptions<MappingsOptions> options, string gameName, string? specificVersion = null)
+            IOptions<MappingsOptions> options, GameDirectoryProvider gameDirectoryProvider, string gameName, string? specificVersion = null)
         {
             this.httpClientFactory = httpClientFactory;
             this.logger = logger;
             this.options = options;
+            this.gameDirectoryProvider = gameDirectoryProvider;
             _specificVersion = specificVersion;
             _gameName = gameName;
             _isWindows64Bit = Environment.Is64BitOperatingSystem && RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
@@ -61,12 +62,12 @@ namespace BanjoBotAssets
             return client;
         }
 
-        public sealed override bool Reload()
+        public override bool Reload()
         {
             return ReloadAsync().ConfigureAwait(false).GetAwaiter().GetResult();
         }
 
-        public sealed override async Task<bool> ReloadAsync()
+        public override async Task<bool> ReloadAsync()
         {
             try
             {
@@ -74,10 +75,17 @@ namespace BanjoBotAssets
 
                 if (File.Exists(cacheFile))
                 {
-                    var bytes = await File.ReadAllBytesAsync(cacheFile);
-                    AddUsmap(bytes, _gameName, cacheFile);
-                    logger.LogInformation("Loaded cached mappings from {File}", cacheFile);
-                    return true;
+                    if (File.GetLastWriteTime(cacheFile) < gameDirectoryProvider.GetGameDirectory().LastWriteTime)
+                    {
+                        logger.LogInformation(Resources.Status_SkippingOutdatedCachedMappings, cacheFile);
+                    }
+                    else
+                    {
+                        var bytes = await File.ReadAllBytesAsync(cacheFile);
+                        AddUsmap(bytes, _gameName, cacheFile);
+                        logger.LogInformation(Resources.Status_LoadedCachedMappings, cacheFile);
+                        return true;
+                    }
                 }
 
                 var jsonText = _specificVersion != null
@@ -85,7 +93,7 @@ namespace BanjoBotAssets
                     : await LoadEndpoint(options.Value.MappingsApiUri);
                 if (jsonText == null)
                 {
-                    logger.LogError("Failed to get BenBot Mappings Endpoint");
+                    logger.LogError(Resources.Error_FailedToGetMappingsEndpoint);
                     return false;
                 }
                 var json = JArray.Parse(jsonText);
@@ -93,7 +101,7 @@ namespace BanjoBotAssets
 
                 if (!json.HasValues)
                 {
-                    logger.LogError("Couldn't reload mappings, json array was empty");
+                    logger.LogError(Resources.Error_MissingMappingsJsonArray);
                     return false;
                 }
 
@@ -119,19 +127,19 @@ namespace BanjoBotAssets
                 var usmapBytes = await LoadEndpointBytes(usmapUrl);
                 if (usmapBytes == null)
                 {
-                    logger.LogError("Failed to download usmap from {URL}", usmapUrl);
+                    logger.LogError(Resources.Error_FailedToDownloadUsmap, usmapUrl);
                     return false;
                 }
 
                 await File.WriteAllBytesAsync(cacheFile, usmapBytes);
-                logger.LogInformation("Cached mappings to {File}", cacheFile);
+                logger.LogInformation(Resources.Status_CachedMappingsToFile, cacheFile);
 
                 AddUsmap(usmapBytes, _gameName, usmapName!);
                 return true;
             }
             catch (Exception e)
             {
-                logger.LogError(e, "Uncaught exception while reloading mappings from BenBot");
+                logger.LogError(e, Resources.Error_UncaughtExceptionWhileReloadingMappings);
                 return false;
             }
         }
