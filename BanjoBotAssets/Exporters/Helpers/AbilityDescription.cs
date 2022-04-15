@@ -12,7 +12,7 @@ namespace BanjoBotAssets.Exporters.Helpers
             this.logger = logger;
         }
 
-        public async Task<string?> GetAsync(UObject? grantedAbilityKit, IAssetCounter assetCounter)
+        public async Task<string?> GetAsync(UObject grantedAbilityKit, IAssetCounter assetCounter)
         {
             var (markup, cdo) = await GetMarkupAsync(grantedAbilityKit, assetCounter);
 
@@ -27,7 +27,7 @@ namespace BanjoBotAssets.Exporters.Helpers
             return FormatMarkup(markup, tokens);
         }
 
-        private static async Task<(string? markup, UObject? tooltip)> GetMarkupAsync(UObject? grantedAbilityKit, IAssetCounter assetCounter)
+        private static async Task<(string? markup, UObject? tooltip)> GetMarkupAsync(UObject grantedAbilityKit, IAssetCounter assetCounter)
         {
             var tooltipDescription = grantedAbilityKit?.GetOrDefault<FText>("TooltipDescription");
             if (tooltipDescription != null)

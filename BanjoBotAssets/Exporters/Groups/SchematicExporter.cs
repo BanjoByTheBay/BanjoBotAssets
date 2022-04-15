@@ -215,11 +215,6 @@ namespace BanjoBotAssets.Exporters.Groups
             var statRowPrefix = GetStatRowPrefix(weaponOrTrapDef);
             var triggerType = weaponOrTrapDef.GetOrDefault<EFortWeaponTriggerType>("TriggerType").ToString();
 
-            var smallPreview = weaponOrTrapDef.GetOrDefault<FSoftObjectPath>("SmallPreviewImage").AssetPathName;
-            var smallPreviewPath = smallPreview.IsNone ? null : smallPreview.Text;
-            var largePreview = weaponOrTrapDef.GetOrDefault<FSoftObjectPath>("LargePreviewImage").AssetPathName;
-            var largePreviewPath = largePreview.IsNone ? null : largePreview.Text;
-
             return result with
             {
                 Description = description,
@@ -230,8 +225,8 @@ namespace BanjoBotAssets.Exporters.Groups
                 AmmoType = ammoType,
                 WeaponOrTrapStatRowPrefix = statRowPrefix,
                 TriggerType = triggerType,
-                SmallPreviewImagePath = smallPreviewPath,
-                LargePreviewImagePath = largePreviewPath,
+                SmallPreviewImagePath = weaponOrTrapDef.GetSoftAssetPath("SmallPreviewImage"),
+                LargePreviewImagePath = weaponOrTrapDef.GetSoftAssetPath("LargePreviewImage"),
             };
         }
 

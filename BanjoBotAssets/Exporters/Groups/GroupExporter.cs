@@ -1,5 +1,6 @@
 ﻿using BanjoBotAssets.Artifacts.Models;
 using BanjoBotAssets.Exporters.Helpers;
+using BanjoBotAssets.Extensions;
 
 namespace BanjoBotAssets.Exporters.Groups
 {
@@ -155,18 +156,13 @@ namespace BanjoBotAssets.Exporters.Groups
 
         protected virtual Task<TFields> ExtractCommonFieldsAsync(TAsset asset, IGrouping<string?, string> grouping)
         {
-            var smallPreview = asset.GetOrDefault<FSoftObjectPath>("SmallPreviewImage").AssetPathName;
-            var smallPreviewPath = smallPreview.IsNone ? null : smallPreview.Text;
-            var largePreview = asset.GetOrDefault<FSoftObjectPath>("LargePreviewImage").AssetPathName;
-            var largePreviewPath = largePreview.IsNone ? null : largePreview.Text;
-
             return Task.FromResult(new TFields() with
             {
                 Description = asset.GetOrDefault<FText>("Description")?.Text,
                 DisplayName = asset.GetOrDefault<FText>("DisplayName")?.Text ?? $"<{grouping.Key}>",
                 SubType = null,
-                SmallPreviewImagePath = smallPreviewPath,
-                LargePreviewImagePath = largePreviewPath,
+                SmallPreviewImagePath = asset.GetSoftAssetPath("SmallPreviewImage"),
+                LargePreviewImagePath = asset.GetSoftAssetPath("LargePreviewImage"),
             });
         }
 

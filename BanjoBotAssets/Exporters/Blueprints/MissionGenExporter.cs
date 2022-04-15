@@ -31,13 +31,10 @@ namespace BanjoBotAssets.Exporters.Blueprints
                 imagePaths.Add(ImageType.Icon, path);
             }
 
-            var bgImage = classDefaultObject
-                .GetOrDefault<FStructFallback>("LoadingScreenConfig")
-                ?.GetOrDefault<FSoftObjectPath>("BackgroundImage")
-                .AssetPathName ?? new FName();
-            if (!bgImage.IsNone)
+            var bgImage = classDefaultObject.GetOrDefault<FStructFallback>("LoadingScreenConfig")?.GetSoftAssetPath("BackgroundImage");
+            if (bgImage != null)
             {
-                imagePaths.Add(ImageType.LoadingScreen, bgImage.Text);
+                imagePaths.Add(ImageType.LoadingScreen, bgImage);
             }
 
             return Task.FromResult(true);

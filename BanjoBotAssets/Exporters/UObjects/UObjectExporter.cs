@@ -1,5 +1,6 @@
 ﻿using BanjoBotAssets.Artifacts.Models;
 using BanjoBotAssets.Exporters.Helpers;
+using BanjoBotAssets.Extensions;
 using CUE4Parse.FN.Enums.FortniteGame;
 
 namespace BanjoBotAssets.Exporters.UObjects
@@ -116,11 +117,11 @@ namespace BanjoBotAssets.Exporters.UObjects
 
                     var imagePaths = new Dictionary<ImageType, string>();
 
-                    if (uobject.GetOrDefault<FSoftObjectPath>("SmallPreviewImage").AssetPathName is { IsNone: false, Text: var t1 })
-                        imagePaths.Add(ImageType.SmallPreview, t1);
+                    if (uobject.GetSoftAssetPath("SmallPreviewImage") is string smallPreviewPath)
+                        imagePaths.Add(ImageType.SmallPreview, smallPreviewPath);
 
-                    if (uobject.GetOrDefault<FSoftObjectPath>("LargePreviewImage").AssetPathName is { IsNone: false, Text: var t2 })
-                        imagePaths.Add(ImageType.LargePreview, t2);
+                    if (uobject.GetSoftAssetPath("LargePreviewImage") is string largePreviewPath)
+                        imagePaths.Add(ImageType.LargePreview, largePreviewPath);
 
                     if (!await ExportAssetAsync(uobject, itemData, imagePaths))
                     {

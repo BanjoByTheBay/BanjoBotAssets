@@ -91,9 +91,12 @@ namespace BanjoBotAssets.Exporters.Groups
         private async Task<(string displayName, string description)> GetPerkTextAsync(UObject? gameplayDefinition, string perkProperty)
         {
             var perk = gameplayDefinition?.GetOrDefault<FStructFallback>(perkProperty);
+            if (perk == null)
+                return ($"<{Resources.Field_Hero_NoGrantedAbility}>", $"<{Resources.Field_NoDescription}>");
+
             Interlocked.Increment(ref assetsLoaded);
-            var grantedAbilityKit = perk == null ? null : await perk.GetOrDefault<FSoftObjectPath>("GrantedAbilityKit").LoadAsync(provider);
-            var displayName = grantedAbilityKit?.GetOrDefault<FText>("DisplayName")?.Text ?? $"<{grantedAbilityKit?.Name ?? Resources.Field_Hero_NoGrantedAbility}>";
+            var grantedAbilityKit = await perk.GetOrDefault<FSoftObjectPath>("GrantedAbilityKit").LoadAsync(provider);
+            var displayName = grantedAbilityKit.GetOrDefault<FText>("DisplayName")?.Text ?? $"<{grantedAbilityKit.Name ?? Resources.Field_Hero_NoGrantedAbility}>";
             var description = await abilityDescription.GetAsync(grantedAbilityKit, this) ?? $"<{Resources.Field_NoDescription}>";
             return (displayName, description);
         }

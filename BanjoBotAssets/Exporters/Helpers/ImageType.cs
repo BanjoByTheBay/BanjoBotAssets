@@ -6,5 +6,6 @@
         LargePreview,
         Icon,
         LoadingScreen,
+        PackImage,
     }
 }
