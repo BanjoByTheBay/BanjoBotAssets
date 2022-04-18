@@ -1,9 +1,7 @@
 ﻿using BanjoBotAssets.Aes;
 using BanjoBotAssets.Artifacts;
-using BanjoBotAssets.Artifacts.Helpers;
 using BanjoBotAssets.Config;
 using BanjoBotAssets.Exporters;
-using BanjoBotAssets.Exporters.Helpers;
 using BanjoBotAssets.PostExporters;
 using CUE4Parse.UE4.Versions;
 using Microsoft.Extensions.Options;

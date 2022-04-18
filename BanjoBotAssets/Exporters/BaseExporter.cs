@@ -1,5 +1,4 @@
 ﻿using BanjoBotAssets.Config;
-using BanjoBotAssets.Exporters.Helpers;
 using Microsoft.Extensions.Options;
 
 namespace BanjoBotAssets.Exporters

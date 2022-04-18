@@ -1,6 +1,4 @@
-﻿using BanjoBotAssets.Artifacts.Helpers;
-using BanjoBotAssets.Exporters.Helpers;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;

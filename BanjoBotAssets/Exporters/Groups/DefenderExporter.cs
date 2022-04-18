@@ -1,6 +1,4 @@
-﻿using BanjoBotAssets.Exporters.Helpers;
-
-namespace BanjoBotAssets.Exporters.Groups
+﻿namespace BanjoBotAssets.Exporters.Groups
 {
     internal sealed class DefenderExporter : GroupExporter<UFortHeroType>
     {

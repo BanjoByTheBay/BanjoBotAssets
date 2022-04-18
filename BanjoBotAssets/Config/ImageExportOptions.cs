@@ -1,6 +1,4 @@
-﻿using BanjoBotAssets.Exporters.Helpers;
-
-namespace BanjoBotAssets.Config
+﻿namespace BanjoBotAssets.Config
 {
     public class ImageExportOptions
     {

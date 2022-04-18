@@ -1,5 +1,4 @@
-﻿using BanjoBotAssets.Exporters.Helpers;
-using CUE4Parse.FN.Exports.FortniteGame.NoProperties;
+﻿using CUE4Parse.FN.Exports.FortniteGame.NoProperties;
 
 namespace BanjoBotAssets.Exporters.UObjects
 {

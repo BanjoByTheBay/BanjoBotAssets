@@ -28,6 +28,10 @@
 		<Using Include="System.Globalization" />
 		<Using Include="System.Text.RegularExpressions" />
 		<Using Include="BanjoBotAssets" />
+		<Using Include="BanjoBotAssets.Artifacts.Helpers" />
+		<Using Include="BanjoBotAssets.Exporters.Helpers" />
+		<Using Include="BanjoBotAssets.Extensions" />
+		<Using Include="BanjoBotAssets.PostExporters.Helpers" />
 		<Using Include="BanjoBotAssets.Properties" />
 	</ItemGroup>
 

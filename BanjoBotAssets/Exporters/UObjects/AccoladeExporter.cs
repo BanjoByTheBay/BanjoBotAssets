@@ -1,6 +1,4 @@
-﻿using BanjoBotAssets.Exporters.Helpers;
-
-// TODO: include accolade XP amounts (XpRewardAmount property -> STWAccoladeXP curve table)
+﻿// TODO: include accolade XP amounts (XpRewardAmount property -> STWAccoladeXP curve table)
 
 namespace BanjoBotAssets.Exporters.UObjects
 {

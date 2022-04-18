@@ -1,5 +1,4 @@
 ﻿using BanjoBotAssets.Config;
-using BanjoBotAssets.Extensions;
 using System.Reflection;
 
 // TODO: export per-difficulty stat clamp tables (GameDifficultyGrowthBounds, CombatStatClampsPerTheater)

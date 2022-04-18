@@ -1,5 +1,4 @@
-﻿using BanjoBotAssets.Artifacts.Helpers;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using System.Diagnostics.CodeAnalysis;
 
 namespace BanjoBotAssets.Artifacts.Models

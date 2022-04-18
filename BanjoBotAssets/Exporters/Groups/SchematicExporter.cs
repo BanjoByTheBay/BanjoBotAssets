@@ -1,6 +1,4 @@
 ﻿using BanjoBotAssets.Artifacts.Models;
-using BanjoBotAssets.Exporters.Helpers;
-using BanjoBotAssets.Extensions;
 using CUE4Parse.FN.Enums.FortniteGame;
 using CUE4Parse.UE4.Objects.GameplayTags;
 using System.Collections.Concurrent;

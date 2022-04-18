@@ -3,7 +3,6 @@ using BanjoBotAssets.Artifacts;
 using BanjoBotAssets.Artifacts.Models;
 using BanjoBotAssets.Config;
 using BanjoBotAssets.Exporters;
-using BanjoBotAssets.Exporters.Helpers;
 using BanjoBotAssets.PostExporters;
 using CUE4Parse.Encryption.Aes;
 using CUE4Parse.UE4.Objects.Core.Misc;

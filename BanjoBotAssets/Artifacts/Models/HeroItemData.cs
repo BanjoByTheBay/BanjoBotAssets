@@ -1,5 +1,4 @@
-﻿using BanjoBotAssets.Artifacts.Helpers;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 
 namespace BanjoBotAssets.Artifacts.Models
 {

@@ -1,5 +1,4 @@
-﻿using BanjoBotAssets.Exporters.Helpers;
-using CUE4Parse.FN.Structs.CoreUObject;
+﻿using CUE4Parse.FN.Structs.CoreUObject;
 
 namespace BanjoBotAssets.Exporters
 {

@@ -1,5 +1,4 @@
-﻿using BanjoBotAssets.Extensions;
-using CUE4Parse.UE4.Objects.Engine;
+﻿using CUE4Parse.UE4.Objects.Engine;
 
 namespace BanjoBotAssets.Exporters.Helpers
 {

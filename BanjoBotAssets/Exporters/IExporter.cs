@@ -1,6 +1,4 @@
-﻿using BanjoBotAssets.Exporters.Helpers;
-
-namespace BanjoBotAssets.Exporters
+﻿namespace BanjoBotAssets.Exporters
 {
     internal interface IExporter : IAssetCounter
     {

@@ -1,5 +1,4 @@
 ﻿using BanjoBotAssets.Artifacts.Models;
-using BanjoBotAssets.Exporters.Helpers;
 using CUE4Parse.UE4.Objects.GameplayTags;
 
 namespace BanjoBotAssets.Exporters.Groups

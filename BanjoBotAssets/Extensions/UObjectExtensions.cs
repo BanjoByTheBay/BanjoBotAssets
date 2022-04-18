@@ -1,6 +1,4 @@
-﻿using BanjoBotAssets.Exporters.Helpers;
-
-namespace BanjoBotAssets.Extensions
+﻿namespace BanjoBotAssets.Extensions
 {
     internal static class UObjectExtensions
     {

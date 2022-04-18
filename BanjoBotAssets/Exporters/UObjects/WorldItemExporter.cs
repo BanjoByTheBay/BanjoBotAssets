@@ -1,6 +1,4 @@
-﻿using BanjoBotAssets.Exporters.Helpers;
-
-namespace BanjoBotAssets.Exporters.UObjects
+﻿namespace BanjoBotAssets.Exporters.UObjects
 {
     internal sealed class WorldItemExporter : UObjectExporter
     {
