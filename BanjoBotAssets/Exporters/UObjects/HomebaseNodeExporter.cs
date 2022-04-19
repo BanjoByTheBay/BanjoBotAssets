@@ -1,4 +1,6 @@
-﻿namespace BanjoBotAssets.Exporters.UObjects
+﻿// TODO: export LevelData and DisplayType
+
+namespace BanjoBotAssets.Exporters.UObjects
 {
     internal class HomebaseNodeExporter : UObjectExporter<UFortHomebaseNodeItemDefinition>
     {
