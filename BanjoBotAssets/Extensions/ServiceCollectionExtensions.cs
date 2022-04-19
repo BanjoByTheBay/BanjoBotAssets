@@ -1,5 +1,7 @@
 ﻿using System.Reflection;
 
+// TODO: use a source generator instead of ServiceCollectionExtensions.AddDerivedServices
+
 namespace BanjoBotAssets.Extensions
 {
     internal static partial class ServiceCollectionExtensions
