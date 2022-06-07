@@ -70,9 +70,9 @@ namespace BanjoBotAssets.Exporters
 
         private static readonly (string rarity, int maxTier)[] rarityTiers =
         {
-            ("C", 2),
-            ("UC", 3),
-            ("R", 4),
+            ("C", 5),
+            ("UC", 5),
+            ("R", 5),
             ("VR", 5),
             ("SR", 5),
             ("UR", 5),
