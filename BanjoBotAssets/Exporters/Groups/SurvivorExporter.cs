@@ -1,5 +1,7 @@
 ﻿using BanjoBotAssets.Artifacts.Models;
 
+// TODO: fix Halloween survivors all getting the same name: they should be separated by rarity (WorkerHalloween_VR_T04 is Lobber, WorkerHalloween_UC_T01 is Husky, etc.)
+
 namespace BanjoBotAssets.Exporters.Groups
 {
     internal record SurvivorItemGroupFields(string DisplayName, string? Description, string? SubType,
@@ -16,7 +18,7 @@ namespace BanjoBotAssets.Exporters.Groups
             name.Contains("Workers/Worker", StringComparison.OrdinalIgnoreCase) || name.Contains("Managers/Manager", StringComparison.OrdinalIgnoreCase);
 
         // regular survivor:    WorkerBasic_SR_T02
-        // special survivor:    Worker_Leprechaun_VR_T01
+        // special survivor:    Worker_Leprechaun_VR_T01, WorkerHalloween_VR_T04
         // mythic survivor:     Worker_Karolina_UR_T02
         // lead:                ManagerEngineer_R_T04
         // mythic lead:         ManagerMartialArtist_SR_samurai_T03
