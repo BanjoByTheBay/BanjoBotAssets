@@ -72,19 +72,26 @@ namespace BanjoBotAssets
             try
             {
                 string cacheFile = options.Value.LocalFilePath;
+                bool hasCachedFallback = false;
+
+                async Task<bool> LoadCachedMappings()
+                {
+                    var bytes = await File.ReadAllBytesAsync(cacheFile);
+                    AddUsmap(bytes, _gameName, cacheFile);
+                    logger.LogInformation(Resources.Status_LoadedCachedMappings, cacheFile);
+                    return true;
+                }
 
                 if (File.Exists(cacheFile))
                 {
                     if (File.GetLastWriteTime(cacheFile) < gameDirectoryProvider.GetGameDirectory().LastWriteTime)
                     {
                         logger.LogInformation(Resources.Status_SkippingOutdatedCachedMappings, cacheFile);
+                        hasCachedFallback = true;
                     }
                     else
                     {
-                        var bytes = await File.ReadAllBytesAsync(cacheFile);
-                        AddUsmap(bytes, _gameName, cacheFile);
-                        logger.LogInformation(Resources.Status_LoadedCachedMappings, cacheFile);
-                        return true;
+                        return await LoadCachedMappings();
                     }
                 }
 
@@ -94,7 +101,7 @@ namespace BanjoBotAssets
                 if (jsonText == null)
                 {
                     logger.LogError(Resources.Error_FailedToGetMappingsEndpoint);
-                    return false;
+                    return hasCachedFallback && await LoadCachedMappings();
                 }
                 var json = JArray.Parse(jsonText);
                 var preferredCompression = _isWindows64Bit ? "Oodle" : "Brotli";
@@ -102,7 +109,7 @@ namespace BanjoBotAssets
                 if (!json.HasValues)
                 {
                     logger.LogError(Resources.Error_MissingMappingsJsonArray);
-                    return false;
+                    return hasCachedFallback && await LoadCachedMappings();
                 }
 
                 string? usmapUrl = null;
@@ -128,7 +135,7 @@ namespace BanjoBotAssets
                 if (usmapBytes == null)
                 {
                     logger.LogError(Resources.Error_FailedToDownloadUsmap, usmapUrl);
-                    return false;
+                    return hasCachedFallback && await LoadCachedMappings();
                 }
 
                 await File.WriteAllBytesAsync(cacheFile, usmapBytes);
