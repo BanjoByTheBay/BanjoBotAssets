@@ -997,6 +997,15 @@ namespace BanjoBotAssets.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Skipping null main key.
+        /// </summary>
+        internal static string Status_SkippingNullMainKey {
+            get {
+                return ResourceManager.GetString("Status_SkippingNullMainKey", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cached AES keys in {File} are older than game files, ignoring.
         /// </summary>
         internal static string Status_SkippingOutdatedCachedAes {

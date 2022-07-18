@@ -462,6 +462,9 @@
     <value>Skipping null {AssetType} group containing {Count} items.</value>
     <comment>0=asset type, 1=number</comment>
   </data>
+  <data name="Status_SkippingNullMainKey" xml:space="preserve">
+    <value>Skipping null main key</value>
+  </data>
   <data name="Status_SkippingOutdatedCachedAes" xml:space="preserve">
     <value>Cached AES keys in {File} are older than game files, ignoring</value>
     <comment>0=filename</comment>

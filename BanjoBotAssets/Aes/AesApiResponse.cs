@@ -19,7 +19,7 @@ namespace BanjoBotAssets.Aes
         public string Build { get; set; }
 
         [JsonPropertyName("mainKey")]
-        public string MainKey { get; set; }
+        public string? MainKey { get; set; }
 
         [JsonPropertyName("dynamicKeys")]
         public DynamicKey[] DynamicKeys { get; set; }
