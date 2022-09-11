@@ -145,7 +145,7 @@
     <comment>0=URL</comment>
   </data>
   <data name="Error_FailedToGetMappingsEndpoint" xml:space="preserve">
-    <value>Failed to get BenBot Mappings Endpoint</value>
+    <value>Failed to get FNCentral Mappings Endpoint</value>
   </data>
   <data name="Error_GameNotFound" xml:space="preserve">
     <value>Couldn't find game directory. Add it to the GameDirectories setting.</value>
@@ -164,7 +164,7 @@
     <comment>0=asset ID</comment>
   </data>
   <data name="Error_UncaughtExceptionWhileReloadingMappings" xml:space="preserve">
-    <value>Uncaught exception while reloading mappings from BenBot</value>
+    <value>Uncaught exception while reloading mappings from FNCentral</value>
   </data>
   <data name="Field_Defender_DefaultName" xml:space="preserve">
     <value>Defender</value>
