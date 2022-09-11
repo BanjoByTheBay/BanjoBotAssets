@@ -172,7 +172,7 @@ namespace BanjoBotAssets.Extensions
         public static IServiceCollection AddMappingsProviders(this IServiceCollection services)
         {
             services
-                .AddTransient<ITypeMappingsProviderFactory, CachingBenBotMappingsProviderFactory>();
+                .AddTransient<ITypeMappingsProviderFactory, CachingFNCentralMappingsProviderFactory>();
 
             services.AddOptions<MappingsOptions>()
                 .Configure<IConfiguration>((options, config) =>

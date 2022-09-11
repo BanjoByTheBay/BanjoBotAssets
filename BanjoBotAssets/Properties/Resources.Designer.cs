@@ -124,7 +124,7 @@ namespace BanjoBotAssets.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Failed to get BenBot Mappings Endpoint.
+        ///   Looks up a localized string similar to Failed to get FNCentral Mappings Endpoint.
         /// </summary>
         internal static string Error_FailedToGetMappingsEndpoint {
             get {
@@ -178,7 +178,7 @@ namespace BanjoBotAssets.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Uncaught exception while reloading mappings from BenBot.
+        ///   Looks up a localized string similar to Uncaught exception while reloading mappings from FNCentral.
         /// </summary>
         internal static string Error_UncaughtExceptionWhileReloadingMappings {
             get {
