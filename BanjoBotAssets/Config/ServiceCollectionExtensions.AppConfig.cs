@@ -172,12 +172,12 @@ namespace BanjoBotAssets.Extensions
         public static IServiceCollection AddMappingsProviders(this IServiceCollection services)
         {
             services
-                .AddTransient<ITypeMappingsProviderFactory, CachingBenBotMappingsProviderFactory>();
+                .AddTransient<ITypeMappingsProviderFactory, CachingFNCentralMappingsProviderFactory>();
 
             services.AddOptions<MappingsOptions>()
                 .Configure<IConfiguration>((options, config) =>
                 {
-                    options.MappingsApiUri = "https://benbot.app/api/v1/mappings";
+                    options.MappingsApiUri = "https://fortnitecentral.gmatrixgames.ga/api/v1/mappings?platform=Windows";
                     options.LocalFilePath = "mappings.usmap";
                     config.GetSection(nameof(MappingsOptions)).Bind(options);
                 });

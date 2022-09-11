@@ -11,17 +11,17 @@ namespace BanjoBotAssets
         ITypeMappingsProvider Create(string gameName, string? specificVersion = null);
     }
 
-    internal class CachingBenBotMappingsProviderFactory : ITypeMappingsProviderFactory
+    internal class CachingFNCentralMappingsProviderFactory : ITypeMappingsProviderFactory
     {
         private readonly IServiceProvider serviceProvider;
         private readonly ObjectFactory objectFactory;
 
-        public CachingBenBotMappingsProviderFactory(IServiceProvider serviceProvider)
+        public CachingFNCentralMappingsProviderFactory(IServiceProvider serviceProvider)
         {
             this.serviceProvider = serviceProvider;
 
             objectFactory = ActivatorUtilities.CreateFactory(
-                typeof(CachingBenBotMappingsProvider),
+                typeof(CachingFNCentralMappingsProvider),
                 new[] { typeof(string), typeof(string) });
         }
 
@@ -31,17 +31,17 @@ namespace BanjoBotAssets
         }
     }
 
-    internal sealed class CachingBenBotMappingsProvider : UsmapTypeMappingsProvider
+    internal sealed class CachingFNCentralMappingsProvider : UsmapTypeMappingsProvider
     {
         private readonly IHttpClientFactory httpClientFactory;
-        private readonly ILogger<CachingBenBotMappingsProvider> logger;
+        private readonly ILogger<CachingFNCentralMappingsProvider> logger;
         private readonly IOptions<MappingsOptions> options;
         private readonly GameDirectoryProvider gameDirectoryProvider;
         private readonly string? _specificVersion;
         private readonly string _gameName;
         private readonly bool _isWindows64Bit;
 
-        public CachingBenBotMappingsProvider(IHttpClientFactory httpClientFactory, ILogger<CachingBenBotMappingsProvider> logger,
+        public CachingFNCentralMappingsProvider(IHttpClientFactory httpClientFactory, ILogger<CachingFNCentralMappingsProvider> logger,
             IOptions<MappingsOptions> options, GameDirectoryProvider gameDirectoryProvider, string gameName, string? specificVersion = null)
         {
             this.httpClientFactory = httpClientFactory;
