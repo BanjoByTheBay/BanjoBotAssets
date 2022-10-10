@@ -182,17 +182,17 @@ namespace BanjoBotAssets
 
             if (provider.GameName.Equals("FortniteGame", StringComparison.OrdinalIgnoreCase))
             {
-                provider.MappingsContainer = typeMappingsProviderFactory.Create("fortnitegame");
+                provider.MappingsContainer = typeMappingsProviderFactory.Create();
             }
 
             // sometimes the mappings don't load, and then nothing works
-            if (provider.MappingsForThisGame is null or { Enums.Count: 0, Types.Count: 0 })
+            if (provider.MappingsForGame is null or { Enums.Count: 0, Types.Count: 0 })
             {
                 await Task.Delay(5 * 1000, cancellationToken);
                 logger.LogWarning(Resources.Status_RetryingMappings);
-                provider.MappingsContainer = typeMappingsProviderFactory.Create("fortnitegame");
+                provider.MappingsContainer = typeMappingsProviderFactory.Create();
 
-                if (provider.MappingsForThisGame is null or { Enums.Count: 0, Types.Count: 0 })
+                if (provider.MappingsForGame is null or { Enums.Count: 0, Types.Count: 0 })
                     throw new CriticalFailureException(Resources.Error_MappingsFetchFailed);
             }
         }

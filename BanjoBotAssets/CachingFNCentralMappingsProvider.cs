@@ -8,7 +8,7 @@ namespace BanjoBotAssets
 {
     internal interface ITypeMappingsProviderFactory
     {
-        ITypeMappingsProvider Create(string gameName, string? specificVersion = null);
+        ITypeMappingsProvider Create(string? specificVersion = null);
     }
 
     internal class CachingFNCentralMappingsProviderFactory : ITypeMappingsProviderFactory
@@ -22,12 +22,12 @@ namespace BanjoBotAssets
 
             objectFactory = ActivatorUtilities.CreateFactory(
                 typeof(CachingFNCentralMappingsProvider),
-                new[] { typeof(string), typeof(string) });
+                new[] { typeof(string) });
         }
 
-        public ITypeMappingsProvider Create(string gameName, string? specificVersion = null)
+        public ITypeMappingsProvider Create(string? specificVersion = null)
         {
-            return (ITypeMappingsProvider)objectFactory.Invoke(serviceProvider, new[] { gameName, specificVersion });
+            return (ITypeMappingsProvider)objectFactory.Invoke(serviceProvider, new[] { specificVersion });
         }
     }
 
@@ -38,18 +38,16 @@ namespace BanjoBotAssets
         private readonly IOptions<MappingsOptions> options;
         private readonly GameDirectoryProvider gameDirectoryProvider;
         private readonly string? _specificVersion;
-        private readonly string _gameName;
         private readonly bool _isWindows64Bit;
 
         public CachingFNCentralMappingsProvider(IHttpClientFactory httpClientFactory, ILogger<CachingFNCentralMappingsProvider> logger,
-            IOptions<MappingsOptions> options, GameDirectoryProvider gameDirectoryProvider, string gameName, string? specificVersion = null)
+            IOptions<MappingsOptions> options, GameDirectoryProvider gameDirectoryProvider, string? specificVersion = null)
         {
             this.httpClientFactory = httpClientFactory;
             this.logger = logger;
             this.options = options;
             this.gameDirectoryProvider = gameDirectoryProvider;
             _specificVersion = specificVersion;
-            _gameName = gameName;
             _isWindows64Bit = Environment.Is64BitOperatingSystem && RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
             Reload();
         }
@@ -62,12 +60,12 @@ namespace BanjoBotAssets
             return client;
         }
 
-        public override bool Reload()
+        public override void Reload()
         {
-            return ReloadAsync().ConfigureAwait(false).GetAwaiter().GetResult();
+            ReloadAsync().ConfigureAwait(false).GetAwaiter().GetResult();
         }
 
-        public override async Task<bool> ReloadAsync()
+        public async Task<bool> ReloadAsync()
         {
             try
             {
@@ -77,7 +75,7 @@ namespace BanjoBotAssets
                 async Task<bool> LoadCachedMappings()
                 {
                     var bytes = await File.ReadAllBytesAsync(cacheFile);
-                    AddUsmap(bytes, _gameName, cacheFile);
+                    Load(bytes);
                     logger.LogInformation(Resources.Status_LoadedCachedMappings, cacheFile);
                     return true;
                 }
@@ -141,7 +139,7 @@ namespace BanjoBotAssets
                 await File.WriteAllBytesAsync(cacheFile, usmapBytes);
                 logger.LogInformation(Resources.Status_CachedMappingsToFile, cacheFile);
 
-                AddUsmap(usmapBytes, _gameName, usmapName!);
+                Load(usmapBytes);
                 return true;
             }
             catch (Exception e)

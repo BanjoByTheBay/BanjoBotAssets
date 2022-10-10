@@ -15,6 +15,7 @@
 
 	<ItemGroup>
 		<Using Include="CUE4Parse.FileProvider.Vfs" />
+		<Using Include="CUE4Parse.FN.Enums" />
 		<Using Include="CUE4Parse.FN.Exports.FortniteGame" />
 		<Using Include="CUE4Parse.FN.Structs.Engine" />
 		<Using Include="CUE4Parse.FN.Structs.FortniteGame" />
@@ -24,7 +25,6 @@
 		<Using Include="CUE4Parse.UE4.Assets.Objects" />
 		<Using Include="CUE4Parse.UE4.Objects.Core.i18N" />
 		<Using Include="CUE4Parse.UE4.Objects.UObject" />
-		<Using Include="CUE4Parse_Fortnite.Enums" />
 		<Using Include="System.Globalization" />
 		<Using Include="System.Text.RegularExpressions" />
 		<Using Include="BanjoBotAssets" />
@@ -54,10 +54,9 @@
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="BanjoByTheBay.CUE4Parse" Version="1.0.4-unofficial" />
-		<PackageReference Include="BanjoByTheBay.CUE4Parse.Conversion" Version="1.0.4-unofficial" />
-		<PackageReference Include="BanjoByTheBay.CUE4Parse.Fortnite" Version="1.0.4-unofficial" />
-		<PackageReference Include="BanjoByTheBay.CUE4Parse.FortniteTypes" Version="1.0.0-unofficial" />
+		<PackageReference Include="BanjoByTheBay.CUE4Parse.FortniteTypes" Version="1.0.7-unofficial" />
+		<PackageReference Include="CUE4Parse" Version="1.0.2" />
+		<PackageReference Include="CUE4Parse-Conversion" Version="1.0.2" />
 		<PackageReference Include="LazyCache" Version="2.4.0" />
 		<PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="6.0.1" />
 		<PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.1" />
