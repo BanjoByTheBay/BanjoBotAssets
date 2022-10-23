@@ -143,7 +143,7 @@ namespace BanjoBotAssets.Extensions
                          directory: gameDirectory,
                          searchOption: SearchOption.TopDirectoryOnly,
                          isCaseInsensitive: true,
-                         versions: new VersionContainer(EGame.GAME_UE5_LATEST));
+                         versions: new VersionContainer(EGame.GAME_UE5_1));
 
                      provider.Initialize();
                      return provider;
@@ -177,7 +177,7 @@ namespace BanjoBotAssets.Extensions
             services.AddOptions<MappingsOptions>()
                 .Configure<IConfiguration>((options, config) =>
                 {
-                    options.MappingsApiUri = "https://fortnitecentral.gmatrixgames.ga/api/v1/mappings?platform=Windows";
+                    options.MappingsApiUri = "https://fortnitecentral.gmatrixgames.ga/api/v1/mappings";
                     options.LocalFilePath = "mappings.usmap";
                     config.GetSection(nameof(MappingsOptions)).Bind(options);
                 });
