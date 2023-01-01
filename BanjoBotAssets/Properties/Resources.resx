@@ -364,6 +364,10 @@
   <data name="Status_DecryptingGameFiles" xml:space="preserve">
     <value>Decrypting game files</value>
   </data>
+  <data name="Status_ExportedGroup" xml:space="preserve">
+    <value>Finished exporting {AssetType} ({Total} assets, {Failures} failed)</value>
+    <comment>0=asset type, 1=number, 2=number</comment>
+  </data>
   <data name="Status_ExportedItemRatings" xml:space="preserve">
     <value>Exported item ratings</value>
   </data>

@@ -1,4 +1,5 @@
 ﻿using BanjoBotAssets.Artifacts.Models;
+using System.Collections.Concurrent;
 
 namespace BanjoBotAssets.Exporters.Groups
 {
@@ -19,6 +20,7 @@ namespace BanjoBotAssets.Exporters.Groups
         where TItemData : NamedItemData, new()
     {
         private int numToProcess, processedSoFar;
+        private readonly ConcurrentDictionary<string, byte> failedAssets = new();
 
         protected GroupExporter(IExporterContext services) : base(services)
         {
@@ -38,7 +40,7 @@ namespace BanjoBotAssets.Exporters.Groups
             });
         }
 
-        public override Task ExportAssetsAsync(IProgress<ExportProgress> progress, IAssetOutput output, CancellationToken cancellationToken)
+        public override async Task ExportAssetsAsync(IProgress<ExportProgress> progress, IAssetOutput output, CancellationToken cancellationToken)
         {
             var uniqueAssets = assetPaths.ToLookup(path => ParseAssetName(path)?.BaseName, StringComparer.OrdinalIgnoreCase);
             numToProcess = uniqueAssets.Count;
@@ -47,7 +49,8 @@ namespace BanjoBotAssets.Exporters.Groups
 
             var opts = new ParallelOptions { CancellationToken = cancellationToken, MaxDegreeOfParallelism = performanceOptions.Value.MaxParallelism };
 
-            return Parallel.ForEachAsync(scopeOptions.Value.Limit != null ? uniqueAssets.Take((int)scopeOptions.Value.Limit) : uniqueAssets, opts, async (grouping, _) =>
+            var assetsToProcess = scopeOptions.Value.Limit != null ? uniqueAssets.Take((int)scopeOptions.Value.Limit) : uniqueAssets;
+            await Parallel.ForEachAsync(assetsToProcess, opts, async (grouping, _) =>
             {
                 try
                 {
@@ -74,6 +77,7 @@ namespace BanjoBotAssets.Exporters.Groups
 
                     if (asset == null)
                     {
+                        failedAssets.TryAdd(baseName, 0);
                         logger.LogError(Resources.Warning_FailedToLoadFile, file.PathWithoutExtension);
                         return;
                     }
@@ -95,6 +99,7 @@ namespace BanjoBotAssets.Exporters.Groups
 
                         if (parsed == null)
                         {
+                            failedAssets.TryAdd(baseName, 0);
                             logger.LogWarning(Resources.Status_SkippingUnparsable, templateId, path);
                             continue;
                         }
@@ -132,9 +137,15 @@ namespace BanjoBotAssets.Exporters.Groups
                 }
                 catch (Exception ex) when (ex is not OperationCanceledException)
                 {
+                    if (grouping.Key != null)
+                        failedAssets.TryAdd(grouping.Key, 0);
+
                     logger.LogError(ex, Resources.Error_ExceptionWhileProcessingAssetGroup, grouping.Key);
                 }
             });
+
+            Report(progress, "");
+            logger.LogInformation(Resources.Status_ExportedGroup, Type, assetsToProcess.Count(), failedAssets.Count);
         }
 
         protected virtual Task<bool> ExportAssetAsync(TParsedName parsed, TAsset primaryAsset, TFields fields, string path, TItemData itemData)

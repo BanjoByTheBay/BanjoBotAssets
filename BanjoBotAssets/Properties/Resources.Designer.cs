@@ -754,6 +754,15 @@ namespace BanjoBotAssets.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Finished exporting {AssetType} ({Total} assets, {Failures} failed).
+        /// </summary>
+        internal static string Status_ExportedGroup {
+            get {
+                return ResourceManager.GetString("Status_ExportedGroup", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Exported item ratings.
         /// </summary>
         internal static string Status_ExportedItemRatings {
