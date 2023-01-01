@@ -3,7 +3,7 @@
 namespace BanjoBotAssets.Artifacts.Models
 {
     [NamedItemData("Quest")]
-    internal class QuestItemData : NamedItemData
+    internal sealed class QuestItemData : NamedItemData
     {
         [DisallowNull]
         public QuestObjective[]? Objectives { get; set; }

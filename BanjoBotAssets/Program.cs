@@ -1,4 +1,6 @@
-﻿using BanjoBotAssets.Config;
+﻿#pragma warning disable CA1852 // https://github.com/dotnet/roslyn-analyzers/issues/6141
+
+using BanjoBotAssets.Config;
 using System.Reflection;
 
 // TODO: export per-difficulty stat clamp tables (GameDifficultyGrowthBounds, CombatStatClampsPerTheater)

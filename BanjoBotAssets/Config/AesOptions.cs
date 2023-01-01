@@ -2,7 +2,7 @@
 
 namespace BanjoBotAssets.Config
 {
-    internal class AesOptions
+    internal sealed class AesOptions
     {
         [Url]
         public string AesApiUri { get; set; } = null!;

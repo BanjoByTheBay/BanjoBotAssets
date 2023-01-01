@@ -2,7 +2,7 @@
 
 namespace BanjoBotAssets.Artifacts.Models
 {
-    internal class XPRewardLevel
+    internal sealed class XPRewardLevel
     {
         public int TotalRequiredXP { get; set; }
         public bool IsMajorReward { get; set; }

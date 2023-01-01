@@ -2,7 +2,7 @@
 
 namespace BanjoBotAssets.Exporters.Helpers
 {
-    internal class AbilityDescription
+    internal sealed class AbilityDescription
     {
         private readonly ILogger<AbilityDescription> logger;
 

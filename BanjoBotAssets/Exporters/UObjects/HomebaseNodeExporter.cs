@@ -2,7 +2,7 @@
 
 namespace BanjoBotAssets.Exporters.UObjects
 {
-    internal class HomebaseNodeExporter : UObjectExporter<UFortHomebaseNodeItemDefinition>
+    internal sealed class HomebaseNodeExporter : UObjectExporter<UFortHomebaseNodeItemDefinition>
     {
         public HomebaseNodeExporter(IExporterContext services) : base(services)
         {

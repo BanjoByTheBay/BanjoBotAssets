@@ -6,7 +6,7 @@ using Microsoft.Extensions.Options;
 
 namespace BanjoBotAssets
 {
-    internal class AssetCache : IDisposable
+    internal sealed class AssetCache : IDisposable
     {
         private readonly MemoryCache memoryCache;
 

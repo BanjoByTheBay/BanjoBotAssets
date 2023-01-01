@@ -2,7 +2,7 @@
 
 namespace BanjoBotAssets.Artifacts.Models
 {
-    internal class ItemRatingTables
+    internal sealed class ItemRatingTables
     {
         [DisallowNull]
         public ItemRatingTable? Survivor { get; set; }

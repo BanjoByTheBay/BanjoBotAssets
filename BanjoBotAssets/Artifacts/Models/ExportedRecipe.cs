@@ -2,7 +2,7 @@
 
 namespace BanjoBotAssets.Artifacts.Models
 {
-    internal class ExportedRecipe
+    internal sealed class ExportedRecipe
     {
         [DisallowNull]
         public string? ItemName { get; set; }

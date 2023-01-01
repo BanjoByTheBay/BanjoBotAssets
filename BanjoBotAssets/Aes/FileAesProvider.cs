@@ -4,7 +4,7 @@ using System.Text.Json;
 
 namespace BanjoBotAssets.Aes
 {
-    internal class FileAesProvider : IAesProvider, IAesCacheUpdater
+    internal sealed class FileAesProvider : IAesProvider, IAesCacheUpdater
     {
         private readonly ILogger<FileAesProvider> logger;
         private readonly IOptions<AesOptions> options;

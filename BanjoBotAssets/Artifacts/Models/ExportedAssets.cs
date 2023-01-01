@@ -2,7 +2,7 @@
 
 namespace BanjoBotAssets.Artifacts.Models
 {
-    internal class ExportedAssets
+    internal sealed class ExportedAssets
     {
         [JsonProperty(Order = 1)]
         public DateTime ExportedAt { get; set; } = DateTime.Now;

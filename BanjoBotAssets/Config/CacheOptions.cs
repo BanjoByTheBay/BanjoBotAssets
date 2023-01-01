@@ -1,6 +1,6 @@
 ﻿namespace BanjoBotAssets.Config
 {
-    internal class CacheOptions
+    internal sealed class CacheOptions
     {
         /// <summary>
         /// The maximum size of the in-memory asset cache, in bytes.

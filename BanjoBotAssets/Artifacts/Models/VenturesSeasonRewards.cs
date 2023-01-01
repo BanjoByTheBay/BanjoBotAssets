@@ -4,7 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace BanjoBotAssets.Artifacts.Models
 {
     [JsonObject(ItemNullValueHandling = NullValueHandling.Ignore)]
-    class VenturesSeason
+    sealed class VenturesSeason
     {
         [DisallowNull]
         public string? EventTag { get; set; }
@@ -19,7 +19,7 @@ namespace BanjoBotAssets.Artifacts.Models
         public int PastLevelXPRequirement { get; set; }
     }
 
-    class VenturesSeasonLevel
+    sealed class VenturesSeasonLevel
     {
         public int TotalRequiredXP { get; set; }
         public bool IsMajorReward { get; set; }

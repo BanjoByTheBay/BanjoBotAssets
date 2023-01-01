@@ -3,7 +3,7 @@ using CUE4Parse.UE4.Objects.GameplayTags;
 
 namespace BanjoBotAssets.Exporters.Groups
 {
-    internal record HeroItemGroupFields(string DisplayName, string? Description, string? SubType,
+    internal sealed record HeroItemGroupFields(string DisplayName, string? Description, string? SubType,
         string HeroPerk, string HeroPerkDescription, string CommanderPerk, string CommanderPerkDescription)
         : BaseItemGroupFields(DisplayName, Description, SubType)
     {

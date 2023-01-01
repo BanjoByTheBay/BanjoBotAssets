@@ -83,7 +83,7 @@ namespace BanjoBotAssets.Exporters
             progress.Report(new ExportProgress { TotalSteps = total, CompletedSteps = done, AssetsLoaded = assetsLoaded, CurrentItem = Resources.Status_ExportedQuestMap });
         }
 
-        private record QuestLine(string Name, string[][] QuestPages, bool IsMainCampaign = false);
+        private sealed record QuestLine(string Name, string[][] QuestPages, bool IsMainCampaign = false);
 
         private async Task<IEnumerable<QuestLine>> LoadQuestLinesAsync(ResolvedObject questMapDataAssetLink, bool isMainCampaign,
             CancellationToken cancellationToken = default)

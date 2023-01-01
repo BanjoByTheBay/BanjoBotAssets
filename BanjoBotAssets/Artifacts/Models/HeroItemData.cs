@@ -3,7 +3,7 @@
 namespace BanjoBotAssets.Artifacts.Models
 {
     [NamedItemData("Hero")]
-    internal class HeroItemData : NamedItemData
+    internal sealed class HeroItemData : NamedItemData
     {
         [DisallowNull]
         public string? HeroPerk { get; set; }

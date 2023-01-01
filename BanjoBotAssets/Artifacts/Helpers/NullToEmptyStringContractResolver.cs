@@ -6,7 +6,7 @@ namespace BanjoBotAssets.Artifacts.Helpers
 {
     // https://stackoverflow.com/questions/23830206/json-convert-empty-string-instead-of-null
 
-    internal class NullToEmptyStringContractResolver : DefaultContractResolver
+    internal sealed class NullToEmptyStringContractResolver : DefaultContractResolver
     {
         protected override IList<JsonProperty> CreateProperties(Type type, MemberSerialization memberSerialization)
         {
@@ -20,7 +20,7 @@ namespace BanjoBotAssets.Artifacts.Helpers
         }
     }
 
-    internal class NullToEmptyStringValueProvider : IValueProvider
+    internal sealed class NullToEmptyStringValueProvider : IValueProvider
     {
         private readonly PropertyInfo _MemberInfo;
 

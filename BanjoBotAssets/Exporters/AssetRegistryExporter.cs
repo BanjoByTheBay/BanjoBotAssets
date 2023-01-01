@@ -5,7 +5,7 @@ namespace BanjoBotAssets.Exporters
     /// <summary>
     /// Extracts the display names of weapons and traps so they can be applied to the exported schematics.
     /// </summary>
-    internal class AssetRegistryExporter : BaseExporter
+    internal sealed class AssetRegistryExporter : BaseExporter
     {
         private static readonly Regex weaponOrTrapAssetClassRegex = new("^Fort(?:Weapon(?:Ranged|Melee)|Trap)ItemDefinition$", RegexOptions.Compiled);
         private static readonly Regex nsLocTextRegex = new(@"

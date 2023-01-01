@@ -2,7 +2,7 @@
 
 namespace BanjoBotAssets.Artifacts.Models
 {
-    internal class ItemRatingTier
+    internal sealed class ItemRatingTier
     {
         public int FirstLevel { get; set; }
         [DisallowNull]

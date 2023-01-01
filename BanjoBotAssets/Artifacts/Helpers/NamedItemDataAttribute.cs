@@ -7,7 +7,7 @@ namespace BanjoBotAssets.Artifacts.Helpers
     /// based on the value of the <see cref="NamedItemData.Type"/> field.
     /// </summary>
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = false)]
-    internal class NamedItemDataAttribute : Attribute
+    internal sealed class NamedItemDataAttribute : Attribute
     {
         public NamedItemDataAttribute(string typeFieldDiscriminator)
         {

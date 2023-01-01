@@ -2,7 +2,7 @@
 
 namespace BanjoBotAssets.Exporters
 {
-    internal class VenturesSeasonExporter : BaseExporter
+    internal sealed class VenturesSeasonExporter : BaseExporter
     {
         const string LevelRewardsTableName = "PhoenixLevelRewardsTable.uasset";
         const string PastLevelRewardsTableName = "PostMaxPhoenixLevelRewardsTable.uasset";

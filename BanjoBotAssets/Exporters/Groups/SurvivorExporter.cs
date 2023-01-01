@@ -4,7 +4,7 @@
 
 namespace BanjoBotAssets.Exporters.Groups
 {
-    internal record SurvivorItemGroupFields(string DisplayName, string? Description, string? SubType,
+    internal sealed record SurvivorItemGroupFields(string DisplayName, string? Description, string? SubType,
         string? Personality) : BaseItemGroupFields(DisplayName, Description, SubType)
     {
         public SurvivorItemGroupFields() : this("", null, null, null) { }

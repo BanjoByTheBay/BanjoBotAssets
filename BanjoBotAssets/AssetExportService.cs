@@ -63,7 +63,7 @@ namespace BanjoBotAssets
             lifetime.StopApplication();
         }
 
-        private class CriticalFailureException : ApplicationException
+        private sealed class CriticalFailureException : ApplicationException
         {
             public CriticalFailureException()
             {

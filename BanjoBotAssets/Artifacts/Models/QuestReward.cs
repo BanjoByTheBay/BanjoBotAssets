@@ -2,7 +2,7 @@
 
 namespace BanjoBotAssets.Artifacts.Models
 {
-    internal class QuestReward
+    internal sealed class QuestReward
     {
         [DisallowNull]
         public string? Item { get; set; }

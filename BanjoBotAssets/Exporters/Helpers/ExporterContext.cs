@@ -12,7 +12,7 @@ namespace BanjoBotAssets.Exporters.Helpers
         AbilityDescription AbilityDescription { get; }
     }
 
-    internal class ExporterContext : IExporterContext
+    internal sealed class ExporterContext : IExporterContext
     {
         public AbstractVfsFileProvider Provider { get; set; }
 

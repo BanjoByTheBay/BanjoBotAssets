@@ -4,7 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace BanjoBotAssets.Artifacts.Models
 {
     [JsonObject(ItemNullValueHandling = NullValueHandling.Ignore)]
-    internal class QuestObjective
+    internal sealed class QuestObjective
     {
         [DisallowNull]
         public string? BackendName { get; set; }

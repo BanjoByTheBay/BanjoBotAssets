@@ -2,7 +2,7 @@
 
 namespace BanjoBotAssets.Artifacts.Models
 {
-    internal class DifficultyInfo
+    internal sealed class DifficultyInfo
     {
         public int RequiredRating { get; set; }
         public int MaximumRating { get; set; }

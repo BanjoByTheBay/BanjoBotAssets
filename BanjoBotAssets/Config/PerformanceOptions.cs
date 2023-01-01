@@ -1,6 +1,6 @@
 ﻿namespace BanjoBotAssets.Config
 {
-    internal class PerformanceOptions
+    internal sealed class PerformanceOptions
     {
         public int MaxParallelism { get; set; }
     }

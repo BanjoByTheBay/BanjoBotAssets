@@ -3,7 +3,7 @@ using System.Collections.Concurrent;
 
 namespace BanjoBotAssets.Exporters.Helpers
 {
-    internal class AssetOutput : IAssetOutput
+    internal sealed class AssetOutput : IAssetOutput
     {
         private ItemRatingTable? defaultItemRatings, survivorItemRatings, leadSurvivorItemRatings;
         private readonly ConcurrentDictionary<string, NamedItemData> namedItems = new(StringComparer.OrdinalIgnoreCase);
@@ -20,7 +20,7 @@ namespace BanjoBotAssets.Exporters.Helpers
         private readonly ConcurrentDictionary<string, ConcurrentDictionary<int, XPRewardLevel>> venturesLevelRewards = new(StringComparer.OrdinalIgnoreCase);
         private readonly ConcurrentDictionary<string, SeasonPastLevelData> venturesPastLevelRewards = new(StringComparer.OrdinalIgnoreCase);
 
-        private record SeasonPastLevelData()
+        private sealed record SeasonPastLevelData()
         {
             public int XPStepAmount { get; set; } = 200_000;
             public ConcurrentDictionary<int, XPRewardLevel> Rewards = new();

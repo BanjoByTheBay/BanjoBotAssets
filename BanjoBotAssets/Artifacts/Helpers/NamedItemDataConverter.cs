@@ -5,7 +5,7 @@ using System.Reflection;
 
 namespace BanjoBotAssets.Artifacts.Helpers
 {
-    internal class NamedItemDataConverter : JsonConverter
+    internal sealed class NamedItemDataConverter : JsonConverter
     {
         public override bool CanConvert(Type objectType) => typeof(NamedItemData).IsAssignableFrom(objectType);
 

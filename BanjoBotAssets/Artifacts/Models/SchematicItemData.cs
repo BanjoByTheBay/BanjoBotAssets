@@ -4,7 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace BanjoBotAssets.Artifacts.Models
 {
     [NamedItemData("Schematic")]
-    internal class SchematicItemData : NamedItemData
+    internal sealed class SchematicItemData : NamedItemData
     {
         public string? Category { get; set; }
         public string? EvoType { get; set; }
@@ -21,7 +21,7 @@ namespace BanjoBotAssets.Artifacts.Models
     /// <summary>
     /// Only included for ranged weapon schematics
     /// </summary>
-    internal class RangedWeaponStats
+    internal sealed class RangedWeaponStats
     {
         public string? AmmoType { get; set; }
         public int? BulletsPerCartridge { get; set; }
@@ -124,7 +124,7 @@ namespace BanjoBotAssets.Artifacts.Models
     /// <summary>
     /// Only included for melee weapon schematics (i.e. RngMax is zero)
     /// </summary>
-    internal class MeleeWeaponStats
+    internal sealed class MeleeWeaponStats
     {
         /// <summary>
         /// RangeVSEnemies
@@ -146,7 +146,7 @@ namespace BanjoBotAssets.Artifacts.Models
     /// <summary>
     /// Only included for trap schematics
     /// </summary>
-    internal class TrapStats
+    internal sealed class TrapStats
     {
         public float? ArmTime { get; set; }
         public float? FireDelay { get; set; }

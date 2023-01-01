@@ -1,6 +1,6 @@
 ﻿namespace BanjoBotAssets.PostExporters.Helpers
 {
-    internal class ConcurrentUniqueTransformer<TOriginal, TTransformed>
+    internal sealed class ConcurrentUniqueTransformer<TOriginal, TTransformed>
         where TOriginal : notnull
         where TTransformed : notnull
     {

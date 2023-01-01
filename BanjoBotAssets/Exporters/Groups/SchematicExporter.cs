@@ -5,17 +5,17 @@ using System.Collections.Concurrent;
 
 namespace BanjoBotAssets.Exporters.Groups
 {
-    internal record ParsedSchematicName(string BaseName, string Rarity, int Tier, string EvoType)
+    internal sealed record ParsedSchematicName(string BaseName, string Rarity, int Tier, string EvoType)
         : BaseParsedItemName(BaseName, Rarity, Tier);
 
-    internal record SchematicItemGroupFields(string DisplayName, string? Description, string? SubType, string AlterationSlotsLoadoutRow,
+    internal sealed record SchematicItemGroupFields(string DisplayName, string? Description, string? SubType, string AlterationSlotsLoadoutRow,
         string? AmmoType, string? WeaponOrTrapStatRowPrefix, string? TriggerType, string? Category)
         : BaseItemGroupFields(DisplayName, Description, SubType)
     {
         public SchematicItemGroupFields() : this("", null, null, "", "", "", "", "") { }
     }
 
-    internal class SchematicExporter : GroupExporter<UObject, ParsedSchematicName, SchematicItemGroupFields, SchematicItemData>
+    internal sealed class SchematicExporter : GroupExporter<UObject, ParsedSchematicName, SchematicItemGroupFields, SchematicItemData>
     {
         private readonly Dictionary<string, string> craftingResultPaths = new(StringComparer.OrdinalIgnoreCase);
         private string? craftingPath, alterationGroupPath, slotDefsPath, slotLoadoutsPath, meleeWeaponsPath, rangedWeaponsPath, trapsPath, durabilityPath, namedExclusionsPath;

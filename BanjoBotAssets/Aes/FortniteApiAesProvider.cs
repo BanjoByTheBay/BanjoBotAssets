@@ -4,7 +4,7 @@ using System.Net.Http.Json;
 
 namespace BanjoBotAssets.Aes
 {
-    internal class FortniteApiAesProvider : IAesProvider
+    internal sealed class FortniteApiAesProvider : IAesProvider
     {
         private readonly ILogger<FortniteApiAesProvider> logger;
         private readonly IOptions<AesOptions> options;

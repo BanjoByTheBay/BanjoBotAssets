@@ -11,7 +11,7 @@ namespace BanjoBotAssets
         ITypeMappingsProvider Create(string? specificVersion = null);
     }
 
-    internal class CachingFNCentralMappingsProviderFactory : ITypeMappingsProviderFactory
+    internal sealed class CachingFNCentralMappingsProviderFactory : ITypeMappingsProviderFactory
     {
         private readonly IServiceProvider serviceProvider;
         private readonly ObjectFactory objectFactory;

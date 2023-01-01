@@ -5,7 +5,7 @@ using System.Collections.Concurrent;
 
 namespace BanjoBotAssets
 {
-    internal class CachingFileProvider : DefaultFileProvider
+    internal sealed class CachingFileProvider : DefaultFileProvider
     {
         private readonly AssetCache cache;
         private readonly ILogger<CachingFileProvider> logger;

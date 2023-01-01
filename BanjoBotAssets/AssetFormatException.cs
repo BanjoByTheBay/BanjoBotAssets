@@ -2,7 +2,7 @@
 
 namespace BanjoBotAssets
 {
-    internal class AssetFormatException : ApplicationException
+    internal sealed class AssetFormatException : ApplicationException
     {
         public AssetFormatException()
         {
@@ -13,10 +13,6 @@ namespace BanjoBotAssets
         }
 
         public AssetFormatException(string? message, Exception? innerException) : base(message, innerException)
-        {
-        }
-
-        protected AssetFormatException(SerializationInfo info, StreamingContext context) : base(info, context)
         {
         }
     }
