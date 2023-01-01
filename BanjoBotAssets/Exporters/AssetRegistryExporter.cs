@@ -39,7 +39,7 @@ namespace BanjoBotAssets.Exporters
                     {
                         cancellationToken.ThrowIfCancellationRequested();
 
-                        if (buffer.ObjectPath.Text.Contains("/Athena/", StringComparison.OrdinalIgnoreCase))
+                        if (buffer.ObjectPath.Contains("/Athena/", StringComparison.OrdinalIgnoreCase))
                         {
                             continue;
                         }
