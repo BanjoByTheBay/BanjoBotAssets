@@ -1,6 +1,4 @@
-﻿using System.Runtime.Serialization;
-
-namespace BanjoBotAssets
+﻿namespace BanjoBotAssets
 {
     internal sealed class AssetFormatException : ApplicationException
     {

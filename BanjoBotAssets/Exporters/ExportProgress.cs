@@ -6,5 +6,6 @@
         public int CompletedSteps { get; set; }
         public string CurrentItem { get; set; }
         public int AssetsLoaded { get; set; }
+        public IEnumerable<string>? FailedAssets { get; set; }
     }
 }

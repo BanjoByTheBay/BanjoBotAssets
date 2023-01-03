@@ -13,3 +13,4 @@ ExportedImages
 *.old
 *.user
 launchSettings.json
+*.gz

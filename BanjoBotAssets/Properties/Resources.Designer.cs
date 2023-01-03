@@ -115,6 +115,15 @@ namespace BanjoBotAssets.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {Asset}.
+        /// </summary>
+        internal static string Error_FailedAsset {
+            get {
+                return ResourceManager.GetString("Error_FailedAsset", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Failed to download usmap from {URL}.
         /// </summary>
         internal static string Error_FailedToDownloadUsmap {
@@ -129,6 +138,15 @@ namespace BanjoBotAssets.Properties {
         internal static string Error_FailedToGetMappingsEndpoint {
             get {
                 return ResourceManager.GetString("Error_FailedToGetMappingsEndpoint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Finished with {Count} failed assets:.
+        /// </summary>
+        internal static string Error_FinishedWithFailedAssets {
+            get {
+                return ResourceManager.GetString("Error_FinishedWithFailedAssets", resourceCulture);
             }
         }
         

@@ -36,7 +36,8 @@ namespace BanjoBotAssets.Exporters.Groups
                 TotalSteps = numToProcess,
                 CompletedSteps = processedSoFar,
                 AssetsLoaded = assetsLoaded,
-                CurrentItem = current
+                CurrentItem = current,
+                FailedAssets = failedAssets.Keys,
             });
         }
 

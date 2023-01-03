@@ -140,12 +140,20 @@
     <value>Exception while processing asset group {AssetGroup}</value>
     <comment>0=asset group ID</comment>
   </data>
+  <data name="Error_FailedAsset" xml:space="preserve">
+    <value>{Asset}</value>
+    <comment>0=asset ID</comment>
+  </data>
   <data name="Error_FailedToDownloadUsmap" xml:space="preserve">
     <value>Failed to download usmap from {URL}</value>
     <comment>0=URL</comment>
   </data>
   <data name="Error_FailedToGetMappingsEndpoint" xml:space="preserve">
     <value>Failed to get FNCentral Mappings Endpoint</value>
+  </data>
+  <data name="Error_FinishedWithFailedAssets" xml:space="preserve">
+    <value>Finished with {Count} failed assets:</value>
+    <comment>0=number</comment>
   </data>
   <data name="Error_GameNotFound" xml:space="preserve">
     <value>Couldn't find game directory. Add it to the GameDirectories setting.</value>

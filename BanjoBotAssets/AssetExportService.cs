@@ -8,6 +8,7 @@ using CUE4Parse.Encryption.Aes;
 using CUE4Parse.UE4.Objects.Core.Misc;
 using CUE4Parse.UE4.Versions;
 using Microsoft.Extensions.Options;
+using System.Collections.Concurrent;
 using System.Diagnostics;
 
 namespace BanjoBotAssets
@@ -25,6 +26,8 @@ namespace BanjoBotAssets
         private readonly ITypeMappingsProviderFactory typeMappingsProviderFactory;
         private readonly IOptions<ScopeOptions> scopeOptions;
         private readonly IEnumerable<IPostExporter> allPostExporters;
+
+        private readonly ConcurrentDictionary<string, byte> failedAssets = new();
 
         public AssetExportService(ILogger<AssetExportService> logger,
             IHostApplicationLifetime lifetime,
@@ -128,6 +131,9 @@ namespace BanjoBotAssets
 
             // report cache stats
             (provider as CachingFileProvider)?.ReportCacheStats();
+
+            // report any export failures
+            ReportFailedAssets();
 
             // done!
             return 0;
@@ -286,7 +292,28 @@ namespace BanjoBotAssets
 
         private void HandleProgressReport(ExportProgress progress)
         {
-            // TODO: do something with progress reports
+            if (progress.FailedAssets?.Any() == true)
+            {
+                foreach (var i in progress.FailedAssets)
+                {
+                    failedAssets.TryAdd(i, 0);
+                }
+            }
+
+            // TODO: do something more with progress reports
+        }
+
+        private void ReportFailedAssets()
+        {
+            if (!failedAssets.IsEmpty)
+            {
+                logger.LogError(Resources.Error_FinishedWithFailedAssets, failedAssets.Count);
+
+                foreach (var i in failedAssets)
+                {
+                    logger.LogError(Resources.Error_FailedAsset, i);
+                }
+            }
         }
 
         private void OfferFileListToExporters()
