@@ -6,7 +6,7 @@ using Microsoft.Extensions.Options;
 
 namespace BanjoBotAssets.PostExporters
 {
-    internal sealed class ImageFilesPostExporter : IPostExporter
+    internal sealed partial class ImageFilesPostExporter : IPostExporter
     {
         private readonly AbstractVfsFileProvider provider;
         private readonly IOptions<ImageExportOptions> options;
@@ -87,11 +87,11 @@ namespace BanjoBotAssets.PostExporters
             logger.LogInformation(Resources.Status_WroteImageFilesUpdatedPaths, filesWritten, pathsUpdated);
         }
 
-        private static readonly Regex NumberSuffixedFilenameRegex = new(@"^(.*)_(\d+)(\..+)?$");
+        private static readonly Regex numberSuffixedFilenameRegex = NumberSuffixedFilenameRegex();
 
         private static string IncrementFilenameSuffix(string filename)
         {
-            if (NumberSuffixedFilenameRegex.Match(filename) is { Success: true, Groups: var g })
+            if (numberSuffixedFilenameRegex.Match(filename) is { Success: true, Groups: var g })
             {
                 // Foo_1.png -> Foo_2.png
                 var num = int.Parse(g[2].Value, CultureInfo.InvariantCulture) + 1;
@@ -103,5 +103,8 @@ namespace BanjoBotAssets.PostExporters
                 return $"{Path.GetFileNameWithoutExtension(filename)}_1{Path.GetExtension(filename)}";
             }
         }
+
+        [GeneratedRegex(@"^(.*)_(\d+)(\..+)?$")]
+        private static partial Regex NumberSuffixedFilenameRegex();
     }
 }

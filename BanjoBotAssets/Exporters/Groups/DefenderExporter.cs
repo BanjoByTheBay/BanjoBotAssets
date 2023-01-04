@@ -1,13 +1,13 @@
 ﻿namespace BanjoBotAssets.Exporters.Groups
 {
-    internal sealed class DefenderExporter : GroupExporter<UFortHeroType>
+    internal sealed partial class DefenderExporter : GroupExporter<UFortHeroType>
     {
         protected override string Type => "Defender";
 
         protected override bool InterestedInAsset(string name) =>
             name.Contains("Defenders/DID_", StringComparison.OrdinalIgnoreCase);
 
-        private static readonly Regex defenderAssetNameRegex = new(@".*/([^/]+)_(C|UC|R|VR|SR|UR)_T(\d+)(?:\..*)?$", RegexOptions.IgnoreCase);
+        private static readonly Regex defenderAssetNameRegex = DefenderAssetNameRegex();
 
         public DefenderExporter(IExporterContext services) : base(services) { }
 
@@ -54,5 +54,8 @@
             var rarity = GetRarity(parsedName, primaryAsset, fields);
             return string.Format(CultureInfo.CurrentCulture, Resources.FormatString_Field_Defender_DisplayNameFormat, rarity.GetNameText(), fields.SubType ?? Resources.Field_Defender_DefaultName);
         }
+
+        [GeneratedRegex(".*/([^/]+)_(C|UC|R|VR|SR|UR)_T(\\d+)(?:\\..*)?$", RegexOptions.IgnoreCase, "en-US")]
+        private static partial Regex DefenderAssetNameRegex();
     }
 }

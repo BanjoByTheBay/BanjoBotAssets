@@ -15,7 +15,7 @@ namespace BanjoBotAssets.Exporters.Groups
         public SchematicItemGroupFields() : this("", null, null, "", "", "", "", "") { }
     }
 
-    internal sealed class SchematicExporter : GroupExporter<UObject, ParsedSchematicName, SchematicItemGroupFields, SchematicItemData>
+    internal sealed partial class SchematicExporter : GroupExporter<UObject, ParsedSchematicName, SchematicItemGroupFields, SchematicItemData>
     {
         private readonly Dictionary<string, string> craftingResultPaths = new(StringComparer.OrdinalIgnoreCase);
         private string? craftingPath, alterationGroupPath, slotDefsPath, slotLoadoutsPath, meleeWeaponsPath, rangedWeaponsPath, trapsPath, durabilityPath, namedExclusionsPath;
@@ -23,8 +23,7 @@ namespace BanjoBotAssets.Exporters.Groups
 
         protected override string Type => "Schematic";
 
-        //private static readonly Regex craftingResultNameRegex = new("/Items(?!.*/Schematics/)(?:/.*)?/(?:WID_|TID_|G_|Ingredient_|AmmoData)[^/]+$", RegexOptions.IgnoreCase | RegexOptions.Compiled);
-        private static readonly Regex craftingResultNameRegex = new(@"(?<!/Schematics/.*)/(?:WID_|TID_|G_|Ingredient_|AmmoData)[^/]+\.uasset$", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        private static readonly Regex craftingResultNameRegex = CraftingResultNameRegex();
 
         protected override bool InterestedInAsset(string name)
         {
@@ -135,13 +134,7 @@ namespace BanjoBotAssets.Exporters.Groups
          *
          * The epic and legendary versions of the Walloper also have separate stats rows, but otherwise they're
          * indistinguishable from other schematics.*/
-        private static readonly Regex schematicAssetNameRegex = new(
-            @"^ (?<key>.+?_(?<rarity>C|UC|R|VR|SR|UR))?     # key includes path and rarity
-                (?:_(?<evotype>Ore|Crystal))?               # evolution type for tier 4+
-                (?:_?T(?<tier>\d+))?                        # tier
-                (?:\.[^/]*)?                                # (ignored) extension
-            $",
-            RegexOptions.IgnorePatternWhitespace | RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        private static readonly Regex schematicAssetNameRegex = SchematicAssetNameRegex();
 
         protected override ParsedSchematicName? ParseAssetName(string name)
         {
@@ -271,7 +264,7 @@ namespace BanjoBotAssets.Exporters.Groups
             return null;
         }
 
-        private static readonly Regex schematicSubTypeRegex = new(@"^(?:Weapon\.(?:Ranged|Melee\.(?:Edged|Blunt|Piercing))|Trap(?=\.(?:Ceiling|Floor|Wall)))\.([^.]+)", RegexOptions.IgnoreCase);
+        private static readonly Regex schematicSubTypeRegex = SchematicSubTypeRegex();
 
         public SchematicExporter(IExporterContext services) : base(services)
         {
@@ -593,5 +586,20 @@ namespace BanjoBotAssets.Exporters.Groups
                 Range = row.GetOrDefault<float>(range),
             };
         }
+
+        [GeneratedRegex("(?<!/Schematics/.*)/(?:WID_|TID_|G_|Ingredient_|AmmoData)[^/]+\\.uasset$", RegexOptions.IgnoreCase | RegexOptions.Compiled, "en-US")]
+        private static partial Regex CraftingResultNameRegex();
+        [GeneratedRegex(
+            """
+            ^
+            (?<key>.+?_(?<rarity>C|UC|R|VR|SR|UR))?     # key includes path and rarity
+            (?:_(?<evotype>Ore|Crystal))?               # evolution type for tier 4+
+            (?:_?T(?<tier>\d+))?                        # tier
+            (?:\.[^/]*)?                                # (ignored) extension
+            $
+            """, RegexOptions.IgnoreCase | RegexOptions.Compiled | RegexOptions.IgnorePatternWhitespace, "en-US")]
+        private static partial Regex SchematicAssetNameRegex();
+        [GeneratedRegex(@"^(?:Weapon\.(?:Ranged|Melee\.(?:Edged|Blunt|Piercing))|Trap(?=\.(?:Ceiling|Floor|Wall)))\.([^.]+)", RegexOptions.IgnoreCase, "en-US")]
+        private static partial Regex SchematicSubTypeRegex();
     }
 }

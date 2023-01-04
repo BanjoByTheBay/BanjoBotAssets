@@ -2,7 +2,7 @@
 
 namespace BanjoBotAssets.Exporters.Helpers
 {
-    internal sealed class AbilityDescription
+    internal sealed partial class AbilityDescription
     {
         private readonly ILogger<AbilityDescription> logger;
 
@@ -199,13 +199,19 @@ namespace BanjoBotAssets.Exporters.Helpers
             return value;
         }
 
-        private static readonly Regex tokenRegex = new(@"\[(Ability\.Line\d+)\]", RegexOptions.IgnoreCase);
-        private static readonly Regex tagRegex = new(@"<(?:\w+)>([^<]*)</>");
+        private static readonly Regex tokenRegex = TokenRegex();
+        private static readonly Regex tagRegex = TagRegex();
 
         private static string FormatMarkup(string markup, Dictionary<string, string> tokens)
         {
             markup = tokenRegex.Replace(markup, match => tokens.GetValueOrDefault(match.Groups[1].Value, match.Value));
             return tagRegex.Replace(markup, match => match.Groups[1].Value);
         }
+
+        [GeneratedRegex(@"\[(Ability\.Line\d+)\]", RegexOptions.IgnoreCase, "en-US")]
+        private static partial Regex TokenRegex();
+
+        [GeneratedRegex("<(?:\\w+)>([^<]*)</>")]
+        private static partial Regex TagRegex();
     }
 }

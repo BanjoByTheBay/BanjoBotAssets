@@ -2,7 +2,7 @@
 
 namespace BanjoBotAssets.Exporters.UObjects
 {
-    internal sealed class QuestExporter : UObjectExporter<UFortQuestItemDefinition, QuestItemData>
+    internal sealed partial class QuestExporter : UObjectExporter<UFortQuestItemDefinition, QuestItemData>
     {
         private string? questRewardsPath, objectiveStatTablePath, homebaseRatingDifficultyMappingPath;
         private UDataTable? questRewardsTable, objectiveStatTable, homebaseRatingDifficultyMappingTable;
@@ -112,7 +112,7 @@ namespace BanjoBotAssets.Exporters.UObjects
             return Task.FromResult(true);
         }
 
-        private static readonly Regex zoneDifficultyRegex = new(@"Zone\.Difficulty\s*>=\s*(\d+)", RegexOptions.IgnoreCase);
+        private static readonly Regex zoneDifficultyRegex = ZoneDifficultyRegex();
 
         private int? TryGetZonePowerLevelCondition(string rowKey)
         {
@@ -148,5 +148,8 @@ namespace BanjoBotAssets.Exporters.UObjects
 
             return null;
         }
+
+        [GeneratedRegex(@"Zone\.Difficulty\s*>=\s*(\d+)", RegexOptions.IgnoreCase, "en-US")]
+        private static partial Regex ZoneDifficultyRegex();
     }
 }

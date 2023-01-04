@@ -5,15 +5,20 @@ namespace BanjoBotAssets.Exporters
     /// <summary>
     /// Extracts the display names of weapons and traps so they can be applied to the exported schematics.
     /// </summary>
-    internal sealed class AssetRegistryExporter : BaseExporter
+    internal sealed partial class AssetRegistryExporter : BaseExporter
     {
-        private static readonly Regex weaponOrTrapAssetClassRegex = new("^Fort(?:Weapon(?:Ranged|Melee)|Trap)ItemDefinition$", RegexOptions.Compiled);
-        private static readonly Regex nsLocTextRegex = new(@"
+        [GeneratedRegex("^Fort(?:Weapon(?:Ranged|Melee)|Trap)ItemDefinition$", RegexOptions.Compiled)]
+        private static partial Regex WeaponOrTrapAssetClassRegex();
+
+        [GeneratedRegex(
+            """
             ^NSLOCTEXT\(
-            \s* ""(?<ns>   (?: [^""] | \\"" )* )"" \s*,
-            \s* ""(?<id>   (?: [^""] | \\"" )* )"" \s*,
-            \s* ""(?<text> (?: [^""] | \\"" )* )"" \s*
-            \)", RegexOptions.Compiled | RegexOptions.IgnorePatternWhitespace);
+            \s* "(?<ns>   (?: [^"] | \\" )* )" \s*,
+            \s* "(?<id>   (?: [^"] | \\" )* )" \s*,
+            \s* "(?<text> (?: [^"] | \\" )* )" \s*
+            \)
+            """, RegexOptions.Compiled | RegexOptions.IgnorePatternWhitespace)]
+        private static partial Regex NSLocTextRegex();
 
         public override Task ExportAssetsAsync(IProgress<ExportProgress> progress, IAssetOutput output, CancellationToken cancellationToken)
         {
@@ -44,7 +49,7 @@ namespace BanjoBotAssets.Exporters
                             continue;
                         }
 
-                        if (weaponOrTrapAssetClassRegex.IsMatch(buffer.AssetClass.Text))
+                        if (WeaponOrTrapAssetClassRegex().IsMatch(buffer.AssetClass.Text))
                         {
                             var schematicTemplateId = $"Schematic:SID_{buffer.AssetName.Text[4..]}";
                             var displayName = buffer.TagsAndValues.FirstOrDefault(pair => pair.Key.Text == "DisplayName").Value;
@@ -54,7 +59,7 @@ namespace BanjoBotAssets.Exporters
                                 continue;
                             }
 
-                            if (nsLocTextRegex.Match(displayName) is { Success: true, Groups: var g })
+                            if (NSLocTextRegex().Match(displayName) is { Success: true, Groups: var g })
                             {
                                 var goodName = provider.GetLocalizedString(
                                     Regex.Unescape(g["ns"].Value),
@@ -79,12 +84,13 @@ namespace BanjoBotAssets.Exporters
             return Task.CompletedTask;
         }
 
-        private static readonly Regex assetRegistryFileRegex = new(@"^(?:.*/)?AssetRegistry[0-9A-F]*\.bin$", RegexOptions.IgnoreCase);
-
         public AssetRegistryExporter(IExporterContext services) : base(services)
         {
         }
 
-        protected override bool InterestedInAsset(string name) => assetRegistryFileRegex.IsMatch(name);
+        protected override bool InterestedInAsset(string name) => AssetRegistryFileRegex().IsMatch(name);
+
+        [GeneratedRegex(@"^(?:.*/)?AssetRegistry[0-9A-F]*\.bin$", RegexOptions.IgnoreCase, "en-US")]
+        private static partial Regex AssetRegistryFileRegex();
     }
 }

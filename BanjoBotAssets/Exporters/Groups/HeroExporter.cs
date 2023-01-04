@@ -10,7 +10,7 @@ namespace BanjoBotAssets.Exporters.Groups
         public HeroItemGroupFields() : this("", null, null, "", "", "", "") { }
     }
 
-    internal sealed class HeroExporter : GroupExporter<UFortHeroType, BaseParsedItemName, HeroItemGroupFields, HeroItemData>
+    internal sealed partial class HeroExporter : GroupExporter<UFortHeroType, BaseParsedItemName, HeroItemGroupFields, HeroItemData>
     {
         private string? itemToQuestPath, questRewardsPath;
         private readonly Dictionary<string, string> heroToTeamPerk = new(StringComparer.OrdinalIgnoreCase);
@@ -43,7 +43,7 @@ namespace BanjoBotAssets.Exporters.Groups
             return asset.AttributeInitKey?.AttributeInitCategory.PlainText != "AthenaHero";
         }
 
-        private static readonly Regex heroAssetNameRegex = new(@".*/([^/]+)_(C|UC|R|VR|SR|UR)_T(\d+)(?:\..*)?$", RegexOptions.IgnoreCase);
+        private static readonly Regex heroAssetNameRegex = HeroAssetNameRegex();
 
         public HeroExporter(IExporterContext services) : base(services) { }
 
@@ -178,5 +178,8 @@ namespace BanjoBotAssets.Exporters.Groups
 
             return Resources.Field_Hero_Unknown;
         }
+
+        [GeneratedRegex(".*/([^/]+)_(C|UC|R|VR|SR|UR)_T(\\d+)(?:\\..*)?$", RegexOptions.IgnoreCase, "en-US")]
+        private static partial Regex HeroAssetNameRegex();
     }
 }

@@ -1,8 +1,8 @@
 ﻿namespace BanjoBotAssets.Exporters
 {
-    internal sealed class CraftingRecipeExporter : BaseExporter
+    internal sealed partial class CraftingRecipeExporter : BaseExporter
     {
-        private static readonly Regex widOrTidRegex = new("^[tw]id_", RegexOptions.IgnoreCase);
+        private static readonly Regex widOrTidRegex = WidOrTidRegex();
 
         public CraftingRecipeExporter(IExporterContext services) : base(services)
         {
@@ -54,5 +54,7 @@
 
         protected override bool InterestedInAsset(string name) =>
             name.Contains("/CraftingRecipes_New", StringComparison.OrdinalIgnoreCase);
+        [GeneratedRegex("^[tw]id_", RegexOptions.IgnoreCase, "en-US")]
+        private static partial Regex WidOrTidRegex();
     }
 }

@@ -10,7 +10,7 @@ namespace BanjoBotAssets.Exporters.Groups
         public SurvivorItemGroupFields() : this("", null, null, null) { }
     }
 
-    internal sealed class SurvivorExporter : GroupExporter<UFortWorkerType, BaseParsedItemName, SurvivorItemGroupFields, SurvivorItemData>
+    internal sealed partial class SurvivorExporter : GroupExporter<UFortWorkerType, BaseParsedItemName, SurvivorItemGroupFields, SurvivorItemData>
     {
         protected override string Type => "Worker";
 
@@ -22,7 +22,7 @@ namespace BanjoBotAssets.Exporters.Groups
         // mythic survivor:     Worker_Karolina_UR_T02
         // lead:                ManagerEngineer_R_T04
         // mythic lead:         ManagerMartialArtist_SR_samurai_T03
-        private static readonly Regex survivorAssetNameRegex = new(@".*/([^/]+)_(C|UC|R|VR|SR|UR)_([a-z]+_)?T(\d+)(?:\..*)?$", RegexOptions.IgnoreCase);
+        private static readonly Regex survivorAssetNameRegex = SurvivorAssetNameRegex();
 
         public SurvivorExporter(IExporterContext services) : base(services) { }
 
@@ -90,5 +90,7 @@ namespace BanjoBotAssets.Exporters.Groups
 
         private static string MakeSurvivorDisplayName(UFortWorkerType worker) =>
             worker.bIsManager ? string.Format(CultureInfo.CurrentCulture, Resources.FormatString_Field_Survivor_LeadNameFormat, GetManagerJob(worker)) : Resources.Field_Survivor_DefaultName;
+        [GeneratedRegex(@".*/([^/]+)_(C|UC|R|VR|SR|UR)_([a-z]+_)?T(\d+)(?:\..*)?$", RegexOptions.IgnoreCase, "en-US")]
+        private static partial Regex SurvivorAssetNameRegex();
     }
 }
