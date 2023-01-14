@@ -177,7 +177,7 @@ namespace BanjoBotAssets.Extensions
             services.AddOptions<MappingsOptions>()
                 .Configure<IConfiguration>((options, config) =>
                 {
-                    options.MappingsApiUri = "https://fortnitecentral.gmatrixgames.ga/api/v1/mappings";
+                    options.MappingsApiUri = "https://fortnitecentral.genxgames.gg/api/v1/mappings";
                     options.LocalFilePath = "mappings.usmap";
                     config.GetSection(nameof(MappingsOptions)).Bind(options);
                 });
