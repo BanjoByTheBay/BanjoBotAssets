@@ -1,5 +1,6 @@
 ﻿using BanjoBotAssets.Artifacts.Models;
 using CUE4Parse.FN.Enums.FortniteGame;
+using System.Collections.Concurrent;
 
 namespace BanjoBotAssets.Exporters.UObjects
 {
@@ -20,6 +21,9 @@ namespace BanjoBotAssets.Exporters.UObjects
         where TAsset : UObject
         where TItemData : NamedItemData, new()
     {
+        private int numToProcess, processedSoFar;
+        private readonly ConcurrentDictionary<string, byte> failedAssets = new();
+
         protected UObjectExporter(IExporterContext services) : base(services) { }
 
         protected abstract string Type { get; }
@@ -28,17 +32,33 @@ namespace BanjoBotAssets.Exporters.UObjects
 
         protected virtual Task<bool> ExportAssetAsync(TAsset asset, TItemData itemData, Dictionary<ImageType, string> imagePaths)
         {
+            // by default, just export it as-is
             return Task.FromResult(true);
         }
 
-        public override Task ExportAssetsAsync(IProgress<ExportProgress> progress, IAssetOutput output, CancellationToken cancellationToken)
+        private void Report(IProgress<ExportProgress> progress, string current)
         {
-            var numToProcess = assetPaths.Count;
-            var processedSoFar = 0;
+            progress.Report(new ExportProgress
+            {
+                TotalSteps = numToProcess,
+                CompletedSteps = processedSoFar,
+                AssetsLoaded = assetsLoaded,
+                CurrentItem = current,
+                FailedAssets = failedAssets.Keys,
+            });
+        }
 
+        public override async Task ExportAssetsAsync(IProgress<ExportProgress> progress, IAssetOutput output, CancellationToken cancellationToken)
+        {
+            numToProcess = assetPaths.Count;
+            processedSoFar = 0;
+
+            Report(progress, string.Format(CultureInfo.CurrentCulture, Resources.FormatString_Status_ExportingGroup, Type));
+
+            var assetsToProcess = scopeOptions.Value.Limit != null ? assetPaths.Take((int)scopeOptions.Value.Limit) : assetPaths;
             var opts = new ParallelOptions { CancellationToken = cancellationToken, MaxDegreeOfParallelism = performanceOptions.Value.MaxParallelism };
 
-            return Parallel.ForEachAsync(scopeOptions.Value.Limit != null ? assetPaths.Take((int)scopeOptions.Value.Limit) : assetPaths, opts, async (path, _) =>
+            await Parallel.ForEachAsync(assetsToProcess, opts, async (path, _) =>
             {
                 try
                 {
@@ -49,6 +69,8 @@ namespace BanjoBotAssets.Exporters.UObjects
 
                     //logger.LogInformation("Loading {0}", file.PathWithoutExtension);
                     Interlocked.Increment(ref assetsLoaded);
+
+                    Report(progress, file.PathWithoutExtension);
 
                     TAsset? uobject;
                     if (IgnoreLoadFailures)
@@ -78,6 +100,7 @@ namespace BanjoBotAssets.Exporters.UObjects
                         catch (Exception ex)
                         {
                             logger.LogError(ex, Resources.Warning_FailedToLoadFile, file.PathWithoutExtension);
+                            failedAssets.TryAdd(file.PathWithoutExtension, 0);
                             return;
                         }
                     }
@@ -85,6 +108,7 @@ namespace BanjoBotAssets.Exporters.UObjects
                     if (uobject == null)
                     {
                         logger.LogError(Resources.Warning_FailedToLoadFile, file.PathWithoutExtension);
+                        failedAssets.TryAdd(file.PathWithoutExtension, 0);
                         return;
                     }
 
@@ -136,8 +160,12 @@ namespace BanjoBotAssets.Exporters.UObjects
                 catch (Exception ex) when (ex is not OperationCanceledException)
                 {
                     logger.LogError(ex, Resources.Error_ExceptionWhileProcessingAsset, path);
+                    failedAssets.TryAdd(Path.ChangeExtension(path, null), 0);
                 }
             });
+
+            Report(progress, "");
+            logger.LogInformation(Resources.Status_ExportedGroup, Type, assetsToProcess.Count(), failedAssets.Count);
         }
     }
 }

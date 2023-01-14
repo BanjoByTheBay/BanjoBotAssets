@@ -48,9 +48,9 @@ namespace BanjoBotAssets.Exporters.Groups
 
             Report(progress, string.Format(CultureInfo.CurrentCulture, Resources.FormatString_Status_ExportingGroup, Type));
 
+            var assetsToProcess = scopeOptions.Value.Limit != null ? uniqueAssets.Take((int)scopeOptions.Value.Limit) : uniqueAssets;
             var opts = new ParallelOptions { CancellationToken = cancellationToken, MaxDegreeOfParallelism = performanceOptions.Value.MaxParallelism };
 
-            var assetsToProcess = scopeOptions.Value.Limit != null ? uniqueAssets.Take((int)scopeOptions.Value.Limit) : uniqueAssets;
             await Parallel.ForEachAsync(assetsToProcess, opts, async (grouping, _) =>
             {
                 try

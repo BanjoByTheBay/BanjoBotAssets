@@ -309,7 +309,7 @@ namespace BanjoBotAssets
             {
                 logger.LogError(Resources.Error_FinishedWithFailedAssets, failedAssets.Count);
 
-                foreach (var i in failedAssets)
+                foreach (var i in failedAssets.Keys.OrderBy(i => i))
                 {
                     logger.LogError(Resources.Error_FailedAsset, i);
                 }
