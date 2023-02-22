@@ -36,7 +36,7 @@ jobs:
         # Artifact name
         name: BanjoBotAssets-win-x64
         # A file, directory or wildcard pattern that describes what to upload
-        path: BanjoBotAssets/bin/Release/net6.0/win-x64/publish/
+        path: BanjoBotAssets/bin/Release/net7.0/win-x64/publish/
         # The desired behavior if no files are found using the provided path.
         if-no-files-found: error
         # Duration after which artifact will expire in days. 0 means using default retention.
