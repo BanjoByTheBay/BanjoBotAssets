@@ -4,7 +4,7 @@ A tool to export names, descriptions, and other data related to game items from 
 ## Usage
 
 ```
-git submodule update --recursive
+git submodule update --init --recursive
 cd BanjoBotAssets
 dotnet run
 ```
