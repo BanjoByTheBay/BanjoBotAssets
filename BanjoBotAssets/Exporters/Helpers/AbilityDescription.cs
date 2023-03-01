@@ -51,7 +51,7 @@ namespace BanjoBotAssets.Exporters.Helpers
                 // hi, Chaos Agent
                 return (tooltipDescription.Text, null);
             }
-            var tooltip = grantedAbilityKit?.GetOrDefault<UBlueprintGeneratedClass>("Tooltip");
+            var tooltip = grantedAbilityKit?.GetOrDefault<UBlueprintGeneratedClass>("ToolTip");
             if (tooltip == null)
             {
                 return (null, null);
@@ -135,7 +135,7 @@ namespace BanjoBotAssets.Exporters.Helpers
 
             // find the right FName to use, what a pain
             var rowNameStr = curveTableRow.RowName.Text;
-            var curveName = curveTableRow.CurveTable.RowMap.Keys.FirstOrDefault(k => k.Text == rowNameStr);
+            var curveName = curveTableRow.CurveTable?.RowMap.Keys.FirstOrDefault(k => k.Text == rowNameStr) ?? default;
 
             if (curveName.IsNone)
             {
