@@ -19,6 +19,10 @@ using CUE4Parse.FileProvider;
 using CUE4Parse.UE4.Versions;
 using Microsoft.Extensions.Caching.Memory;
 using System.Collections.Concurrent;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
+using System.Text;
 
 namespace BanjoBotAssets
 {
@@ -29,22 +33,64 @@ namespace BanjoBotAssets
         private int cacheRequests, cacheMisses;
         private readonly ConcurrentDictionary<string, int> cacheMissesByPath = new();
 
-        public CachingFileProvider(AssetCache cache, ILogger<CachingFileProvider> logger, string directory, SearchOption searchOption, bool isCaseInsensitive = false, VersionContainer? versions = null) : base(directory, searchOption, isCaseInsensitive, versions)
+        private readonly string? assetLogPath;
+        private TextWriter? assetLogWriter;
+        private FileStream? assetLogStream;
+
+        public CachingFileProvider(AssetCache cache, ILogger<CachingFileProvider> logger, string directory, SearchOption searchOption, bool isCaseInsensitive = false, VersionContainer? versions = null, string? assetLogPath = null) : base(directory, searchOption, isCaseInsensitive, versions)
         {
             this.cache = cache;
             this.logger = logger;
+            this.assetLogPath = assetLogPath;
+            OpenAssetLog();
         }
 
-        public CachingFileProvider(AssetCache cache, ILogger<CachingFileProvider> logger, DirectoryInfo directory, SearchOption searchOption, bool isCaseInsensitive = false, VersionContainer? versions = null) : base(directory, searchOption, isCaseInsensitive, versions)
+        public CachingFileProvider(AssetCache cache, ILogger<CachingFileProvider> logger, DirectoryInfo directory, SearchOption searchOption, bool isCaseInsensitive = false, VersionContainer? versions = null, string? assetLogPath = null) : base(directory, searchOption, isCaseInsensitive, versions)
         {
             this.cache = cache;
             this.logger = logger;
+            this.assetLogPath = assetLogPath;
+            OpenAssetLog();
         }
 
-        public CachingFileProvider(AssetCache cache, ILogger<CachingFileProvider> logger, DirectoryInfo mainDirectory, List<DirectoryInfo> extraDirectories, SearchOption searchOption, bool isCaseInsensitive = false, VersionContainer? versions = null) : base(mainDirectory, extraDirectories, searchOption, isCaseInsensitive, versions)
+        public CachingFileProvider(AssetCache cache, ILogger<CachingFileProvider> logger, DirectoryInfo mainDirectory, List<DirectoryInfo> extraDirectories, SearchOption searchOption, bool isCaseInsensitive = false, VersionContainer? versions = null, string? assetLogPath = null) : base(mainDirectory, extraDirectories, searchOption, isCaseInsensitive, versions)
         {
             this.cache = cache;
             this.logger = logger;
+            this.assetLogPath = assetLogPath;
+            OpenAssetLog();
+        }
+
+        private void OpenAssetLog()
+        {
+            if (assetLogPath == null)
+            {
+                return;
+            }
+
+            assetLogStream = new FileStream(assetLogPath, new FileStreamOptions
+            {
+                Access = FileAccess.Write,
+                BufferSize = 0,
+                Mode = FileMode.Create,
+                Options = FileOptions.WriteThrough,
+                Share = FileShare.Write,
+            });
+
+            assetLogWriter = new StreamWriter(assetLogStream) { AutoFlush = true };
+        }
+
+        private void WriteToAssetLog(string line)
+        {
+            if (assetLogWriter == null)
+            {
+                return;
+            }
+
+            lock (assetLogWriter)
+            {
+                assetLogWriter.WriteLine(line);
+            }
         }
 
         public override Task<IPackage> LoadPackageAsync(GameFile file)
@@ -60,6 +106,7 @@ namespace BanjoBotAssets
                     cacheMissesByPath.AddOrUpdate(file.Path, 1, (_, i) => i + 1);
                     logger.LogDebug(Resources.Status_CacheMiss, file.Path, file.Size);
 
+                    WriteToAssetLog(file.Path);
                     return await base.LoadPackageAsync(file);
                 },
                 new MemoryCacheEntryOptions { Size = file.Size });
@@ -78,6 +125,7 @@ namespace BanjoBotAssets
                     cacheMissesByPath.AddOrUpdate(file.Path, 1, (_, i) => i + 1);
                     logger.LogDebug(Resources.Status_CacheMiss, file.Path, file.Size);
 
+                    WriteToAssetLog(file.Path);
                     return await base.TryLoadPackageAsync(file);
                 },
                 new MemoryCacheEntryOptions { Size = file.Size });
