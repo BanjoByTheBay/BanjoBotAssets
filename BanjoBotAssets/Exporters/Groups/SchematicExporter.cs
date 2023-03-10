@@ -298,7 +298,7 @@ namespace BanjoBotAssets.Exporters.Groups
                     return match.Groups[1].Value.ToLower(CultureInfo.InvariantCulture) switch
                     {
                         "hammer" => (Resources.Field_Recipe_Melee, Resources.Field_Schematic_Hardware),
-                        "heavy" => (Resources.Field_Recipe_Melee, Resources.Field_Schematic_Explosive),
+                        "heavy" => (Resources.Field_Recipe_Ranged, Resources.Field_Schematic_Explosive),
                         "improvised" => (Resources.Field_Recipe_Melee, Resources.Field_Schematic_Club),
                         "smg" => (Resources.Field_Recipe_Ranged, Resources.Field_Schematic_SMG),
                         "assault" => (Resources.Field_Recipe_Ranged, Resources.Field_Schematic_Assault),
