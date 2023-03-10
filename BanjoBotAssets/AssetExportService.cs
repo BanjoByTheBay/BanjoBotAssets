@@ -182,17 +182,17 @@ namespace BanjoBotAssets
             // offer them to CUE4Parse
             logger.LogInformation(Resources.Status_DecryptingGameFiles);
 
-            if (aes.Data.MainKey != null)
+            if (aes.MainKey != null)
             {
                 logger.LogDebug(Resources.Status_SubmittingMainKey);
-                provider.SubmitKey(new FGuid(), new FAesKey(aes.Data.MainKey));
+                provider.SubmitKey(new FGuid(), new FAesKey(aes.MainKey));
             }
             else
             {
                 logger.LogDebug(Resources.Status_SkippingNullMainKey);
             }
 
-            foreach (var dk in aes.Data.DynamicKeys)
+            foreach (var dk in aes.DynamicKeys)
             {
                 logger.LogDebug(Resources.Status_SubmittingDynamicKey, dk.PakFilename);
                 provider.SubmitKey(new FGuid(dk.PakGuid), new FAesKey(dk.Key));
