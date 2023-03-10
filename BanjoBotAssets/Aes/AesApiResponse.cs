@@ -23,9 +23,6 @@ namespace BanjoBotAssets.Aes
 {
     public class AesApiResponse
     {
-        [JsonPropertyName("version")]
-        public string Version { get; set; }
-
         [JsonPropertyName("mainKey")]
         public string MainKey { get; set; }
 
