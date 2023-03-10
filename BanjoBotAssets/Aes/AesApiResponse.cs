@@ -23,34 +23,19 @@ namespace BanjoBotAssets.Aes
 {
     public class AesApiResponse
     {
-        [JsonPropertyName("status")]
-        public long Status { get; set; }
-
-        [JsonPropertyName("data")]
-        public Data Data { get; set; }
-    }
-
-    public class Data
-    {
-        [JsonPropertyName("build")]
-        public string Build { get; set; }
-
         [JsonPropertyName("mainKey")]
-        public string? MainKey { get; set; }
+        public string MainKey { get; set; }
 
         [JsonPropertyName("dynamicKeys")]
         public DynamicKey[] DynamicKeys { get; set; }
-
-        [JsonPropertyName("updated")]
-        public DateTimeOffset Updated { get; set; }
     }
 
     public class DynamicKey
     {
-        [JsonPropertyName("pakFilename")]
+        [JsonPropertyName("name")]
         public string PakFilename { get; set; }
 
-        [JsonPropertyName("pakGuid")]
+        [JsonPropertyName("guid")]
         public string PakGuid { get; set; }
 
         [JsonPropertyName("key")]

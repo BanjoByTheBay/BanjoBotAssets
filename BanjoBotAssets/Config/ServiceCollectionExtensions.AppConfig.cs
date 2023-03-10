@@ -40,7 +40,7 @@ namespace BanjoBotAssets.Extensions
                 .AddOptions<AesOptions>()
                 .Configure<IConfiguration>((options, config) =>
                 {
-                    options.AesApiUri = "https://fortnite-api.com/v2/aes";
+                    options.AesApiUri = "https://fortnitecentral.genxgames.gg/api/v1/aes";
                     options.LocalFilePath = "aes.json";
                     config.GetSection(nameof(AesOptions)).Bind(options);
                 });
