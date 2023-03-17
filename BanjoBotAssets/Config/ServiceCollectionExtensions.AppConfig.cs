@@ -57,7 +57,7 @@ namespace BanjoBotAssets.Extensions
                 .AddTransient<IExporterContext, ExporterContext>()
                 .AddTransient<AbilityDescription>();
 
-            // performance shouldIgnore affecting the exporters
+            // performance options affecting the exporters
             services
                 .AddOptions<PerformanceOptions>()
                 .Configure<IConfiguration>((options, config) =>
@@ -66,7 +66,7 @@ namespace BanjoBotAssets.Extensions
                     config.GetRequiredSection("PerformanceOptions").Bind(options);
                 });
 
-            // post-exporter for image files and its shouldIgnore
+            // post-exporter for image files and its options
             services
                 .AddTransient<IPostExporter, ImageFilesPostExporter>()
                 .AddOptions<ImageExportOptions>()
@@ -82,7 +82,7 @@ namespace BanjoBotAssets.Extensions
                 .ConfigureAll<ExportedFileOptions, IOptions<ScopeOptions>>(
                         (options, scopeOptions) => options.Merge = scopeOptions.Value.Merge);
 
-            // artifact generator for assets.json and its shouldIgnore
+            // artifact generator for assets.json and its options
             services
                 .AddTransientWithNamedOptions<IExportArtifact, AssetsJsonArtifact, ExportedFileOptions>()
                 .Configure<IConfiguration, IOptions<ScopeOptions>>((options, config, scopeOptions) =>
@@ -92,7 +92,7 @@ namespace BanjoBotAssets.Extensions
                     config.GetRequiredSection("ExportedAssets").Bind(options);
                 });
 
-            // artifact generator for schematics.json and its shouldIgnore
+            // artifact generator for schematics.json and its options
             services
                 .AddTransientWithNamedOptions<IExportArtifact, SchematicsJsonArtifact, ExportedFileOptions>()
                 .Configure<IConfiguration, IOptions<ScopeOptions>>((options, config, scopeOptions) =>
