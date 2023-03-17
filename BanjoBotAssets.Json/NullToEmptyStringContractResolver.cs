@@ -19,18 +19,18 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using System.Reflection;
 
-namespace BanjoBotAssets.Artifacts.Helpers
+namespace BanjoBotAssets.Json
 {
     // https://stackoverflow.com/questions/23830206/json-convert-empty-string-instead-of-null
 
-    internal sealed class NullToEmptyStringContractResolver : DefaultContractResolver
+    public sealed class NullToEmptyStringContractResolver : DefaultContractResolver
     {
         protected override IList<JsonProperty> CreateProperties(Type type, MemberSerialization memberSerialization)
         {
             return type.GetProperties()
                     .Select(p =>
                     {
-                        var jp = base.CreateProperty(p, memberSerialization);
+                        var jp = CreateProperty(p, memberSerialization);
                         jp.ValueProvider = new NullToEmptyStringValueProvider(p);
                         return jp;
                     }).ToList();

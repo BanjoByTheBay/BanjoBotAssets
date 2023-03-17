@@ -15,8 +15,8 @@
  * You should have received a copy of the GNU General Public License
  * along with BanjoBotAssets.  If not, see <http://www.gnu.org/licenses/>.
  */
-using BanjoBotAssets.Artifacts.Models;
 using BanjoBotAssets.Config;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 
 namespace BanjoBotAssets.Artifacts
@@ -25,13 +25,13 @@ namespace BanjoBotAssets.Artifacts
     {
         private readonly ExportedFileOptions options;
         private readonly ILogger<AssetsJsonArtifact> logger;
-        private readonly IgnoreImagePathsContractResolver contractResolver;
+        private readonly IOptions<ImageExportOptions> imageExportOptions;
 
-        public AssetsJsonArtifact(ExportedFileOptions options, ILogger<AssetsJsonArtifact> logger, IgnoreImagePathsContractResolver contractResolver)
+        public AssetsJsonArtifact(ExportedFileOptions options, ILogger<AssetsJsonArtifact> logger, IOptions<ImageExportOptions> imageExportOptions)
         {
             this.options = options;
             this.logger = logger;
-            this.contractResolver = contractResolver;
+            this.imageExportOptions = imageExportOptions;
         }
 
         public Task RunAsync(ExportedAssets exportedAssets, IList<ExportedRecipe> exportedRecipes, CancellationToken cancellationToken = default)
@@ -41,8 +41,8 @@ namespace BanjoBotAssets.Artifacts
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            var settings = new JsonSerializerSettings { Formatting = Formatting.Indented, ContractResolver = contractResolver };
-            var serializer = JsonSerializer.CreateDefault(settings);
+            var wantImagePaths = imageExportOptions.Value.Type.Values.Any(i => i != WantImageExport.No);
+            var serializer = ExportedAssets.CreateJsonSerializer(wantImagePaths);
 
             if (options.Merge && File.Exists(path))
             {

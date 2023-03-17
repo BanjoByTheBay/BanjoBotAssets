@@ -17,7 +17,6 @@
  */
 using BanjoBotAssets.Aes;
 using BanjoBotAssets.Artifacts;
-using BanjoBotAssets.Artifacts.Models;
 using BanjoBotAssets.Config;
 using BanjoBotAssets.Exporters;
 using BanjoBotAssets.PostExporters;

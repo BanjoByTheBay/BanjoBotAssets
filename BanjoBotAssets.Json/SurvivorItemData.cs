@@ -15,14 +15,12 @@
  * You should have received a copy of the GNU General Public License
  * along with BanjoBotAssets.  If not, see <http://www.gnu.org/licenses/>.
  */
-using System.Diagnostics.CodeAnalysis;
 
-namespace BanjoBotAssets.Artifacts.Models
+namespace BanjoBotAssets.Json
 {
-    internal sealed class ItemRatingTier
+    [NamedItemData("Worker")]
+    public sealed class SurvivorItemData : NamedItemData
     {
-        public int FirstLevel { get; set; }
-        [DisallowNull]
-        public float[]? Ratings { get; set; }
+        public string? Personality { get; set; }
     }
 }

@@ -15,22 +15,19 @@
  * You should have received a copy of the GNU General Public License
  * along with BanjoBotAssets.  If not, see <http://www.gnu.org/licenses/>.
  */
-using BanjoBotAssets.Artifacts.Models;
-using BanjoBotAssets.Config;
-using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using System.Reflection;
 
-namespace BanjoBotAssets.Artifacts.Helpers
+namespace BanjoBotAssets.Json
 {
-    internal sealed class IgnoreImagePathsContractResolver : OrderedPropertiesContractResolver
+    internal sealed class ImagePathsContractResolver : OrderedPropertiesContractResolver
     {
-        private readonly IOptions<ImageExportOptions> options;
+        private readonly bool wantImagePaths;
 
-        public IgnoreImagePathsContractResolver(IOptions<ImageExportOptions> options)
+        public ImagePathsContractResolver(bool wantImagePaths)
         {
-            this.options = options;
+            this.wantImagePaths = wantImagePaths;
         }
 
         protected override JsonProperty CreateProperty(MemberInfo member, MemberSerialization memberSerialization)
@@ -38,8 +35,8 @@ namespace BanjoBotAssets.Artifacts.Helpers
             var result = base.CreateProperty(member, memberSerialization);
 
             // if we aren't exporting any image paths, hide the whole ImagePaths property
-            if (typeof(NamedItemData).IsAssignableFrom(member.DeclaringType) && member.Name == nameof(NamedItemData.ImagePaths) &&
-                options.Value.Type.Values.All(i => i == WantImageExport.No))
+            if (!wantImagePaths && member.Name == nameof(NamedItemData.ImagePaths) &&
+                typeof(NamedItemData).IsAssignableFrom(member.DeclaringType))
             {
                 result.ShouldSerialize = _ => false;
             }

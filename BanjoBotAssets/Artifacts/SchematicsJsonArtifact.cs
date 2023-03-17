@@ -15,7 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with BanjoBotAssets.  If not, see <http://www.gnu.org/licenses/>.
  */
-using BanjoBotAssets.Artifacts.Models;
 using BanjoBotAssets.Config;
 using Newtonsoft.Json;
 
@@ -25,13 +24,11 @@ namespace BanjoBotAssets.Artifacts
     {
         private readonly ExportedFileOptions options;
         private readonly ILogger<SchematicsJsonArtifact> logger;
-        private readonly NullToEmptyStringContractResolver contractResolver;
 
-        public SchematicsJsonArtifact(ExportedFileOptions options, ILogger<SchematicsJsonArtifact> logger, NullToEmptyStringContractResolver contractResolver)
+        public SchematicsJsonArtifact(ExportedFileOptions options, ILogger<SchematicsJsonArtifact> logger)
         {
             this.options = options;
             this.logger = logger;
-            this.contractResolver = contractResolver;
         }
 
         public Task RunAsync(ExportedAssets exportedAssets, IList<ExportedRecipe> exportedRecipes, CancellationToken cancellationToken = default)
@@ -93,8 +90,7 @@ namespace BanjoBotAssets.Artifacts
             while (recipesToExclude.Count > 0)
                 exportedRecipes.RemoveAt(recipesToExclude.Pop());
 
-            var settings = new JsonSerializerSettings { ContractResolver = contractResolver, Formatting = Formatting.Indented };
-            var serializer = JsonSerializer.CreateDefault(settings);
+            var serializer = ExportedRecipes.CreateJsonSerializer();
 
             string path = options.Path;
 
@@ -110,7 +106,7 @@ namespace BanjoBotAssets.Artifacts
                         ?? throw new InvalidOperationException(string.Format(CultureInfo.CurrentCulture, Resources.FormatString_Error_CannotReadPreviousArtifact, path));
                 }
 
-                Merge(previous, exportedRecipes);
+                ExportedRecipes.Merge(previous, exportedRecipes);
                 exportedRecipes = previous;
             }
             else
@@ -133,51 +129,6 @@ namespace BanjoBotAssets.Artifacts
             }
 
             return Task.CompletedTask;
-        }
-
-        private static IList<ExportedRecipe> Merge(IList<ExportedRecipe> previous, IList<ExportedRecipe> current)
-        {
-            // duplicate current and build a map of merge key => array index
-            var mySrc = new List<ExportedRecipe?>(current.Count);
-            var keyedSrc = new Dictionary<string, int>(current.Count);
-
-            foreach (var er in current)
-            {
-                keyedSrc.Add(er.GetMergeKey(), mySrc.Count);
-                mySrc.Add(er);
-            }
-
-            // copy previous into result, taking values from current instead whenever possible
-            var result = new List<ExportedRecipe>(previous.Count + (mySrc.Count / 10));
-
-            foreach (var recipe in previous)
-            {
-                var mergeKey = recipe.GetMergeKey();
-
-                if (keyedSrc.TryGetValue(mergeKey, out var i))
-                {
-                    var item = mySrc[i];
-                    System.Diagnostics.Debug.Assert(item != null);
-                    result.Add(item);
-                    keyedSrc.Remove(mergeKey);
-                    mySrc[i] = null;
-                }
-                else
-                {
-                    result.Add(recipe);
-                }
-            }
-
-            // copy any remaining items from current
-            foreach (var recipe in mySrc)
-            {
-                if (recipe != null)
-                {
-                    mySrc.Add(recipe);
-                }
-            }
-
-            return result;
         }
     }
 }

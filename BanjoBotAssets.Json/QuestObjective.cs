@@ -18,26 +18,18 @@
 using Newtonsoft.Json;
 using System.Diagnostics.CodeAnalysis;
 
-namespace BanjoBotAssets.Artifacts.Models
+namespace BanjoBotAssets.Json
 {
     [JsonObject(ItemNullValueHandling = NullValueHandling.Ignore)]
-    [JsonConverter(typeof(NamedItemDataConverter))]
-    internal class NamedItemData
+    public sealed class QuestObjective
     {
-        [JsonProperty(Order = 2), DisallowNull]
-        public string? Name { get; set; }
-        [JsonProperty(Order = 1), DisallowNull]
-        public string? Type { get; set; }
-        [JsonProperty(Order = OrderedPropertiesContractResolver.DefaultOrder + 1), DisallowNull]
-        public string? AssetPath { get; set; }
-        [JsonProperty(Order = 3), DisallowNull]
-        public string? DisplayName { get; set; }
+        [DisallowNull]
+        public string? BackendName { get; set; }
+        [DisallowNull]
         public string? Description { get; set; }
-        [JsonProperty(Order = 4)]
-        public string? SubType { get; set; }
-        public string? Rarity { get; set; }
-        public int? Tier { get; set; }
-        [JsonProperty(Order = OrderedPropertiesContractResolver.DefaultOrder + 2)]
-        public SortedDictionary<ImageType, string>? ImagePaths { get; set; }
+        [DisallowNull]
+        public string? HudShortDescription { get; set; }
+        public int? ZonePowerLevel { get; set; }
+        public int Count { get; set; }
     }
 }

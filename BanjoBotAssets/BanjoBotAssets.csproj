@@ -28,9 +28,9 @@
 		<Using Include="System.Globalization" />
 		<Using Include="System.Text.RegularExpressions" />
 		<Using Include="BanjoBotAssets" />
-		<Using Include="BanjoBotAssets.Artifacts.Helpers" />
 		<Using Include="BanjoBotAssets.Exporters.Helpers" />
 		<Using Include="BanjoBotAssets.Extensions" />
+		<Using Include="BanjoBotAssets.Json" />
 		<Using Include="BanjoBotAssets.PostExporters.Helpers" />
 		<Using Include="BanjoBotAssets.Properties" />
 	</ItemGroup>
@@ -58,6 +58,7 @@
 		<PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="7.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.1" />
 		<PackageReference Include="Microsoft.Extensions.Http" Version="7.0.0" />
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
 		<PackageReference Include="Roslynator.Analyzers" Version="4.2.0">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -66,6 +67,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <ProjectReference Include="..\BanjoBotAssets.Json\BanjoBotAssets.Json.csproj" />
 	  <ProjectReference Include="..\external\CUE4Parse-FortniteTypes\CUE4Parse-FortniteTypes.csproj" />
 	  <ProjectReference Include="..\external\CUE4Parse\CUE4Parse-Conversion\CUE4Parse-Conversion.csproj" />
 	  <ProjectReference Include="..\external\CUE4Parse\CUE4Parse\CUE4Parse.csproj" />

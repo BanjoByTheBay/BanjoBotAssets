@@ -21,13 +21,13 @@ using BanjoBotAssets.Config;
 using System.Reflection;
 
 // TODO: export per-difficulty stat clamp tables (GameDifficultyGrowthBounds, CombatStatClampsPerTheater)
-// TODO: export collection book categories and recruitment/research/voucher options (CollectionBookSlots)
+// TODO: export collection book categories and recruitment/research/voucher shouldIgnore (CollectionBookSlots)
 
 await Host.CreateDefaultBuilder(args)
 #if DEBUG
     .UseEnvironment("Development")
 #endif
-    .UseContentRoot(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location))
+    .UseContentRoot(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? throw new InvalidOperationException("Null content root"))
     .ConfigureLogging(logging =>
     {
         logging

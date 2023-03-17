@@ -15,14 +15,13 @@
  * You should have received a copy of the GNU General Public License
  * along with BanjoBotAssets.  If not, see <http://www.gnu.org/licenses/>.
  */
-using BanjoBotAssets.Artifacts.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Reflection;
 
-namespace BanjoBotAssets.Artifacts.Helpers
+namespace BanjoBotAssets.Json
 {
-    internal sealed class NamedItemDataConverter : JsonConverter
+    public sealed class NamedItemDataConverter : JsonConverter
     {
         public override bool CanConvert(Type objectType) => typeof(NamedItemData).IsAssignableFrom(objectType);
 

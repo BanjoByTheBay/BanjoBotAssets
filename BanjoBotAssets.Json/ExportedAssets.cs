@@ -17,9 +17,9 @@
  */
 using Newtonsoft.Json;
 
-namespace BanjoBotAssets.Artifacts.Models
+namespace BanjoBotAssets.Json
 {
-    internal sealed class ExportedAssets
+    public sealed class ExportedAssets
     {
         [JsonProperty(Order = 1)]
         public DateTime ExportedAt { get; set; } = DateTime.Now;
@@ -97,5 +97,13 @@ namespace BanjoBotAssets.Artifacts.Models
                 }
             }
         }
+
+        public static JsonSerializerSettings CreateJsonSerializerSettings(bool wantImagePaths)
+        {
+            var contractResolver = new ImagePathsContractResolver(wantImagePaths);
+            return new JsonSerializerSettings { ContractResolver = contractResolver, Formatting = Formatting.Indented };
+        }
+
+        public static JsonSerializer CreateJsonSerializer(bool wantImagePaths) => JsonSerializer.CreateDefault(CreateJsonSerializerSettings(wantImagePaths));
     }
 }

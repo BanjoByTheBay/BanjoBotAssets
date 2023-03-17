@@ -17,14 +17,22 @@
  */
 using System.Diagnostics.CodeAnalysis;
 
-namespace BanjoBotAssets.Artifacts.Models
+namespace BanjoBotAssets.Json
 {
-    internal sealed class DifficultyInfo
+    public sealed class ItemRatingTables
     {
-        public int RequiredRating { get; set; }
-        public int MaximumRating { get; set; }
-        public int RecommendedRating { get; set; }
         [DisallowNull]
-        public string? DisplayName { get; set; }
+        public ItemRatingTable? Survivor { get; set; }
+        [DisallowNull]
+        public ItemRatingTable? LeadSurvivor { get; set; }
+        [DisallowNull]
+        public ItemRatingTable? Default { get; set; }
+
+        public void Update(ItemRatingTables other)
+        {
+            Survivor ??= other.Survivor;
+            LeadSurvivor ??= other.LeadSurvivor;
+            Default ??= other.Default;
+        }
     }
 }

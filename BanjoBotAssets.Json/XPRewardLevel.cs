@@ -17,19 +17,14 @@
  */
 using System.Diagnostics.CodeAnalysis;
 
-namespace BanjoBotAssets.Artifacts.Models
+namespace BanjoBotAssets.Json
 {
-    [NamedItemData("Hero")]
-    internal sealed class HeroItemData : NamedItemData
+    public sealed class XPRewardLevel
     {
+        public int TotalRequiredXP { get; set; }
+        public bool IsMajorReward { get; set; }
+
         [DisallowNull]
-        public string? HeroPerk { get; set; }
-        [DisallowNull]
-        public string? HeroPerkDescription { get; set; }
-        [DisallowNull]
-        public string? CommanderPerk { get; set; }
-        [DisallowNull]
-        public string? CommanderPerkDescription { get; set; }
-        public string? UnlocksTeamPerk { get; set; }
+        public QuestReward[] Rewards { get; set; } = null!;
     }
 }

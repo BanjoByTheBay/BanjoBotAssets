@@ -15,11 +15,16 @@
  * You should have received a copy of the GNU General Public License
  * along with BanjoBotAssets.  If not, see <http://www.gnu.org/licenses/>.
  */
-namespace BanjoBotAssets.Artifacts.Models
+using System.Diagnostics.CodeAnalysis;
+
+namespace BanjoBotAssets.Json
 {
-    internal sealed class ItemRatingTable
+    public sealed class QuestReward
     {
-        // key: $"{rarity}_T{tier:00}", e.g. "SR_T05"
-        public Dictionary<string, ItemRatingTier> Tiers { get; set; } = new(StringComparer.OrdinalIgnoreCase);
+        [DisallowNull]
+        public string? Item { get; set; }
+        public int Quantity { get; set; }
+        public bool Hidden { get; set; }
+        public bool Selectable { get; set; }
     }
 }

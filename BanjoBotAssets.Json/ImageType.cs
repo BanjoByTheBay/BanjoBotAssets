@@ -15,24 +15,15 @@
  * You should have received a copy of the GNU General Public License
  * along with BanjoBotAssets.  If not, see <http://www.gnu.org/licenses/>.
  */
-using System.Diagnostics.CodeAnalysis;
 
-namespace BanjoBotAssets.Artifacts.Models
+namespace BanjoBotAssets.Json
 {
-    internal sealed class ItemRatingTables
+    public enum ImageType
     {
-        [DisallowNull]
-        public ItemRatingTable? Survivor { get; set; }
-        [DisallowNull]
-        public ItemRatingTable? LeadSurvivor { get; set; }
-        [DisallowNull]
-        public ItemRatingTable? Default { get; set; }
-
-        public void Update(ItemRatingTables other)
-        {
-            Survivor ??= other.Survivor;
-            LeadSurvivor ??= other.LeadSurvivor;
-            Default ??= other.Default;
-        }
+        SmallPreview,
+        LargePreview,
+        Icon,
+        LoadingScreen,
+        PackImage,
     }
 }

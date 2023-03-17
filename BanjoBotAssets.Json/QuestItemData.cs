@@ -15,14 +15,20 @@
  * You should have received a copy of the GNU General Public License
  * along with BanjoBotAssets.  If not, see <http://www.gnu.org/licenses/>.
  */
-namespace BanjoBotAssets.Exporters.Helpers
+using System.Diagnostics.CodeAnalysis;
+
+namespace BanjoBotAssets.Json
 {
-    public enum ImageType
+    [NamedItemData("Quest")]
+    public sealed class QuestItemData : NamedItemData
     {
-        SmallPreview,
-        LargePreview,
-        Icon,
-        LoadingScreen,
-        PackImage,
+        [DisallowNull]
+        public QuestObjective[]? Objectives { get; set; }
+        [DisallowNull]
+        public string? Category { get; set; }
+        [DisallowNull]
+        public QuestReward[]? Rewards { get; set; }
+        [DisallowNull]
+        public string? QuestType { get; set; }
     }
 }

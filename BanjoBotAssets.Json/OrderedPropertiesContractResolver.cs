@@ -18,9 +18,9 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
-namespace BanjoBotAssets.Artifacts.Helpers
+namespace BanjoBotAssets.Json
 {
-    internal class OrderedPropertiesContractResolver : DefaultContractResolver
+    public class OrderedPropertiesContractResolver : DefaultContractResolver
     {
         /// <summary>
         /// The value used for <see cref="JsonPropertyAttribute.Order"/> if it isn't specified

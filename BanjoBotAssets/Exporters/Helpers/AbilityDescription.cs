@@ -143,7 +143,7 @@ namespace BanjoBotAssets.Exporters.Helpers
                 return null;
             }
 
-            var curve = curveTableRow.CurveTable.FindCurve(curveName);
+            var curve = curveTableRow.CurveTable?.FindCurve(curveName);
             return curve?.Eval(1) * multiplier;
         }
 

@@ -15,16 +15,15 @@
  * You should have received a copy of the GNU General Public License
  * along with BanjoBotAssets.  If not, see <http://www.gnu.org/licenses/>.
  */
-using BanjoBotAssets.Artifacts.Models;
 
-namespace BanjoBotAssets.Artifacts.Helpers
+namespace BanjoBotAssets.Json
 {
     /// <summary>
     /// Allows a subclass of <see cref="NamedItemData"/> to be deserialized polymorphically
     /// based on the value of the <see cref="NamedItemData.Type"/> field.
     /// </summary>
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = false)]
-    internal sealed class NamedItemDataAttribute : Attribute
+    public sealed class NamedItemDataAttribute : Attribute
     {
         public NamedItemDataAttribute(string typeFieldDiscriminator)
         {

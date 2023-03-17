@@ -17,9 +17,9 @@
  */
 using System.Diagnostics.CodeAnalysis;
 
-namespace BanjoBotAssets.Artifacts.Models
+namespace BanjoBotAssets.Json
 {
-    internal sealed class ExportedRecipe
+    public sealed class ExportedRecipe
     {
         [DisallowNull]
         public string? ItemName { get; set; }

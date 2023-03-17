@@ -19,10 +19,6 @@ using CUE4Parse.FileProvider;
 using CUE4Parse.UE4.Versions;
 using Microsoft.Extensions.Caching.Memory;
 using System.Collections.Concurrent;
-using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
-using System.Runtime.CompilerServices;
-using System.Text;
 
 namespace BanjoBotAssets
 {

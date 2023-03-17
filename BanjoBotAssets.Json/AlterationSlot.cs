@@ -17,14 +17,12 @@
  */
 using System.Diagnostics.CodeAnalysis;
 
-namespace BanjoBotAssets.Artifacts.Models
+namespace BanjoBotAssets.Json
 {
-    internal sealed class XPRewardLevel
+    public sealed class AlterationSlot
     {
-        public int TotalRequiredXP { get; set; }
-        public bool IsMajorReward { get; set; }
-
+        public int RequiredLevel { get; set; }
         [DisallowNull]
-        public QuestReward[] Rewards { get; set; } = null!;
+        public string[][]? Alterations { get; set; }
     }
 }

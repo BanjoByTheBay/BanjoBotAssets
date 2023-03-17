@@ -57,7 +57,7 @@ namespace BanjoBotAssets.Extensions
                 .AddTransient<IExporterContext, ExporterContext>()
                 .AddTransient<AbilityDescription>();
 
-            // performance options affecting the exporters
+            // performance shouldIgnore affecting the exporters
             services
                 .AddOptions<PerformanceOptions>()
                 .Configure<IConfiguration>((options, config) =>
@@ -66,7 +66,7 @@ namespace BanjoBotAssets.Extensions
                     config.GetRequiredSection("PerformanceOptions").Bind(options);
                 });
 
-            // post-exporter for image files and its options
+            // post-exporter for image files and its shouldIgnore
             services
                 .AddTransient<IPostExporter, ImageFilesPostExporter>()
                 .AddOptions<ImageExportOptions>()
@@ -82,7 +82,7 @@ namespace BanjoBotAssets.Extensions
                 .ConfigureAll<ExportedFileOptions, IOptions<ScopeOptions>>(
                         (options, scopeOptions) => options.Merge = scopeOptions.Value.Merge);
 
-            // artifact generator for assets.json and its options
+            // artifact generator for assets.json and its shouldIgnore
             services
                 .AddTransientWithNamedOptions<IExportArtifact, AssetsJsonArtifact, ExportedFileOptions>()
                 .Configure<IConfiguration, IOptions<ScopeOptions>>((options, config, scopeOptions) =>
@@ -92,7 +92,7 @@ namespace BanjoBotAssets.Extensions
                     config.GetRequiredSection("ExportedAssets").Bind(options);
                 });
 
-            // artifact generator for schematics.json and its options
+            // artifact generator for schematics.json and its shouldIgnore
             services
                 .AddTransientWithNamedOptions<IExportArtifact, SchematicsJsonArtifact, ExportedFileOptions>()
                 .Configure<IConfiguration, IOptions<ScopeOptions>>((options, config, scopeOptions) =>
@@ -101,11 +101,6 @@ namespace BanjoBotAssets.Extensions
                     options.Merge = scopeOptions.Value.Merge;
                     config.GetRequiredSection("ExportedSchematics").Bind(options);
                 });
-
-            // JSON contract resolvers used by the artifact generators
-            services
-                .AddSingleton<IgnoreImagePathsContractResolver>()
-                .AddSingleton<NullToEmptyStringContractResolver>();
 
             return services;
         }
