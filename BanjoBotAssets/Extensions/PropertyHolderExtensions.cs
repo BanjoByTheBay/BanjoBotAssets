@@ -18,13 +18,14 @@
 namespace BanjoBotAssets.Extensions
 {
     internal static class PropertyHolderExtensions
-    { /// <summary>
-      /// Gets the path contained in the <c>ResourceObject</c> property of another named property.
-      /// </summary>
-      /// <param name="obj">The object to search.</param>
-      /// <param name="property">The name of the property that contains the <c>ResourceObject</c>.</param>
-      /// <returns><c><paramref name="obj"/>.<paramref name="property"/>.<see cref="FPackageIndex">ResourceObject</see>.<see cref="ResolvedObject.GetPathName(bool)">GetPathName()</see></c>
-      /// if it exists, otherwise <see langword="null"/>.</returns>
+    {
+        /// <summary>
+        /// Gets the path contained in the <c>ResourceObject</c> property of another named property.
+        /// </summary>
+        /// <param name="obj">The object to search.</param>
+        /// <param name="property">The name of the property that contains the <c>ResourceObject</c>.</param>
+        /// <returns><c><paramref name="obj"/>.<paramref name="property"/>.<see cref="FPackageIndex">ResourceObject</see>.<see cref="ResolvedObject.GetPathName(bool)">GetPathName()</see></c>
+        /// if it exists, otherwise <see langword="null"/>.</returns>
         public static string? GetResourceObjectPath(this IPropertyHolder obj, string property)
         {
             if (PropertyUtil.GetOrDefault<FStructFallback>(obj, property) is FStructFallback brush &&

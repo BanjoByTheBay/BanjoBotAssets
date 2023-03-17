@@ -46,5 +46,27 @@ namespace BanjoBotAssets.Extensions
 
             return default;
         }
+
+        /// <summary>
+        /// Gets the path contained in the <c>ResourceObject</c> property of another named property,
+        /// potentially following the <see cref="UObject.Template">Template</see> chain to find an
+        /// inherited property value if necessary.
+        /// </summary>
+        /// <param name="obj">The object to search.</param>
+        /// <param name="property">The name of the property that contains the <c>ResourceObject</c>.</param>
+        /// <param name="assetCounter">A counter used to track the assets loaded during this search.</param>
+        /// <returns><c><paramref name="obj"/>.<paramref name="property"/>.<see cref="FPackageIndex">ResourceObject</see>.<see cref="ResolvedObject.GetPathName(bool)">GetPathName()</see></c>
+        /// if it exists on <paramref name="obj"/> or any of its template ancestors, otherwise <see langword="null"/>.</returns>
+        public static async Task<string?> GetInheritedResourceObjectPathAsync(this UObject obj, string property, IAssetCounter assetCounter)
+        {
+            if (await obj.GetInheritedOrDefaultAsync<FStructFallback>(property, assetCounter) is FStructFallback brush &&
+                PropertyUtil.GetOrDefault<FPackageIndex?>(brush, "ResourceObject") is FPackageIndex resobj &&
+                resobj.ResolvedObject?.GetPathName() is string path)
+            {
+                return path;
+            }
+
+            return null;
+        }
     }
 }
