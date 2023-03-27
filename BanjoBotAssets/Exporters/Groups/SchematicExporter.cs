@@ -95,15 +95,13 @@ namespace BanjoBotAssets.Exporters.Groups
         protected override string SelectPrimaryAsset(IGrouping<string?, string> assetGroup)
         {
             /* Select the first schematic that:
-             *   (1) Appears legendary ("sr") in the filename, so we can check whether it's actually mythic
-             *   (2) Isn't crystal, because some crystal schematics are invalid (yet still exist)
-             *   (3) Doesn't have an unusual tier number
+             *   (1) Isn't crystal, because some crystal schematics are invalid (yet still exist)
+             *   (2) Doesn't have an unusual tier number
              */
             return assetGroup.FirstOrDefault(p =>
             {
                 ParsedSchematicName? parsed = ParseAssetName(p);
-                return parsed?.Rarity.Equals("SR", StringComparison.OrdinalIgnoreCase) == true &&
-                       !parsed.EvoType.Equals("Crystal", StringComparison.OrdinalIgnoreCase) &&
+                return parsed?.EvoType.Equals("Crystal", StringComparison.OrdinalIgnoreCase) == false &&
                        parsed.Tier >= 1 && parsed.Tier <= 5;
             }) ?? assetGroup.First();
         }
