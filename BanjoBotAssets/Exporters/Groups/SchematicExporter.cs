@@ -25,10 +25,10 @@ namespace BanjoBotAssets.Exporters.Groups
         : BaseParsedItemName(BaseName, Rarity, Tier);
 
     internal sealed record SchematicItemGroupFields(string DisplayName, string? Description, string? SubType, string AlterationSlotsLoadoutRow,
-        string? AmmoType, string? WeaponOrTrapStatRowPrefix, string? TriggerType, string? Category)
+        string? AmmoType, string? WeaponOrTrapStatRowPrefix, string? CraftingRowPrefix, string? TriggerType, string? Category)
         : BaseItemGroupFields(DisplayName, Description, SubType)
     {
-        public SchematicItemGroupFields() : this("", null, null, "", "", "", "", "") { }
+        public SchematicItemGroupFields() : this("", null, null, "", "", "", "", "", "") { }
     }
 
     internal sealed partial class SchematicExporter : GroupExporter<UObject, ParsedSchematicName, SchematicItemGroupFields, SchematicItemData>
@@ -39,7 +39,8 @@ namespace BanjoBotAssets.Exporters.Groups
 
         protected override string Type => "Schematic";
 
-        private static readonly Regex craftingResultNameRegex = CraftingResultNameRegex();
+        [GeneratedRegex("(?<!/Schematics/.*)/(?:WID_|TID_|G_|Ingredient_|AmmoData)[^/]+\\.uasset$", RegexOptions.IgnoreCase, "en-US")]
+        private static partial Regex CraftingResultNameRegex();
 
         protected override bool InterestedInAsset(string name)
         {
@@ -55,7 +56,7 @@ namespace BanjoBotAssets.Exporters.Groups
             //   Traps
             //   WeaponDurabilityRarity
 
-            if (craftingResultNameRegex.IsMatch(name))
+            if (CraftingResultNameRegex().IsMatch(name))
                 craftingResultPaths.Add(Path.GetFileNameWithoutExtension(name), name);
 
             switch (Path.GetFileName(name))
@@ -148,11 +149,20 @@ namespace BanjoBotAssets.Exporters.Groups
          *
          * The epic and legendary versions of the Walloper also have separate stats rows, but otherwise they're
          * indistinguishable from other schematics.*/
-        private static readonly Regex schematicAssetNameRegex = SchematicAssetNameRegex();
+        [GeneratedRegex(
+    """
+            ^
+            (?<key>.+?_(?<rarity>C|UC|R|VR|SR|UR))?     # key includes path and rarity
+            (?:_(?<evotype>Ore|Crystal))?               # evolution type for tier 4+
+            (?:_?T(?<tier>\d+))?                        # tier
+            (?:\.[^/]*)?                                # (ignored) extension
+            $
+            """, RegexOptions.IgnoreCase | RegexOptions.Compiled | RegexOptions.IgnorePatternWhitespace, "en-US")]
+        private static partial Regex SchematicAssetNameRegex();
 
         protected override ParsedSchematicName? ParseAssetName(string name)
         {
-            var match = schematicAssetNameRegex.Match(name);
+            var match = SchematicAssetNameRegex().Match(name);
 
             if (!match.Success)
             {
@@ -218,6 +228,7 @@ namespace BanjoBotAssets.Exporters.Groups
             var alterationSlotsLoadoutRow = weaponOrTrapDef.GetOrDefault<FName>("AlterationSlotsLoadoutRow").Text;
             var ammoType = await AmmoTypeFromPathAsync(weaponOrTrapDef.GetOrDefault<FSoftObjectPath>("AmmoData"));
             var statRowPrefix = GetStatRowPrefix(weaponOrTrapDef);
+            var craftingRowPrefix = GetCraftingRowPrefix(craftingRow.RowName.Text);
             var triggerType = weaponOrTrapDef.GetOrDefault<EFortWeaponTriggerType>("TriggerType").ToString();
 
             return result with
@@ -229,6 +240,7 @@ namespace BanjoBotAssets.Exporters.Groups
                 AlterationSlotsLoadoutRow = alterationSlotsLoadoutRow,
                 AmmoType = ammoType,
                 WeaponOrTrapStatRowPrefix = statRowPrefix,
+                CraftingRowPrefix = craftingRowPrefix,
                 TriggerType = triggerType,
                 SmallPreviewImagePath = weaponOrTrapDef.GetSoftAssetPath("SmallPreviewImage"),
                 LargePreviewImagePath = weaponOrTrapDef.GetSoftAssetPath("LargePreviewImage"),
@@ -278,17 +290,35 @@ namespace BanjoBotAssets.Exporters.Groups
             return null;
         }
 
-        private static readonly Regex schematicSubTypeRegex = SchematicSubTypeRegex();
+        private static string? GetCraftingRowPrefix(string rowName)
+        {
+            if (rowName.StartsWith("Ranged.", StringComparison.OrdinalIgnoreCase) || rowName.StartsWith("Melee.", StringComparison.OrdinalIgnoreCase))
+            {
+                var parts = rowName.Split('.');
+                return string.Join('.', parts[..^3]);
+            }
+
+            if (rowName.StartsWith("Trap.", StringComparison.OrdinalIgnoreCase))
+            {
+                var parts = rowName.Split('.');
+                return string.Join('.', parts[..^2]);
+            }
+
+            return rowName;
+        }
 
         public SchematicExporter(IExporterContext services) : base(services)
         {
         }
 
+        [GeneratedRegex(@"^(?:Weapon\.(?:Ranged|Melee\.(?:Edged|Blunt|Piercing))|Trap(?=\.(?:Ceiling|Floor|Wall)))\.([^.]+)", RegexOptions.IgnoreCase, "en-US")]
+        private static partial Regex SchematicSubTypeRegex();
+        
         private static (string category, string subType) CategoryAndSubTypeFromTags(FGameplayTagContainer tags)
         {
             foreach (var tag in tags.GameplayTags)
             {
-                var match = schematicSubTypeRegex.Match(tag.Text);
+                var match = SchematicSubTypeRegex().Match(tag.Text);
 
                 if (match.Success)
                 {
@@ -390,6 +420,28 @@ namespace BanjoBotAssets.Exporters.Groups
                 }
             }
 
+            if (fields.CraftingRowPrefix is string craftPrefix && craftingTable != null)
+            {
+                string craftRow;
+                if (craftPrefix.StartsWith("Ranged.", StringComparison.OrdinalIgnoreCase) || craftPrefix.StartsWith("Melee.", StringComparison.OrdinalIgnoreCase))
+                {
+                    craftRow = $"{craftPrefix}.{rarity.ToShortString()}.{parsed.EvoType}.T{parsed.Tier:00}";
+                }
+                else if (craftPrefix.StartsWith("Trap.", StringComparison.OrdinalIgnoreCase))
+                {
+                    craftRow = $"{craftPrefix}.{rarity.ToShortString()}.T{parsed.Tier:00}";
+                }
+                else
+                {
+                    craftRow = craftPrefix;
+                }
+
+                if (craftingTable.TryGetValue(craftRow, out var recipe))
+                {
+                    itemData.CraftingCost = ConvertCraftingCost(recipe);
+                }
+            }
+
             if (slotLoadoutsTable?.TryGetValue(fields.AlterationSlotsLoadoutRow, out var slotLoadout) == true &&
                 slotLoadout.GetOrDefault<FStructFallback[]>("AlterationSlots") is FStructFallback[] slots)
             {
@@ -435,6 +487,15 @@ namespace BanjoBotAssets.Exporters.Groups
 
             _ => Resources.Field_Schematic_Invalid,
         };
+
+        private static Dictionary<string, int> ConvertCraftingCost(FStructFallback recipe)
+        {
+            var recipeCosts = recipe.GetOrDefault<FFortItemQuantityPair[]>("RecipeCosts");
+            return recipeCosts.ToDictionary(
+                p => $"{p.ItemPrimaryAssetId.PrimaryAssetType.Name.Text}:{p.ItemPrimaryAssetId.PrimaryAssetName.Text}",
+                p => p.Quantity,
+                StringComparer.OrdinalIgnoreCase);
+        }
 
         private AlterationSlot? ConvertAlterationSlot(FStructFallback slot, ISet<string> namedExclusions)
         {
@@ -600,20 +661,5 @@ namespace BanjoBotAssets.Exporters.Groups
                 Range = row.GetOrDefault<float>(range),
             };
         }
-
-        [GeneratedRegex("(?<!/Schematics/.*)/(?:WID_|TID_|G_|Ingredient_|AmmoData)[^/]+\\.uasset$", RegexOptions.IgnoreCase | RegexOptions.Compiled, "en-US")]
-        private static partial Regex CraftingResultNameRegex();
-        [GeneratedRegex(
-            """
-            ^
-            (?<key>.+?_(?<rarity>C|UC|R|VR|SR|UR))?     # key includes path and rarity
-            (?:_(?<evotype>Ore|Crystal))?               # evolution type for tier 4+
-            (?:_?T(?<tier>\d+))?                        # tier
-            (?:\.[^/]*)?                                # (ignored) extension
-            $
-            """, RegexOptions.IgnoreCase | RegexOptions.Compiled | RegexOptions.IgnorePatternWhitespace, "en-US")]
-        private static partial Regex SchematicAssetNameRegex();
-        [GeneratedRegex(@"^(?:Weapon\.(?:Ranged|Melee\.(?:Edged|Blunt|Piercing))|Trap(?=\.(?:Ceiling|Floor|Wall)))\.([^.]+)", RegexOptions.IgnoreCase, "en-US")]
-        private static partial Regex SchematicSubTypeRegex();
     }
 }

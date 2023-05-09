@@ -66,6 +66,10 @@ namespace BanjoBotAssets.Extensions
                     config.GetRequiredSection("PerformanceOptions").Bind(options);
                 });
 
+            // post-exporter for crafting recipes
+            services
+                .AddTransient<IPostExporter, CraftingRecipesPostExporter>();
+
             // post-exporter for image files and its options
             services
                 .AddTransient<IPostExporter, ImageFilesPostExporter>()

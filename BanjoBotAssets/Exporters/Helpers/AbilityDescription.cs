@@ -133,6 +133,11 @@ namespace BanjoBotAssets.Exporters.Helpers
             var multiplier = row.Get<float>("Value");
             var curveTableRow = row.Get<FCurveTableRowHandle>("Curve");
 
+            if (curveTableRow.RowName.IsNone)
+            {
+                return null;
+            }
+
             // find the right FName to use, what a pain
             var rowNameStr = curveTableRow.RowName.Text;
             var curveName = curveTableRow.CurveTable?.RowMap.Keys.FirstOrDefault(k => k.Text == rowNameStr) ?? default;

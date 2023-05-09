@@ -194,6 +194,7 @@ namespace BanjoBotAssets.Exporters.Helpers
             }
         }
 
+        [Obsolete]
         public void AddCraftingRecipe(string name, IReadOnlyDictionary<string, int> ingredients)
         {
             craftingRecipes.TryAdd(name, ingredients);

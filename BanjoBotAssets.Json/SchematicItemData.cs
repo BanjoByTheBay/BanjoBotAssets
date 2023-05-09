@@ -33,6 +33,8 @@ namespace BanjoBotAssets.Json
         public RangedWeaponStats? RangedWeaponStats { get; set; }
         public MeleeWeaponStats? MeleeWeaponStats { get; set; }
         public TrapStats? TrapStats { get; set; }
+
+        public Dictionary<string, int>? CraftingCost { get; set; }
     }
 
     /// <summary>
