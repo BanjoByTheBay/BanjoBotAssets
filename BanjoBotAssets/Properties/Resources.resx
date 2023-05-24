@@ -164,6 +164,9 @@
   <data name="Error_MissingMappingsJsonArray" xml:space="preserve">
     <value>Couldn't reload mappings, json array was empty</value>
   </data>
+  <data name="Error_NoGameplayEffectsInAbility" xml:space="preserve">
+    <value>No gameplay effects in ability {Ability}</value>
+  </data>
   <data name="Error_NotAManager" xml:space="preserve">
     <value>Not a manager</value>
   </data>
@@ -173,6 +176,9 @@
   </data>
   <data name="Error_UncaughtExceptionWhileReloadingMappings" xml:space="preserve">
     <value>Uncaught exception while reloading mappings from FNCentral</value>
+  </data>
+  <data name="Error_UnexpectedNumberOfGadgetsInAbility" xml:space="preserve">
+    <value>Unexpected number of gadgets in ability {Ability} ({Count})</value>
   </data>
   <data name="Field_Defender_DefaultName" xml:space="preserve">
     <value>Defender</value>
@@ -547,8 +553,8 @@
     <comment>0=table row ID</comment>
   </data>
   <data name="Warning_MissingCurveTableRow" xml:space="preserve">
-    <value>WARNING: Curve table has no row {TableRow}</value>
-    <comment>0=row ID</comment>
+    <value>WARNING: Curve table {Table} has no row {TableRow}</value>
+    <comment>0=table name, 1=row ID</comment>
   </data>
   <data name="Warning_MissingEventQuestMapData" xml:space="preserve">
     <value>WARNING: Can't find event quest map data</value>

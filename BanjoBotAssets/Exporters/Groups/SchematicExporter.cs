@@ -132,16 +132,6 @@ namespace BanjoBotAssets.Exporters.Groups
             await base.ExportAssetsAsync(progress, output, cancellationToken);
         }
 
-        private async Task<UDataTable?> TryLoadTableAsync(string? path)
-        {
-            if (path == null)
-                return null;
-
-            var file = provider[path];
-            Interlocked.Increment(ref assetsLoaded);
-            return await provider.LoadObjectAsync<UDataTable>(file.PathWithoutExtension);
-        }
-
         /* Rarity is included in "key" so groups will be restricted to a single rarity.
          * For example, the Ski Cleaver and Claxe have the same filename pattern, and non-overlapping rarities,
          * but they must be considered separate weapons because they have separate stats rows. (They

@@ -47,6 +47,16 @@ namespace BanjoBotAssets.Exporters
             Interlocked.Increment(ref assetsLoaded);
         }
 
+        protected async Task<UDataTable?> TryLoadTableAsync(string? path)
+        {
+            if (path == null)
+                return null;
+
+            var file = provider[path];
+            CountAssetLoaded();
+            return await provider.LoadObjectAsync<UDataTable>(file.PathWithoutExtension);
+        }
+
         public abstract Task ExportAssetsAsync(IProgress<ExportProgress> progress, IAssetOutput output, CancellationToken cancellationToken);
         protected abstract bool InterestedInAsset(string name);
 

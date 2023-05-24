@@ -15,6 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with BanjoBotAssets.  If not, see <http://www.gnu.org/licenses/>.
  */
+using CUE4Parse.FN.Structs.GA;
 using CUE4Parse.UE4.Objects.Engine;
 
 namespace BanjoBotAssets.Exporters.Helpers
@@ -128,28 +129,8 @@ namespace BanjoBotAssets.Exporters.Helpers
 
         private float? GetValueFromCurveTable(FStructFallback tokenDef, string property)
         {
-            var row = tokenDef.Get<FStructFallback>(property);
-
-            var multiplier = row.Get<float>("Value");
-            var curveTableRow = row.Get<FCurveTableRowHandle>("Curve");
-
-            if (curveTableRow.RowName.IsNone)
-            {
-                return null;
-            }
-
-            // find the right FName to use, what a pain
-            var rowNameStr = curveTableRow.RowName.Text;
-            var curveName = curveTableRow.CurveTable?.RowMap.Keys.FirstOrDefault(k => k.Text == rowNameStr) ?? default;
-
-            if (curveName.IsNone)
-            {
-                logger.LogWarning(Resources.Warning_MissingCurveTableRow, rowNameStr);
-                return null;
-            }
-
-            var curve = curveTableRow.CurveTable?.FindCurve(curveName);
-            return curve?.Eval(1) * multiplier;
+            var row = tokenDef.Get<FScalableFloat>(property);
+            return row.Curve.RowName.IsNone ? null : row.GetScaledValue(logger);
         }
 
         private static string ApplyFormatting(float value, FName formatting)
@@ -221,13 +202,10 @@ namespace BanjoBotAssets.Exporters.Helpers
             return value;
         }
 
-        private static readonly Regex tokenRegex = TokenRegex();
-        private static readonly Regex tagRegex = TagRegex();
-
         private static string FormatMarkup(string markup, Dictionary<string, string> tokens)
         {
-            markup = tokenRegex.Replace(markup, match => tokens.GetValueOrDefault(match.Groups[1].Value, match.Value));
-            return tagRegex.Replace(markup, match => match.Groups[1].Value);
+            markup = TokenRegex().Replace(markup, match => tokens.GetValueOrDefault(match.Groups[1].Value, match.Value));
+            return TagRegex().Replace(markup, match => match.Groups[1].Value);
         }
 
         [GeneratedRegex(@"\[(Ability\.Line\d+)\]", RegexOptions.IgnoreCase, "en-US")]
