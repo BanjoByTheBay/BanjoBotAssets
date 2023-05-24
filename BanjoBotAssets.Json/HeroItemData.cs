@@ -15,6 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with BanjoBotAssets.  If not, see <http://www.gnu.org/licenses/>.
  */
+using Newtonsoft.Json;
 using System.Diagnostics.CodeAnalysis;
 
 namespace BanjoBotAssets.Json
@@ -31,5 +32,26 @@ namespace BanjoBotAssets.Json
         [DisallowNull]
         public string? CommanderPerkDescription { get; set; }
         public string? UnlocksTeamPerk { get; set; }
+        public PerkRequirement? HeroPerkRequirement { get; set; }
+
+        [DisallowNull]
+        public string[]? HeroAbilities { get; set; }
+    }
+
+    /// <summary>
+    /// Represents a requirement for a perk to be activated in a hero loadout.
+    /// </summary>
+    [JsonObject(ItemNullValueHandling = NullValueHandling.Ignore)]
+    public sealed class PerkRequirement
+    {
+        public string Description { get; set; } = "";
+        /// <summary>
+        /// One or more tags indicating granted abilities that must be present on the commander for this perk to be active.
+        /// </summary>
+        public string[]? CommanderTag { get; set; }
+        /// <summary>
+        /// The hero class of the commander that must be selected for this perk to be active.
+        /// </summary>
+        public string? CommanderSubType { get; set; }
     }
 }

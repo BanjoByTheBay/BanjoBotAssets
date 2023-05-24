@@ -26,15 +26,15 @@ namespace BanjoBotAssets.Extensions
         /// Returns the scalable float's <see cref="FScalableFloat.Value">Value</see>, multiplied by
         /// the value read from the <see cref="FScalableFloat.Curve">Curve</see> if it exists.
         /// </summary>
-        /// <param name="row"></param>
-        /// <returns></returns>
+        /// <param name="row">The scalable float.</param>
+        /// <returns>The scaled value.</returns>
         public static float GetScaledValue(this FScalableFloat row, ILogger logger)
         {
             var multiplier = row.Value;
             var curveTableRow = row.Curve;
             var curveTable = curveTableRow?.CurveTable;
 
-            if (curveTableRow == null || curveTableRow.RowName.IsNone || curveTable == null)
+            if (curveTableRow?.RowName.IsNone != false || curveTable == null)
             {
                 return multiplier;
             }

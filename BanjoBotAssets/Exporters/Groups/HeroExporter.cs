@@ -16,14 +16,16 @@
  * along with BanjoBotAssets.  If not, see <http://www.gnu.org/licenses/>.
  */
 using CUE4Parse.UE4.Objects.GameplayTags;
+using CUE4Parse.Utils;
 
 namespace BanjoBotAssets.Exporters.Groups
 {
     internal sealed record HeroItemGroupFields(string DisplayName, string? Description, string? SubType,
-        string HeroPerk, string HeroPerkDescription, string CommanderPerk, string CommanderPerkDescription)
+        string HeroPerk, string HeroPerkDescription, string CommanderPerk, string CommanderPerkDescription,
+        PerkRequirement? HeroPerkRequirement, string[] HeroAbilities)
         : BaseItemGroupFields(DisplayName, Description, SubType)
     {
-        public HeroItemGroupFields() : this("", null, null, "", "", "", "") { }
+        public HeroItemGroupFields() : this("", null, null, "", "", "", "", null, Array.Empty<string>()) { }
     }
 
     internal sealed partial class HeroExporter : GroupExporter<UFortHeroType, BaseParsedItemName, HeroItemGroupFields, HeroItemData>
@@ -81,18 +83,29 @@ namespace BanjoBotAssets.Exporters.Groups
             var result = await base.ExtractCommonFieldsAsync(asset, grouping);
 
             var hgd = asset.HeroGameplayDefinition;
-            var (heroPerk, heroPerkDesc) = await GetPerkTextAsync(hgd, "HeroPerk");
-            var (commanderPerk, commanderPerkDesc) = await GetPerkTextAsync(hgd, "CommanderPerk");
+
+            // hero/commander perk
+            var (heroPerk, heroPerkDesc, heroPerkRequirement) = await GetPerkAsync(hgd, "HeroPerk");
+            var (commanderPerk, commanderPerkDesc, _) = await GetPerkAsync(hgd, "CommanderPerk");
+
+            // abilities
+            var tierAbilityKits = hgd?.GetOrDefault<FStructFallback[]>("TierAbilityKits");
+            var heroAbilities = tierAbilityKits != null ? Array.ConvertAll(tierAbilityKits, GetHeroAbilityID) : Array.Empty<string>();
 
             return result with
             {
                 HeroPerk = heroPerk,
                 HeroPerkDescription = heroPerkDesc,
+                HeroPerkRequirement = heroPerkRequirement,
                 CommanderPerk = commanderPerk,
                 CommanderPerkDescription = commanderPerkDesc,
                 SubType = GetHeroClass(asset.GameplayTags),
+                HeroAbilities = heroAbilities,
             };
         }
+
+        private static string GetHeroAbilityID(FStructFallback kit) =>
+            kit.GetSoftAssetPath("GrantedAbilityKit") is string s ? $"Ability:{s.SubstringAfterLast('.')}" : "";
 
         protected override EFortRarity GetRarity(BaseParsedItemName parsedName, UFortHeroType primaryAsset, HeroItemGroupFields fields)
         {
@@ -103,18 +116,49 @@ namespace BanjoBotAssets.Exporters.Groups
             return base.GetRarity(parsedName, primaryAsset, fields);
         }
 
-        private async Task<(string displayName, string description)> GetPerkTextAsync(UObject? gameplayDefinition, string perkProperty)
+        private async Task<(string displayName, string description, PerkRequirement? requirement)> GetPerkAsync(UObject? gameplayDefinition, string perkProperty)
         {
             var perk = gameplayDefinition?.GetOrDefault<FStructFallback>(perkProperty);
             if (perk == null)
-                return ($"<{Resources.Field_Hero_NoGrantedAbility}>", $"<{Resources.Field_NoDescription}>");
+                return ($"<{Resources.Field_Hero_NoGrantedAbility}>", $"<{Resources.Field_NoDescription}>", null);
 
             Interlocked.Increment(ref assetsLoaded);
             var grantedAbilityKit = await perk.GetOrDefault<FSoftObjectPath>("GrantedAbilityKit").LoadAsync(provider);
             var displayName = grantedAbilityKit.GetOrDefault<FText>("DisplayName")?.Text ?? $"<{grantedAbilityKit.Name ?? Resources.Field_Hero_NoGrantedAbility}>";
             var description = await abilityDescription.GetAsync(grantedAbilityKit, this) ?? $"<{Resources.Field_NoDescription}>";
-            return (displayName, description);
+
+            PerkRequirement? requirement = null;
+            if (perk.GetOrDefault<FStructFallback>("RequiredCommanderTagQuery") is FStructFallback commanderTagQuery)
+            {
+                requirement = new PerkRequirement
+                {
+                    Description = perk.GetOrDefault<FText>("CommanderRequirementsText")?.Text ?? "",
+                };
+
+                // instead of parsing the TagDictionary and numeric QueryTokenStream, parse the textual AutoDescription
+                var expression = commanderTagQuery.GetOrDefault<string>("AutoDescription");
+                if (CommanderTagsQueryRegex().Match(expression) is { Success: true } match)
+                {
+                    var tags = match.Groups["tag"].Captures.Select(c => c.Value).ToArray();
+
+                    // these are either hero ability tags (Granted.Ability.CLASSNAME.ABILITYNAME),
+                    // or class perk tags (Granted.Perk.CLASSNAME.PERKNAME[.*]) which we interpret as a class requirement
+                    if (tags.Length == 1 && tags[0].StartsWith("Granted.Perk.", StringComparison.OrdinalIgnoreCase))
+                    {
+                        requirement.CommanderSubType = tags[0].Split('.')[2];
+                    }
+                    else
+                    {
+                        requirement.CommanderTag = tags;
+                    }
+                }
+            }
+
+            return (displayName, description, requirement);
         }
+
+        [GeneratedRegex("^\\s*(?:ANY|ALL)\\(\\s*(?<tag>[a-z0-9.]+)(?:\\s*,\\s*(?<tag>[a-z0-9.]+))*\\s*\\)\\s*$", RegexOptions.IgnoreCase, "en-US")]
+        private static partial Regex CommanderTagsQueryRegex();
 
         protected override void LogAssetName(string baseName, HeroItemGroupFields fields)
         {
@@ -168,6 +212,8 @@ namespace BanjoBotAssets.Exporters.Groups
             itemData.HeroPerkDescription = fields.HeroPerkDescription;
             itemData.CommanderPerk = fields.CommanderPerk;
             itemData.CommanderPerkDescription = fields.CommanderPerkDescription;
+            itemData.HeroAbilities = fields.HeroAbilities;
+            itemData.HeroPerkRequirement = fields.HeroPerkRequirement;
 
             if (heroToTeamPerk.TryGetValue($"Hero:{Path.GetFileNameWithoutExtension(path)}", out var teamPerk))
             {
