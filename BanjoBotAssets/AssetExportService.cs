@@ -121,6 +121,9 @@ namespace BanjoBotAssets
             // from cache or from an external API.
             await DecryptGameFilesAsync(cancellationToken);
 
+            // load virtual paths
+            LoadVirtualPaths();
+
             // load the type mappings CUE4Parse uses to parse UE structures
             await LoadMappingsAsync(cancellationToken);
 
@@ -196,6 +199,12 @@ namespace BanjoBotAssets
                 logger.LogDebug(Resources.Status_SubmittingDynamicKey, dk.PakFilename);
                 provider.SubmitKey(new FGuid(dk.PakGuid), new FAesKey(dk.Key));
             }
+        }
+
+        private void LoadVirtualPaths()
+        {
+            var numPaths = provider.LoadVirtualPaths();
+            logger.LogInformation(Resources.Status_LoadedVirtualPaths, numPaths);
         }
 
         private async Task LoadMappingsAsync(CancellationToken cancellationToken)

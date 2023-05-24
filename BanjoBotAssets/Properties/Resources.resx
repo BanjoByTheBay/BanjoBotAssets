@@ -416,6 +416,9 @@
     <value>Loaded cached mappings from {File}</value>
     <comment>0=filename</comment>
   </data>
+  <data name="Status_LoadedVirtualPaths" xml:space="preserve">
+    <value>Loaded {Count} virtual paths</value>
+  </data>
   <data name="Status_LoadingAesFromFile" xml:space="preserve">
     <value>Loading AES keys from {File}</value>
     <comment>0=filename</comment>

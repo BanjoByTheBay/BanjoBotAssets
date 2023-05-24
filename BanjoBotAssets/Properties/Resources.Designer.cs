@@ -889,6 +889,15 @@ namespace BanjoBotAssets.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Loaded {Count} virtual paths.
+        /// </summary>
+        internal static string Status_LoadedVirtualPaths {
+            get {
+                return ResourceManager.GetString("Status_LoadedVirtualPaths", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Loading AES keys from {File}.
         /// </summary>
         internal static string Status_LoadingAesFromFile {
