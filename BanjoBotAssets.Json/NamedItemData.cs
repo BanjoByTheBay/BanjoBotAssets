@@ -36,6 +36,8 @@ namespace BanjoBotAssets.Json
         [JsonProperty(Order = 4)]
         public string? SubType { get; set; }
         public string? Rarity { get; set; }
+        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
+        public bool IsPermanent { get; set; }
         public int? Tier { get; set; }
         [JsonProperty(Order = OrderedPropertiesContractResolver.DefaultOrder + 2)]
         public SortedDictionary<ImageType, string>? ImagePaths { get; set; }
