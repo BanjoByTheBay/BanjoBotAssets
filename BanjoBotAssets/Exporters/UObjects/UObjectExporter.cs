@@ -131,6 +131,7 @@ namespace BanjoBotAssets.Exporters.UObjects
                     var templateId = $"{Type}:{uobject.Name}";
                     var displayName = uobject.GetOrDefault<FText>("DisplayName")?.Text ?? $"<{uobject.Name}>";
                     var description = uobject.GetOrDefault<FText>("Description")?.Text;
+                    var isInventoryLimitExempt = !uobject.GetOrDefault("bInventorySizeLimited", true);
 
                     var itemData = new TItemData
                     {
@@ -139,6 +140,7 @@ namespace BanjoBotAssets.Exporters.UObjects
                         Type = Type,
                         DisplayName = displayName.Trim(),
                         Description = description,
+                        IsInventoryLimitExempt = isInventoryLimitExempt,
                     };
 
                     if (uobject.GetOrDefault<EFortItemTier>("Tier") is EFortItemTier tier && tier != default)
