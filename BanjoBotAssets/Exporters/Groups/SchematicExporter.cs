@@ -15,6 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with BanjoBotAssets.  If not, see <http://www.gnu.org/licenses/>.
  */
+using BanjoBotAssets.UExports;
 using CUE4Parse.FN.Enums.FortniteGame;
 using CUE4Parse.UE4.Objects.GameplayTags;
 using System.Collections.Concurrent;
@@ -35,7 +36,8 @@ namespace BanjoBotAssets.Exporters.Groups
     {
         private readonly Dictionary<string, string> craftingResultPaths = new(StringComparer.OrdinalIgnoreCase);
         private string? craftingPath, alterationGroupPath, slotDefsPath, slotLoadoutsPath, meleeWeaponsPath, rangedWeaponsPath, trapsPath, durabilityPath, namedExclusionsPath;
-        private Dictionary<string, FStructFallback>? craftingTable, alterationGroupTable, slotDefsTable, slotLoadoutsTable, meleeWeaponsTable, rangedWeaponsTable, trapsTable, durabilityTable, namedExclusionsTable;
+        private Dictionary<string, FRecipe>? craftingTable;
+        private Dictionary<string, FStructFallback>? alterationGroupTable, slotDefsTable, slotLoadoutsTable, meleeWeaponsTable, rangedWeaponsTable, trapsTable, durabilityTable, namedExclusionsTable;
 
         protected override string Type => "Schematic";
 
@@ -119,7 +121,7 @@ namespace BanjoBotAssets.Exporters.Groups
             var durabilityTask = TryLoadTableAsync(durabilityPath);
             var namedExclusionsTask = TryLoadTableAsync(namedExclusionsPath);
 
-            craftingTable = (await craftingTask)?.ToDictionary();
+            craftingTable = (await craftingTask)?.ToDictionary<FRecipe>();
             alterationGroupTable = (await alterationGroupTask)?.ToDictionary();
             slotDefsTable = (await slotDefsTask)?.ToDictionary();
             slotLoadoutsTable = (await slotLoadoutsTask)?.ToDictionary();
@@ -181,7 +183,7 @@ namespace BanjoBotAssets.Exporters.Groups
                 return null;
             }
 
-            var recipeResults = craftingRow.GetOrDefault<FFortItemQuantityPair[]>("RecipeResults");
+            var recipeResults = craftingRow.RecipeResults;
             var assetName = recipeResults[0].ItemPrimaryAssetId.PrimaryAssetName.Text;
             if (!craftingResultPaths.TryGetValue(assetName, out var widOrTidPath))
             {
@@ -303,7 +305,7 @@ namespace BanjoBotAssets.Exporters.Groups
 
         [GeneratedRegex(@"^(?:Weapon\.(?:Ranged|Melee\.(?:Edged|Blunt|Piercing))|Trap(?=\.(?:Ceiling|Floor|Wall)))\.([^.]+)", RegexOptions.IgnoreCase, "en-US")]
         private static partial Regex SchematicSubTypeRegex();
-        
+
         private static (string category, string subType) CategoryAndSubTypeFromTags(FGameplayTagContainer tags)
         {
             foreach (var tag in tags.GameplayTags)
@@ -478,10 +480,9 @@ namespace BanjoBotAssets.Exporters.Groups
             _ => Resources.Field_Schematic_Invalid,
         };
 
-        private static Dictionary<string, int> ConvertCraftingCost(FStructFallback recipe)
+        private static Dictionary<string, int> ConvertCraftingCost(FRecipe recipe)
         {
-            var recipeCosts = recipe.GetOrDefault<FFortItemQuantityPair[]>("RecipeCosts");
-            return recipeCosts.ToDictionary(
+            return recipe.RecipeCosts.ToDictionary(
                 p => $"{p.ItemPrimaryAssetId.PrimaryAssetType.Name.Text}:{p.ItemPrimaryAssetId.PrimaryAssetName.Text}",
                 p => p.Quantity,
                 StringComparer.OrdinalIgnoreCase);
