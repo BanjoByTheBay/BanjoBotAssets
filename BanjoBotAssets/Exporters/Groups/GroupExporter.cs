@@ -31,6 +31,32 @@ namespace BanjoBotAssets.Exporters.Groups
         public bool IsPermanent { get; set; }
     }
 
+    /// <summary>
+    /// A base class for exporting items that have variants for different rarities and tiers.
+    /// </summary>
+    /// <typeparam name="TAsset">The type of the asset.</typeparam>
+    /// <typeparam name="TParsedName">A type containing properties extracted from each variant's
+    /// asset name, which are combined with the data extracted from the group's primary asset to
+    /// export the variant.</typeparam>
+    /// <typeparam name="TFields">A type containing properties extracted from a group's primary
+    /// asset, which are combined with the data extracted from each variant's asset name to
+    /// export the variant.</typeparam>
+    /// <typeparam name="TItemData">The type of the exported item.</typeparam>
+    /// <remarks>
+    /// <para>This base class is intended for items such as heroes and schematics, where most
+    /// properties of the item are the same across all variants, and the differences can be
+    /// determined by parsing the asset names.</para>
+    /// <para><see cref="ParseAssetName(string)">ParseAssetName</see> is called for every matched
+    /// asset, and the returned <see cref="BaseParsedItemName.BaseName">BaseName</see> is used to
+    /// group the assets.</para>
+    /// <para>Each group's primary asset, chosen by
+    /// <see cref="SelectPrimaryAsset(IGrouping{string?, string})">SelectPrimaryAsset</see>, is
+    /// loaded, and data common to all assets in the group is extracted from it by
+    /// <see cref="ExtractCommonFieldsAsync(TAsset, IGrouping{string?, string})">ExtractCommonFieldsAsync</see>.</para>
+    /// <para><see cref="ExportAssetAsync(TParsedName, TAsset, TFields, string, TItemData)">ExportAssetAsync</see>
+    /// is then called to produce the exported item for each asset in the group, by combining the
+    /// common fields with each variant's parsed name.</para>
+    /// </remarks>
     internal abstract class GroupExporter<TAsset, TParsedName, TFields, TItemData> : BaseExporter
         where TAsset : UObject
         where TParsedName : BaseParsedItemName
@@ -44,7 +70,17 @@ namespace BanjoBotAssets.Exporters.Groups
         {
         }
 
+        /// <summary>
+        /// The asset type, which appears before the colon in the asset's template ID.
+        /// </summary>
         protected abstract string Type { get; }
+        /// <summary>
+        /// Overridden in a derived class to parse the asset names, separating the base name
+        /// used to group the assets from other properties that differ between variants within
+        /// a group (such as rarity and tier).
+        /// </summary>
+        /// <param name="name">The name of the asset.</param>
+        /// <returns>An instance of <typeparamref name="TParsedName"/>.</returns>
         protected abstract TParsedName? ParseAssetName(string name);
 
         private void Report(IProgress<ExportProgress> progress, string current)
@@ -59,6 +95,7 @@ namespace BanjoBotAssets.Exporters.Groups
             });
         }
 
+        /// <inheritdoc/>
         public override async Task ExportAssetsAsync(IProgress<ExportProgress> progress, IAssetOutput output, CancellationToken cancellationToken)
         {
             var uniqueAssets = assetPaths.ToLookup(path => ParseAssetName(path)?.BaseName, StringComparer.OrdinalIgnoreCase);
@@ -108,8 +145,6 @@ namespace BanjoBotAssets.Exporters.Groups
                     }
 
                     var fields = await ExtractCommonFieldsAsync(asset, grouping);
-
-                    LogAssetName(baseName, fields);
 
                     foreach (var path in grouping)
                     {
@@ -168,21 +203,70 @@ namespace BanjoBotAssets.Exporters.Groups
             logger.LogInformation(Resources.Status_ExportedGroup, Type, assetsToProcess.Count(), failedAssets.Count);
         }
 
+        /// <summary>
+        /// Overridden in a derived class to combine the common fields from a group's primary
+        /// asset with the fields parsed from a variant's name.
+        /// </summary>
+        /// <param name="parsed">The fields parsed from the variant's name.</param>
+        /// <param name="primaryAsset">The loaded primary asset of the group.</param>
+        /// <param name="fields">The common fields extracted from the primary asset.</param>
+        /// <param name="path">The variant's asset path.</param>
+        /// <param name="itemData">The exported item for this variant.</param>
+        /// <returns><see langword="true"/> if this variant should be exported, or
+        /// <see langword="false"/> if it should be skipped.</returns>
+        /// <remarks>
+        /// The base properties defined on <see cref="NamedItemData"/> are already populated on
+        /// <paramref name="itemData"/> by the time this method is called. Generally, this method
+        /// only needs to be overridden if <typeparamref name="TItemData"/> contains additional
+        /// properties that need to be populated. The default implementation does nothing and
+        /// returns <see langword="true"/>.
+        /// </remarks>
         protected virtual Task<bool> ExportAssetAsync(TParsedName parsed, TAsset primaryAsset, TFields fields, string path, TItemData itemData)
         {
             return Task.FromResult(true);
         }
 
+        /// <summary>
+        /// Overridden in a derived class to select one asset from a group to be loaded as
+        /// the primary asset.
+        /// </summary>
+        /// <param name="assetGroup">The set of asset paths comprising the group.</param>
+        /// <returns>The path of the asset from which the common fields should be read.</returns>
+        /// <remarks>
+        /// The default implementation returns the first asset in the group.
+        /// </remarks>
         protected virtual string SelectPrimaryAsset(IGrouping<string?, string> assetGroup)
         {
             return assetGroup.First();
         }
 
+        /// <summary>
+        /// Overridden in a derived class to determine whether a group should be exported
+        /// by examining the primary asset.
+        /// </summary>
+        /// <param name="asset">The group's primary asset.</param>
+        /// <returns><see langword="true"/> to continue processing the group, or
+        /// <see langword="false"/> to skip it.</returns>
+        /// <remarks>
+        /// The default implementation always returns <see langword="true"/>.
+        /// </remarks>
         protected virtual bool WantThisAsset(TAsset asset)
         {
             return true;
         }
 
+        /// <summary>
+        /// Overridden in a derived class to extract the common fields from a group's primary asset.
+        /// </summary>
+        /// <param name="asset">The group's primary asset.</param>
+        /// <param name="grouping">The set of asset paths comprising the group.</param>
+        /// <returns>An instance of <typeparamref name="TFields"/> containing data extracted from
+        /// the primary asset.</returns>
+        /// <remarks>
+        /// The default implementation extracts all fields defined on <see cref="BaseItemGroupFields"/>,
+        /// with the exception of <see cref="BaseItemGroupFields.SubType"/>, which is set to
+        /// <see langword="null"/>.
+        /// </remarks>
         protected virtual Task<TFields> ExtractCommonFieldsAsync(TAsset asset, IGrouping<string?, string> grouping)
         {
             return Task.FromResult(new TFields() with
@@ -196,11 +280,20 @@ namespace BanjoBotAssets.Exporters.Groups
             });
         }
 
-        protected virtual void LogAssetName(string baseName, TFields fields)
-        {
-            //logger.LogInformation("{0} is {1}", baseName, fields.DisplayName);
-        }
-
+        /// <summary>
+        /// Overridden in a derived class to adjust the rarity of a variant when the rarity displayed
+        /// in game differs from the rarity parsed from the variant's name.
+        /// </summary>
+        /// <param name="parsedName">The fields parsed from the variant's name.</param>
+        /// <param name="primaryAsset">The group's primary asset.</param>
+        /// <param name="fields">The fields extracted from the primary asset.</param>
+        /// <returns>The in-game rarity.</returns>
+        /// <remarks>
+        /// <para>The default implementation simply translates the rarity parsed from the variant's name
+        /// into the corresponding <see cref="EFortRarity"/> value.</para>
+        /// <para>Most mythic items in STW are identified as legendary ("SR") in the asset names, so this method
+        /// must be overridden to correctly classify them as mythic.</para>
+        /// </remarks>
         protected virtual EFortRarity GetRarity(TParsedName parsedName, TAsset primaryAsset, TFields fields) =>
             parsedName.Rarity.ToUpperInvariant() switch
             {
@@ -212,11 +305,38 @@ namespace BanjoBotAssets.Exporters.Groups
                 _ => EFortRarity.Uncommon,
             };
 
+        /// <summary>
+        /// Overridden in a derived class to adjust the display name of a variant when the display name
+        /// extracted from the primary asset cannot be used as-is.
+        /// </summary>
+        /// <param name="parsedName">The fields parsed from the variant's name.</param>
+        /// <param name="primaryAsset">The group's primary asset.</param>
+        /// <param name="fields">The fields extracted from the primary asset.</param>
+        /// <returns>The display name.</returns>
+        /// <remarks>
+        /// The default implementation returns the display name extracted from the primary asset.
+        /// </remarks>
         protected virtual string GetDisplayName(TParsedName parsedName, TAsset primaryAsset, TFields fields) => fields.DisplayName;
 
+        /// <summary>
+        /// Overridden in a derived class to adjust the description of a variant when the description
+        /// extracted from the primary asset cannot be used as-is.
+        /// </summary>
+        /// <param name="parsedName">The fields parsed from the variant's name.</param>
+        /// <param name="primaryAsset">The group's primary asset.</param>
+        /// <param name="fields">The fields extracted from the primary asset.</param>
+        /// <returns>The display name.</returns>
+        /// <remarks>
+        /// The default implementation returns the description extracted from the primary asset.
+        /// </remarks>
         protected virtual string? GetDescription(TParsedName parsedName, TAsset primaryAsset, TFields fields) => fields.Description;
     }
 
+    /// <summary>
+    /// A base class for exporting items that have variants for different rarities and tiers, and that
+    /// don't have any additional properties that need to be populated.
+    /// </summary>
+    /// <typeparam name="TAsset">The type of the asset.</typeparam>
     internal abstract class GroupExporter<TAsset> : GroupExporter<TAsset, BaseParsedItemName, BaseItemGroupFields, NamedItemData>
         where TAsset : UObject
     {

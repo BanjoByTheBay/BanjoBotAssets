@@ -160,12 +160,6 @@ namespace BanjoBotAssets.Exporters.Groups
         [GeneratedRegex("^\\s*(?:ANY|ALL)\\(\\s*(?<tag>[a-z0-9.]+)(?:\\s*,\\s*(?<tag>[a-z0-9.]+))*\\s*\\)\\s*$", RegexOptions.IgnoreCase, "en-US")]
         private static partial Regex CommanderTagsQueryRegex();
 
-        protected override void LogAssetName(string baseName, HeroItemGroupFields fields)
-        {
-            //logger.LogInformation("{0} is {1} ({2}), granting {3} / {4}",
-            //    baseName, fields.DisplayName, fields.SubType, fields.HeroPerk, fields.CommanderPerk);
-        }
-
         public override async Task ExportAssetsAsync(IProgress<ExportProgress> progress, IAssetOutput output, CancellationToken cancellationToken)
         {
             if (itemToQuestPath != null && questRewardsPath != null)
