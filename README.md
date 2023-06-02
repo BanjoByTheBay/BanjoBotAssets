@@ -24,7 +24,7 @@ dotnet run -- /only SchematicExporter,AssetRegistryExporter,CraftingRecipeExport
 To control whether images are exported, use `/ImageExportOptions`:
 
 ```
-/ImageExportOptions:Type:LargePreview PathOnly /ImageExportOptions:Type:SmallPreview PathOnly /ImageExportOptions:Type:Icon PathOnly
+/ImageExportOptions:Type:LargePreview PathOnly /ImageExportOptions:Type:SmallPreview PathOnly /ImageExportOptions:Type:Icon PathOnly /ImageExportOptions:Type:LoadingScreen PathOnly /ImageExportOptions:Type:PackImage PathOnly
 ```
 
 To limit multithreading, use `/PerformanceOptions`:
