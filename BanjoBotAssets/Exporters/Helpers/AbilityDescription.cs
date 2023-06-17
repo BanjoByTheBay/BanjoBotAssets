@@ -150,7 +150,7 @@ namespace BanjoBotAssets.Exporters.Helpers
                     return value.ToString("0.#", CultureInfo.CurrentCulture);
                 case "TTT_List::NewEnumerator4":
                     // Subtract From 1
-                    return ((1 - value) * 100).ToString("0.#", CultureInfo.CurrentCulture);
+                    return Math.Abs((1 - value) * 100).ToString("0.#", CultureInfo.CurrentCulture);
                 case "TTT_List::NewEnumerator5":
                     // Distance to Tiles
                     return (value / 512).ToString("0.###", CultureInfo.CurrentCulture);
