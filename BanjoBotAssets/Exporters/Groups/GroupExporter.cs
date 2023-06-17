@@ -101,7 +101,7 @@ namespace BanjoBotAssets.Exporters.Groups
         {
             // grouping is deprecated: it misses some differences between variants, and actually seems to hurt performance now that we're using CachingFileProvider.
             // TODO: Rewrite all GroupExporter subclasses to use UObjectExporter instead, and remove this class. (https://github.com/BanjoByTheBay/BanjoBotAssets/issues/41)
-            var uniqueAssets = assetPaths.ToLookup(path => path /*ParseAssetName(path)?.BaseName*/, StringComparer.OrdinalIgnoreCase);
+            var uniqueAssets = assetPaths.ToLookup(path => ParseAssetName(path) == null ? null : path, StringComparer.OrdinalIgnoreCase);
             numToProcess = uniqueAssets.Count;
 
             Report(progress, string.Format(CultureInfo.CurrentCulture, Resources.FormatString_Status_ExportingGroup, Type));

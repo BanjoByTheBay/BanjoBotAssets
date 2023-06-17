@@ -29,7 +29,7 @@ using System.Diagnostics;
 
 namespace BanjoBotAssets
 {
-    internal sealed class AssetExportService : BackgroundService
+    internal sealed partial class AssetExportService : BackgroundService
     {
         private readonly ILogger<AssetExportService> logger;
         private readonly IHostApplicationLifetime lifetime;
@@ -341,15 +341,16 @@ namespace BanjoBotAssets
             }
         }
 
+        [GeneratedRegex(@"/Athena/|\.[^.]+(?<!\.uasset|\.bin)$|\.o\.[^.]+$", RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.CultureInvariant)]
+        private static partial Regex ExcludedAssetPathRegex();
+
         private void OfferFileListToExporters()
         {
             logger.LogInformation(Resources.Status_AnalyzingFileList);
 
             foreach (var (name, file) in provider.Files)
             {
-                if (name.Contains("/Athena/", StringComparison.OrdinalIgnoreCase) ||
-                    (!name.EndsWith(".uasset", StringComparison.OrdinalIgnoreCase) &&
-                     !name.EndsWith(".bin", StringComparison.OrdinalIgnoreCase)))
+                if (ExcludedAssetPathRegex().IsMatch(name))
                 {
                     continue;
                 }

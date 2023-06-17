@@ -107,7 +107,7 @@ namespace BanjoBotAssets.Exporters
 
         protected override bool InterestedInAsset(string name) => AssetRegistryFileRegex().IsMatch(name);
 
-        [GeneratedRegex(@"^(?:.*/)?AssetRegistry[0-9A-F]*\.bin$", RegexOptions.IgnoreCase, "en-US")]
+        [GeneratedRegex(@"^(?:.*(?<!/UEFN)/)?AssetRegistry[0-9A-F]*\.bin$", RegexOptions.Singleline | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase)]
         private static partial Regex AssetRegistryFileRegex();
     }
 }

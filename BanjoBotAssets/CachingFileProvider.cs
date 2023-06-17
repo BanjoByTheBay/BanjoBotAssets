@@ -16,6 +16,7 @@
  * along with BanjoBotAssets.  If not, see <http://www.gnu.org/licenses/>.
  */
 using CUE4Parse.FileProvider;
+using CUE4Parse.FileProvider.Objects;
 using CUE4Parse.UE4.Versions;
 using Microsoft.Extensions.Caching.Memory;
 using System.Collections.Concurrent;
