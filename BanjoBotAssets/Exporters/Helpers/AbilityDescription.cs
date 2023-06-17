@@ -208,10 +208,10 @@ namespace BanjoBotAssets.Exporters.Helpers
             return TagRegex().Replace(markup, match => match.Groups[1].Value);
         }
 
-        [GeneratedRegex(@"\[(Ability\.Line\d+)\]", RegexOptions.IgnoreCase, "en-US")]
+        [GeneratedRegex(@"\[(Ability\.Line\d+)\]", RegexOptions.Singleline | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase)]
         private static partial Regex TokenRegex();
 
-        [GeneratedRegex("<(?:\\w+)>([^<]*)</>")]
+        [GeneratedRegex("<(?:\\w+)>([^<]*)</>", RegexOptions.Singleline | RegexOptions.CultureInvariant)]
         private static partial Regex TagRegex();
     }
 }

@@ -105,7 +105,7 @@ namespace BanjoBotAssets.Exporters.Groups
 
         private static string MakeSurvivorDisplayName(UFortWorkerType worker) =>
             worker.bIsManager ? string.Format(CultureInfo.CurrentCulture, Resources.FormatString_Field_Survivor_LeadNameFormat, GetManagerJob(worker)) : Resources.Field_Survivor_DefaultName;
-        [GeneratedRegex(@".*/([^/]+)_(C|UC|R|VR|SR|UR)_([a-z]+_)?T(\d+)(?:\..*)?$", RegexOptions.IgnoreCase, "en-US")]
+        [GeneratedRegex(@".*/([^/]+)_(C|UC|R|VR|SR|UR)_([a-z]+_)?T(\d+)(?:\..*)?$", RegexOptions.Singleline | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase)]
         private static partial Regex SurvivorAssetNameRegex();
     }
 }

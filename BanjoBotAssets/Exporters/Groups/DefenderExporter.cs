@@ -72,7 +72,7 @@ namespace BanjoBotAssets.Exporters.Groups
             return string.Format(CultureInfo.CurrentCulture, Resources.FormatString_Field_Defender_DisplayNameFormat, rarity.GetNameText(), fields.SubType ?? Resources.Field_Defender_DefaultName);
         }
 
-        [GeneratedRegex(".*/([^/]+)_(C|UC|R|VR|SR|UR)_T(\\d+)(?:\\..*)?$", RegexOptions.IgnoreCase, "en-US")]
+        [GeneratedRegex(".*/([^/]+)_(C|UC|R|VR|SR|UR)_T(\\d+)(?:\\..*)?$", RegexOptions.Singleline | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase)]
         private static partial Regex DefenderAssetNameRegex();
     }
 }

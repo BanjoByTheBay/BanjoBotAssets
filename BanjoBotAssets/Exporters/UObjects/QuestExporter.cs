@@ -154,7 +154,7 @@ namespace BanjoBotAssets.Exporters.UObjects
             return null;
         }
 
-        [GeneratedRegex(@"Zone\.Difficulty\s*>=\s*(\d+)", RegexOptions.IgnoreCase, "en-US")]
+        [GeneratedRegex(@"Zone\.Difficulty\s*>=\s*(\d+)", RegexOptions.Singleline | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase)]
         private static partial Regex ZoneDifficultyRegex();
     }
 }

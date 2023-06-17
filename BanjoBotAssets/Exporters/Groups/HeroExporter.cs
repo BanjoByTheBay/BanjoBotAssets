@@ -157,7 +157,7 @@ namespace BanjoBotAssets.Exporters.Groups
             return (displayName, description, requirement);
         }
 
-        [GeneratedRegex("^\\s*(?:ANY|ALL)\\(\\s*(?<tag>[a-z0-9.]+)(?:\\s*,\\s*(?<tag>[a-z0-9.]+))*\\s*\\)\\s*$", RegexOptions.IgnoreCase, "en-US")]
+        [GeneratedRegex("^\\s*(?:ANY|ALL)\\(\\s*(?<tag>[a-z0-9.]+)(?:\\s*,\\s*(?<tag>[a-z0-9.]+))*\\s*\\)\\s*$", RegexOptions.Singleline | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase)]
         private static partial Regex CommanderTagsQueryRegex();
 
         public override async Task ExportAssetsAsync(IProgress<ExportProgress> progress, IAssetOutput output, CancellationToken cancellationToken)
@@ -235,7 +235,7 @@ namespace BanjoBotAssets.Exporters.Groups
             return Resources.Field_Hero_Unknown;
         }
 
-        [GeneratedRegex(".*/([^/]+)_(C|UC|R|VR|SR|UR)_T(\\d+)(?:\\..*)?$", RegexOptions.IgnoreCase, "en-US")]
+        [GeneratedRegex(".*/([^/]+)_(C|UC|R|VR|SR|UR)_T(\\d+)(?:\\..*)?$", RegexOptions.Singleline | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase)]
         private static partial Regex HeroAssetNameRegex();
     }
 }

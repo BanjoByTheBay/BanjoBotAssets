@@ -24,7 +24,7 @@ namespace BanjoBotAssets.Exporters
     /// </summary>
     internal sealed partial class AssetRegistryExporter : BaseExporter
     {
-        [GeneratedRegex("^Fort(?:Weapon(?:Ranged|Melee)|Trap)ItemDefinition$", RegexOptions.Compiled)]
+        [GeneratedRegex("^Fort(?:Weapon(?:Ranged|Melee)|Trap)ItemDefinition$", RegexOptions.Singleline | RegexOptions.CultureInvariant | RegexOptions.Compiled)]
         private static partial Regex WeaponOrTrapAssetClassRegex();
 
         [GeneratedRegex(
@@ -34,7 +34,7 @@ namespace BanjoBotAssets.Exporters
             \s* "(?<id>   (?: [^"] | \\" )* )" \s*,
             \s* "(?<text> (?: [^"] | \\" )* )" \s*
             \)
-            """, RegexOptions.Compiled | RegexOptions.IgnorePatternWhitespace)]
+            """, RegexOptions.Singleline | RegexOptions.CultureInvariant | RegexOptions.Compiled | RegexOptions.IgnorePatternWhitespace)]
         private static partial Regex NSLocTextRegex();
 
         public override Task ExportAssetsAsync(IProgress<ExportProgress> progress, IAssetOutput output, CancellationToken cancellationToken)

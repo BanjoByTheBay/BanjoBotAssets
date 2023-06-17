@@ -41,7 +41,7 @@ namespace BanjoBotAssets.Exporters.Groups
 
         protected override string Type => "Schematic";
 
-        [GeneratedRegex("(?<!/Schematics/.*)/(?:WID_|TID_|G_|Ingredient_|AmmoData)[^/]+\\.uasset$", RegexOptions.IgnoreCase, "en-US")]
+        [GeneratedRegex("(?<!/Schematics/.*)/(?:WID_|TID_|G_|Ingredient_|AmmoData)[^/]+\\.uasset$", RegexOptions.Singleline | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase)]
         private static partial Regex CraftingResultNameRegex();
 
         protected override bool InterestedInAsset(string name)
@@ -149,7 +149,7 @@ namespace BanjoBotAssets.Exporters.Groups
             (?:_?T(?<tier>\d+))?                        # tier
             (?:\.[^/]*)?                                # (ignored) extension
             $
-            """, RegexOptions.IgnoreCase | RegexOptions.Compiled | RegexOptions.IgnorePatternWhitespace, "en-US")]
+            """, RegexOptions.Singleline | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.Compiled | RegexOptions.IgnorePatternWhitespace)]
         private static partial Regex SchematicAssetNameRegex();
 
         protected override ParsedSchematicName? ParseAssetName(string name)
@@ -303,7 +303,7 @@ namespace BanjoBotAssets.Exporters.Groups
         {
         }
 
-        [GeneratedRegex(@"^(?:Weapon\.(?:Ranged|Melee\.(?:Edged|Blunt|Piercing))|Trap(?=\.(?:Ceiling|Floor|Wall)))\.([^.]+)", RegexOptions.IgnoreCase, "en-US")]
+        [GeneratedRegex(@"^(?:Weapon\.(?:Ranged|Melee\.(?:Edged|Blunt|Piercing))|Trap(?=\.(?:Ceiling|Floor|Wall)))\.([^.]+)", RegexOptions.Singleline | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase)]
         private static partial Regex SchematicSubTypeRegex();
 
         private static (string category, string subType) CategoryAndSubTypeFromTags(FGameplayTagContainer tags)

@@ -120,7 +120,7 @@ namespace BanjoBotAssets.PostExporters
             }
         }
 
-        [GeneratedRegex(@"^(.*)_(\d+)(\..+)?$")]
+        [GeneratedRegex(@"^(.*)_(\d+)(\..+)?$", RegexOptions.Singleline | RegexOptions.CultureInvariant)]
         private static partial Regex NumberSuffixedFilenameRegex();
     }
 }
