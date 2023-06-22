@@ -29,7 +29,7 @@ namespace BanjoBotAssets.Exporters.Helpers
             this.logger = logger;
         }
 
-        public async Task<string?> GetAsync(UObject grantedAbilityKit, IAssetCounter assetCounter)
+        public async Task<string?> GetForPerkAbilityKitAsync(UObject grantedAbilityKit, IAssetCounter assetCounter)
         {
             var (markup, cdo) = await GetMarkupAsync(grantedAbilityKit, assetCounter);
 
@@ -42,6 +42,32 @@ namespace BanjoBotAssets.Exporters.Helpers
                 await GetTokensAsync(cdo, tokens, assetCounter);
 
             return FormatMarkup(markup, tokens);
+        }
+
+        public async Task<string?> GetForActiveAbilityAsync(UBlueprintGeneratedClass gameplayAbilityClass, IAssetCounter assetCounter)
+        {
+            var gameplayAbilityCdo = await gameplayAbilityClass.ClassDefaultObject.LoadAsync();
+            assetCounter.CountAssetLoaded();
+
+            return await GetForActiveAbilityAsync(gameplayAbilityClass, gameplayAbilityCdo, assetCounter);
+        }
+
+        public async Task<string?> GetForActiveAbilityAsync(UBlueprintGeneratedClass gameplayAbilityClass, UObject gameplayAbilityCdo, IAssetCounter assetCounter)
+        {
+            // TODO: use gameplayAbilityClass to substitute the correct token values
+            var tooltip = gameplayAbilityCdo.GetOrDefault<UBlueprintGeneratedClass?>("ToolTip");
+
+            if (tooltip == null)
+            {
+                return null;
+            }
+
+            assetCounter.CountAssetLoaded();
+
+            var tooltipCdo = await tooltip.ClassDefaultObject.LoadAsync();
+            assetCounter.CountAssetLoaded();
+
+            return tooltipCdo.GetOrDefault<FText>("Description").Text;
         }
 
         private static async Task<(string? markup, UObject? tooltip)> GetMarkupAsync(UObject grantedAbilityKit, IAssetCounter assetCounter)

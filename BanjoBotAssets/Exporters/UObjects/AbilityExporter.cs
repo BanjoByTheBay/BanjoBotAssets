@@ -157,13 +157,8 @@ namespace BanjoBotAssets.Exporters.UObjects
             var sfm = dm.GetOrDefault<FScalableFloat>("ScalableFloatMagnitude");
             namedItemData.CooldownSeconds ??= sfm.GetScaledValue(logger);
 
-            // load from tooltip
-            Interlocked.Increment(ref assetsLoaded);
-            var tooltip = gaCdo.GetOrDefault<UBlueprintGeneratedClass>("ToolTip");
-            Interlocked.Increment(ref assetsLoaded);
-            var tooltipCdo = await tooltip.ClassDefaultObject.LoadAsync();
-
-            namedItemData.Description ??= tooltipCdo.GetOrDefault<FText>("Description").Text;
+            // load tooltip
+            namedItemData.Description ??= await abilityDescription.GetForActiveAbilityAsync(ga, gaCdo, this);
         }
 
         private async Task LoadFromGameplayEffectAsync(AbilityItemData namedItemData, FGameplayEffectApplicationInfoHard geaih)

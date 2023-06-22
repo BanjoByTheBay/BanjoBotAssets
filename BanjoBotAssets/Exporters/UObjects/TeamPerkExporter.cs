@@ -29,7 +29,7 @@ namespace BanjoBotAssets.Exporters.UObjects
         {
             Interlocked.Increment(ref assetsLoaded);
             var grantedAbilityKit = await asset.GetOrDefault<FSoftObjectPath>("GrantedAbilityKit").LoadAsync(provider);
-            namedItemData.Description = await abilityDescription.GetAsync(grantedAbilityKit, this) ?? $"<{Resources.Field_NoDescription}>";
+            namedItemData.Description = await abilityDescription.GetForPerkAbilityKitAsync(grantedAbilityKit, this) ?? $"<{Resources.Field_NoDescription}>";
 
             if (grantedAbilityKit.GetResourceObjectPath("IconBrush") is string path)
             {

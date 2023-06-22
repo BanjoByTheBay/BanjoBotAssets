@@ -15,6 +15,8 @@
  * You should have received a copy of the GNU General Public License
  * along with BanjoBotAssets.  If not, see <http://www.gnu.org/licenses/>.
  */
+using CUE4Parse.UE4.Objects.Engine;
+
 namespace BanjoBotAssets.Exporters.UObjects
 {
     internal sealed class GadgetExporter : UObjectExporter<UFortGadgetItemDefinition>
@@ -35,8 +37,8 @@ namespace BanjoBotAssets.Exporters.UObjects
             }
 
             Interlocked.Increment(ref assetsLoaded);
-            var gameplayAbility = await asset.GameplayAbility.LoadAsync(provider);
-            namedItemData.Description = await abilityDescription.GetAsync(gameplayAbility, this);
+            var gameplayAbility = await asset.GameplayAbility.LoadAsync<UBlueprintGeneratedClass>(provider);
+            namedItemData.Description = await abilityDescription.GetForActiveAbilityAsync(gameplayAbility, this);
             return true;
         }
     }
