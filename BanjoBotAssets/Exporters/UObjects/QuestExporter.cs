@@ -90,7 +90,10 @@ namespace BanjoBotAssets.Exporters.UObjects
             }
 
             namedItemData.Objectives = objectives.ToArray();
-            namedItemData.Category = asset.Category?.RowName.Text ?? "";
+
+            // "category" property may be lowercased
+            var category = asset.Category ?? asset.GetOrDefault<FDataTableRowHandle?>("category");
+            namedItemData.Category = category?.RowName.Text ?? "";
 
             var rewards = new List<QuestReward>();
             if (questRewardsTable != null)
