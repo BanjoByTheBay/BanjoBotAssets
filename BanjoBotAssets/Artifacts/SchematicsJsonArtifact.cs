@@ -73,16 +73,16 @@ namespace BanjoBotAssets.Artifacts
                 }
 
                 // change ingredient IDs to display names
-                if (recipe.Ingredient1 != null)
-                    recipe.Ingredient1 = exportedAssets.NamedItems.GetValueOrDefault(recipe.Ingredient1)?.DisplayName;
-                if (recipe.Ingredient2 != null)
-                    recipe.Ingredient2 = exportedAssets.NamedItems.GetValueOrDefault(recipe.Ingredient2)?.DisplayName;
-                if (recipe.Ingredient3 != null)
-                    recipe.Ingredient3 = exportedAssets.NamedItems.GetValueOrDefault(recipe.Ingredient3)?.DisplayName;
-                if (recipe.Ingredient4 != null)
-                    recipe.Ingredient4 = exportedAssets.NamedItems.GetValueOrDefault(recipe.Ingredient4)?.DisplayName;
-                if (recipe.Ingredient5 != null)
-                    recipe.Ingredient5 = exportedAssets.NamedItems.GetValueOrDefault(recipe.Ingredient5)?.DisplayName;
+                if (recipe.Ingredient1 != null && exportedAssets.NamedItems.TryGetValue(recipe.Ingredient1, out var item1))
+                    recipe.Ingredient1 = item1.DisplayName;
+                if (recipe.Ingredient2 != null && exportedAssets.NamedItems.TryGetValue(recipe.Ingredient2, out var item2))
+                    recipe.Ingredient2 = item2.DisplayName;
+                if (recipe.Ingredient3 != null && exportedAssets.NamedItems.TryGetValue(recipe.Ingredient3, out var item3))
+                    recipe.Ingredient3 = item3.DisplayName;
+                if (recipe.Ingredient4 != null && exportedAssets.NamedItems.TryGetValue(recipe.Ingredient4, out var item4))
+                    recipe.Ingredient4 = item4.DisplayName;
+                if (recipe.Ingredient5 != null && exportedAssets.NamedItems.TryGetValue(recipe.Ingredient5, out var item5))
+                    recipe.Ingredient5 = item5.DisplayName;
 
                 cancellationToken.ThrowIfCancellationRequested();
             }
