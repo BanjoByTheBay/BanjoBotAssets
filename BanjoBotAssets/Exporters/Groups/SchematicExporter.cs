@@ -414,14 +414,15 @@ namespace BanjoBotAssets.Exporters.Groups
 
             if (fields.CraftingRowPrefix is string craftPrefix && craftingTable != null)
             {
+                // mythic weapons are SR instead of UR in the crafting table
                 string craftRow;
                 if (craftPrefix.StartsWith("Ranged.", StringComparison.OrdinalIgnoreCase) || craftPrefix.StartsWith("Melee.", StringComparison.OrdinalIgnoreCase))
                 {
-                    craftRow = $"{craftPrefix}.{rarity.ToShortString()}.{parsed.EvoType}.T{parsed.Tier:00}";
+                    craftRow = $"{craftPrefix}.{parsed.Rarity}.{parsed.EvoType}.T{parsed.Tier:00}";
                 }
                 else if (craftPrefix.StartsWith("Trap.", StringComparison.OrdinalIgnoreCase))
                 {
-                    craftRow = $"{craftPrefix}.{rarity.ToShortString()}.T{parsed.Tier:00}";
+                    craftRow = $"{craftPrefix}.{parsed.Rarity}.T{parsed.Tier:00}";
                 }
                 else
                 {
