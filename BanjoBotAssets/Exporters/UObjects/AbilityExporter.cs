@@ -170,7 +170,7 @@ namespace BanjoBotAssets.Exporters.UObjects
             Interlocked.Increment(ref assetsLoaded);
             var cdo = await ge.ClassDefaultObject.LoadAsync();
             var tags = cdo.GetOrDefault<FInheritedTagContainer?>("InheritableOwnedTagsContainer");
-            namedItemData.GrantedTag ??= tags?.Added.First(t => t.Text.StartsWith("Granted.Ability.", StringComparison.OrdinalIgnoreCase)).Text;
+            namedItemData.GrantedTag ??= tags?.Added.First(t => t.ToString().StartsWith("Granted.Ability.", StringComparison.OrdinalIgnoreCase)).ToString();
         }
     }
 }

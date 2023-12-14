@@ -211,7 +211,7 @@ namespace BanjoBotAssets
         {
             logger.LogInformation(Resources.Status_LoadingMappings);
 
-            if (provider.GameName.Equals("FortniteGame", StringComparison.OrdinalIgnoreCase))
+            if (provider.InternalGameName.Equals("FortniteGame", StringComparison.OrdinalIgnoreCase))
             {
                 provider.MappingsContainer = typeMappingsProviderFactory.Create();
             }

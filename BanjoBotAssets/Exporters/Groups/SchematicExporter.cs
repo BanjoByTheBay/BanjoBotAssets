@@ -310,7 +310,7 @@ namespace BanjoBotAssets.Exporters.Groups
         {
             foreach (var tag in tags.GameplayTags)
             {
-                var match = SchematicSubTypeRegex().Match(tag.Text);
+                var match = SchematicSubTypeRegex().Match(tag.ToString());
 
                 if (match.Success)
                 {

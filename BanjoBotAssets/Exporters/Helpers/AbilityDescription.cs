@@ -16,6 +16,7 @@
  * along with BanjoBotAssets.  If not, see <http://www.gnu.org/licenses/>.
  */
 using CUE4Parse.FN.Structs.GA;
+using CUE4Parse.UE4.Assets.Objects.Properties;
 using CUE4Parse.UE4.Objects.Engine;
 
 namespace BanjoBotAssets.Exporters.Helpers

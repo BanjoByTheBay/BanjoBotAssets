@@ -60,7 +60,7 @@ namespace BanjoBotAssets.Exporters.Groups
             var subType = asset.bIsManager ? GetManagerJob(asset) : null;
             var displayName = asset.DisplayName?.Text ?? MakeSurvivorDisplayName(asset);
             var personality = asset.FixedPersonalityTag.GameplayTags is { Length: 1 }
-                ? asset.FixedPersonalityTag.GameplayTags[0].Text.Split('.')[^1]
+                ? asset.FixedPersonalityTag.GameplayTags[0].ToString().Split('.')[^1]
                 : null;
             return result with { SubType = subType, DisplayName = displayName, Personality = personality };
         }
@@ -96,7 +96,7 @@ namespace BanjoBotAssets.Exporters.Groups
             if (!worker.bIsManager)
                 throw new AssetFormatException(Resources.Error_NotAManager);
 
-            string synergyTag = worker.ManagerSynergyTag.First().Text;
+            string synergyTag = worker.ManagerSynergyTag.First().ToString();
             if (managerSynergyToJob.TryGetValue(synergyTag, out var job))
                 return job;
 

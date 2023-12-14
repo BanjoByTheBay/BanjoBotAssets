@@ -221,7 +221,7 @@ namespace BanjoBotAssets.Exporters.Groups
         {
             foreach (var tag in gameplayTags)
             {
-                var text = tag.Text;
+                var text = tag.ToString();
                 if (text.Contains("IsCommando", StringComparison.OrdinalIgnoreCase))
                     return Resources.Field_Hero_Soldier;
                 if (text.Contains("IsNinja", StringComparison.OrdinalIgnoreCase))
