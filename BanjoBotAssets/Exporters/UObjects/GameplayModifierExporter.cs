@@ -17,10 +17,8 @@
  */
 namespace BanjoBotAssets.Exporters.UObjects
 {
-    internal sealed class GameplayModifierExporter : UObjectExporter<UFortItemDefinition>
+    internal sealed class GameplayModifierExporter(IExporterContext services) : UObjectExporter<UFortItemDefinition>(services)
     {
-        public GameplayModifierExporter(IExporterContext services) : base(services) { }
-
         protected override string Type => "GameplayModifier";
 
         protected override bool InterestedInAsset(string name) =>

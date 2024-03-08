@@ -28,23 +28,15 @@ namespace BanjoBotAssets
         ITypeMappingsProvider Create(string? specificVersion = null);
     }
 
-    internal sealed class CachingFNCentralMappingsProviderFactory : ITypeMappingsProviderFactory
+    internal sealed class CachingFNCentralMappingsProviderFactory(IServiceProvider serviceProvider) : ITypeMappingsProviderFactory
     {
-        private readonly IServiceProvider serviceProvider;
-        private readonly ObjectFactory objectFactory;
-
-        public CachingFNCentralMappingsProviderFactory(IServiceProvider serviceProvider)
-        {
-            this.serviceProvider = serviceProvider;
-
-            objectFactory = ActivatorUtilities.CreateFactory(
+        private readonly ObjectFactory objectFactory = ActivatorUtilities.CreateFactory(
                 typeof(CachingFNCentralMappingsProvider),
-                new[] { typeof(string) });
-        }
+                [typeof(string)]);
 
         public ITypeMappingsProvider Create(string? specificVersion = null)
         {
-            return (ITypeMappingsProvider)objectFactory.Invoke(serviceProvider, new[] { specificVersion });
+            return (ITypeMappingsProvider)objectFactory.Invoke(serviceProvider, [specificVersion]);
         }
     }
 

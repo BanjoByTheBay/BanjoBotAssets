@@ -20,13 +20,9 @@ using Microsoft.Extensions.Options;
 
 namespace BanjoBotAssets
 {
-    internal sealed class GameDirectoryProvider
+    internal sealed class GameDirectoryProvider(IOptions<GameFileOptions> options)
     {
-        private readonly Lazy<GameDirectory> lazyGameDirectory;
-
-        public GameDirectoryProvider(IOptions<GameFileOptions> options)
-        {
-            lazyGameDirectory = new Lazy<GameDirectory>(() =>
+        private readonly Lazy<GameDirectory> lazyGameDirectory = new(() =>
             {
                 try
                 {
@@ -37,23 +33,15 @@ namespace BanjoBotAssets
                     throw new InvalidOperationException(Resources.Error_GameNotFound, ex);
                 }
             });
-        }
 
         public GameDirectory GetGameDirectory() => lazyGameDirectory.Value;
     }
 
-    internal sealed class GameDirectory
+    internal sealed class GameDirectory(string path)
     {
-        private readonly Lazy<DateTime> lazyLastWriteTime;
+        private readonly Lazy<DateTime> lazyLastWriteTime = new(() => new DirectoryInfo(path).GetFiles().Max(f => f.LastWriteTime));
 
-        public GameDirectory(string path)
-        {
-            Path = path;
-
-            lazyLastWriteTime = new Lazy<DateTime>(() => new DirectoryInfo(Path).GetFiles().Max(f => f.LastWriteTime));
-        }
-
-        public string Path { get; }
+        public string Path => path;
 
         public DateTime LastWriteTime => lazyLastWriteTime.Value;
     }

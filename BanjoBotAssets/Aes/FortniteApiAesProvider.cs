@@ -21,19 +21,8 @@ using System.Net.Http.Json;
 
 namespace BanjoBotAssets.Aes
 {
-    internal sealed class FortniteApiAesProvider : IAesProvider
+    internal sealed class FortniteApiAesProvider(ILogger<FortniteApiAesProvider> logger, IOptions<AesOptions> options, IHttpClientFactory httpClientFactory) : IAesProvider
     {
-        private readonly ILogger<FortniteApiAesProvider> logger;
-        private readonly IOptions<AesOptions> options;
-        private readonly IHttpClientFactory httpClientFactory;
-
-        public FortniteApiAesProvider(ILogger<FortniteApiAesProvider> logger, IOptions<AesOptions> options, IHttpClientFactory httpClientFactory)
-        {
-            this.logger = logger;
-            this.options = options;
-            this.httpClientFactory = httpClientFactory;
-        }
-
         public async Task<AesApiResponse?> TryGetAesAsync(CancellationToken cancellationToken)
         {
             using var client = httpClientFactory.CreateClient();

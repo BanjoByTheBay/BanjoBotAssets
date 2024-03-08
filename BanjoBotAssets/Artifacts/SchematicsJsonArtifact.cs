@@ -20,18 +20,11 @@ using Newtonsoft.Json;
 
 namespace BanjoBotAssets.Artifacts
 {
-    internal sealed class SchematicsJsonArtifact : IExportArtifact
+    internal sealed class SchematicsJsonArtifact(
+        ExportedFileOptions options,
+        ILogger<SchematicsJsonArtifact> logger) : IExportArtifact
     {
-        private readonly ExportedFileOptions options;
-        private readonly ILogger<SchematicsJsonArtifact> logger;
-
-        public SchematicsJsonArtifact(ExportedFileOptions options, ILogger<SchematicsJsonArtifact> logger)
-        {
-            this.options = options;
-            this.logger = logger;
-        }
-
-        public Task RunAsync(ExportedAssets exportedAssets, IList<ExportedRecipe> exportedRecipes, CancellationToken cancellationToken = default)
+        public async Task RunAsync(ExportedAssets exportedAssets, IList<ExportedRecipe> exportedRecipes, CancellationToken cancellationToken = default)
         {
             var recipesToExclude = new Stack<int>();
 
@@ -102,8 +95,10 @@ namespace BanjoBotAssets.Artifacts
                 using (var stream = File.OpenText(path))
                 {
                     var rdr = new JsonTextReader(stream);
+#pragma warning disable CA1863 // Use 'CompositeFormat'
                     previous = serializer.Deserialize<IList<ExportedRecipe>>(rdr)
                         ?? throw new InvalidOperationException(string.Format(CultureInfo.CurrentCulture, Resources.FormatString_Error_CannotReadPreviousArtifact, path));
+#pragma warning restore CA1863 // Use 'CompositeFormat'
                 }
 
                 ExportedRecipes.Merge(previous, exportedRecipes);
@@ -114,21 +109,16 @@ namespace BanjoBotAssets.Artifacts
                 logger.LogInformation(Resources.Status_WritingFreshArtifact, path);
             }
 
-            exportedRecipes = exportedRecipes
+            exportedRecipes = [.. exportedRecipes
                 .OrderBy(r => r.ItemName)
                 .ThenBy(r => r.Type)
                 .ThenBy(r => r.Subtype)
                 .ThenBy(r => r.Rarity)
                 .ThenBy(r => r.Tier)
-                .ThenBy(r => r.Material)
-                .ToList();
+                .ThenBy(r => r.Material)];
 
-            using (var file = File.CreateText(path))
-            {
-                serializer.Serialize(file, exportedRecipes);
-            }
-
-            return Task.CompletedTask;
+            await using var file = File.CreateText(path);
+            serializer.Serialize(file, exportedRecipes);
         }
     }
 }

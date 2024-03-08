@@ -20,12 +20,8 @@
 
 namespace BanjoBotAssets.Exporters.UObjects
 {
-    internal sealed class HomebaseNodeExporter : UObjectExporter<UFortHomebaseNodeItemDefinition>
+    internal sealed class HomebaseNodeExporter(IExporterContext services) : UObjectExporter<UFortHomebaseNodeItemDefinition>(services)
     {
-        public HomebaseNodeExporter(IExporterContext services) : base(services)
-        {
-        }
-
         protected override string Type => "HomebaseNode";
 
         protected override bool InterestedInAsset(string name) =>

@@ -31,8 +31,8 @@ namespace BanjoBotAssets.Json
         public string[]? ChallengeQuests { get; set; }
         public string? EventCurrency { get; set; }
         public string? DominantElement { get; set; }
-        public IList<VenturesSeasonLevel> Levels { get; } = new List<VenturesSeasonLevel>();
-        public IList<IList<QuestReward>> PastLevels { get; } = new List<IList<QuestReward>>();
+        public IList<VenturesSeasonLevel> Levels { get; } = [];
+        public IList<IList<QuestReward>> PastLevels { get; } = [];
         public int PastLevelXPRequirement { get; set; }
     }
 
@@ -40,6 +40,6 @@ namespace BanjoBotAssets.Json
     {
         public int TotalRequiredXP { get; set; }
         public bool IsMajorReward { get; set; }
-        public IList<QuestReward> Rewards { get; } = new List<QuestReward>();
+        public IList<QuestReward> Rewards { get; } = [];
     }
 }

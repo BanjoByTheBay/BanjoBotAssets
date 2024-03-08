@@ -17,10 +17,8 @@
  */
 namespace BanjoBotAssets.Exporters.UObjects
 {
-    internal sealed class AlterationExporter : UObjectExporter<UFortItemDefinition>
+    internal sealed class AlterationExporter(IExporterContext services) : UObjectExporter<UFortItemDefinition>(services)
     {
-        public AlterationExporter(IExporterContext services) : base(services) { }
-
         protected override string Type => "Alteration";
 
         protected override bool InterestedInAsset(string name) =>

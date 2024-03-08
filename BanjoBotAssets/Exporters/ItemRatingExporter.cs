@@ -17,7 +17,7 @@
  */
 namespace BanjoBotAssets.Exporters
 {
-    internal sealed class ItemRatingExporter : BaseExporter
+    internal sealed class ItemRatingExporter(IExporterContext services) : BaseExporter(services)
     {
         protected override bool InterestedInAsset(string name) => name.EndsWith("ItemRating.uasset", StringComparison.OrdinalIgnoreCase);
 
@@ -84,24 +84,22 @@ namespace BanjoBotAssets.Exporters
         }
 
         private static readonly (string rarity, int maxTier)[] rarityTiers =
-        {
+        [
             ("C", 5),
             ("UC", 5),
             ("R", 5),
             ("VR", 5),
             ("SR", 5),
             ("UR", 5),
-        };
+        ];
         private static readonly (int tier, int minLevel, int maxLevel)[] tierLevels =
-        {
+        [
             (1, 1, 10),
             (2, 10, 20),
             (3, 20, 30),
             (4, 30, 40),
             (5, 40, 60),    // tier 5 goes up to LV 60 with superchargers
-        };
-
-        public ItemRatingExporter(IExporterContext services) : base(services) { }
+        ];
 
         private ItemRatingTable EvaluateItemRatingCurve(UCurveTable curveTable, string prefix, bool skipUR = false)
         {
@@ -142,7 +140,7 @@ namespace BanjoBotAssets.Exporters
                     }
 
                     tiers.Add($"{rarity}_T{tier:00}",
-                        new ItemRatingTier { FirstLevel = minLevel, Ratings = values.ToArray() });
+                        new ItemRatingTier { FirstLevel = minLevel, Ratings = [.. values] });
                 }
             }
 

@@ -17,15 +17,11 @@
  */
 namespace BanjoBotAssets.Exporters
 {
-    internal sealed class VenturesSeasonExporter : BaseExporter
+    internal sealed class VenturesSeasonExporter(IExporterContext services) : BaseExporter(services)
     {
         const string LevelRewardsTableName = "PhoenixLevelRewardsTable.uasset";
         const string PastLevelRewardsTableName = "PostMaxPhoenixLevelRewardsTable.uasset";
         const string DefaultGameDataTableName = "DefaultGameDataSTW.uasset";
-
-        public VenturesSeasonExporter(IExporterContext services) : base(services)
-        {
-        }
 
         public override async Task ExportAssetsAsync(IProgress<ExportProgress> progress, IAssetOutput output, CancellationToken cancellationToken)
         {

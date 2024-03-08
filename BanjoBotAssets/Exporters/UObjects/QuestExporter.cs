@@ -17,12 +17,10 @@
  */
 namespace BanjoBotAssets.Exporters.UObjects
 {
-    internal sealed partial class QuestExporter : UObjectExporter<UFortQuestItemDefinition, QuestItemData>
+    internal sealed partial class QuestExporter(IExporterContext services) : UObjectExporter<UFortQuestItemDefinition, QuestItemData>(services)
     {
         private string? questRewardsPath, objectiveStatTablePath, homebaseRatingDifficultyMappingPath;
         private UDataTable? questRewardsTable, objectiveStatTable, homebaseRatingDifficultyMappingTable;
-
-        public QuestExporter(IExporterContext services) : base(services) { }
 
         protected override string Type => "Quest";
 
@@ -89,7 +87,7 @@ namespace BanjoBotAssets.Exporters.UObjects
                 }
             }
 
-            namedItemData.Objectives = objectives.ToArray();
+            namedItemData.Objectives = [.. objectives];
 
             // "category" property may be lowercased
             var category = asset.Category ?? asset.GetOrDefault<FDataTableRowHandle?>("category");
@@ -115,7 +113,7 @@ namespace BanjoBotAssets.Exporters.UObjects
                     }
                 }
             }
-            namedItemData.Rewards = rewards.ToArray();
+            namedItemData.Rewards = [.. rewards];
 
             return Task.FromResult(true);
         }

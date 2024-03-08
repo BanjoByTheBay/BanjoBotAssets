@@ -20,10 +20,8 @@
 
 namespace BanjoBotAssets.Exporters.UObjects
 {
-    internal sealed class AccoladeExporter : UObjectExporter
+    internal sealed class AccoladeExporter(IExporterContext services) : UObjectExporter(services)
     {
-        public AccoladeExporter(IExporterContext services) : base(services) { }
-
         protected override string Type => "Accolades";
 
         protected override bool InterestedInAsset(string name) => name.Contains("/AccoladeId_STW_", StringComparison.OrdinalIgnoreCase);

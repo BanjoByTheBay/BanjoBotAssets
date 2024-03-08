@@ -89,7 +89,7 @@ namespace BanjoBotAssets.Exporters.Helpers
                 foreach (var (k, v) in dict)
                 {
                     var ni = exportedAssets.NamedItems[k];
-                    ni.ImagePaths ??= new SortedDictionary<ImageType, string>();
+                    ni.ImagePaths ??= [];
                     ni.ImagePaths.TryAdd(imageType, v);
                 }
             }
@@ -233,7 +233,7 @@ namespace BanjoBotAssets.Exporters.Helpers
             {
                 IsMajorReward = isMajorReward,
                 TotalRequiredXP = totalRequiredXP,
-                Rewards = convertedRewards.ToArray(),
+                Rewards = [.. convertedRewards],
             });
         }
 
@@ -243,7 +243,7 @@ namespace BanjoBotAssets.Exporters.Helpers
             seasonPastLevelData.Rewards.TryAdd(pastLevel, new()
             {
                 IsMajorReward = false,
-                Rewards = new[] { convertedReward },
+                Rewards = [convertedReward],
             });
         }
 

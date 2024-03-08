@@ -37,23 +37,16 @@ namespace BanjoBotAssets.Json
         }
     }
 
-    internal sealed class NullToEmptyStringValueProvider : IValueProvider
+    internal sealed class NullToEmptyStringValueProvider(PropertyInfo memberInfo) : IValueProvider
     {
-        private readonly PropertyInfo _MemberInfo;
-
-        public NullToEmptyStringValueProvider(PropertyInfo memberInfo)
-        {
-            _MemberInfo = memberInfo;
-        }
-
         public object? GetValue(object target)
         {
-            return _MemberInfo.GetValue(target) ?? (object?)"";
+            return memberInfo.GetValue(target) ?? (object?)"";
         }
 
         public void SetValue(object target, object? value)
         {
-            _MemberInfo.SetValue(target, value);
+            memberInfo.SetValue(target, value);
         }
     }
 }

@@ -17,6 +17,8 @@
  */
 // TODO: fix Halloween survivors all getting the same name: they should be separated by rarity (WorkerHalloween_VR_T04 is Lobber, WorkerHalloween_UC_T01 is Husky, etc.)
 
+using System.Text;
+
 namespace BanjoBotAssets.Exporters.Groups
 {
     internal sealed record SurvivorItemGroupFields(string DisplayName, string? Description, string? SubType,
@@ -25,7 +27,7 @@ namespace BanjoBotAssets.Exporters.Groups
         public SurvivorItemGroupFields() : this("", null, null, null) { }
     }
 
-    internal sealed partial class SurvivorExporter : GroupExporter<UFortWorkerType, BaseParsedItemName, SurvivorItemGroupFields, SurvivorItemData>
+    internal sealed partial class SurvivorExporter(IExporterContext services) : GroupExporter<UFortWorkerType, BaseParsedItemName, SurvivorItemGroupFields, SurvivorItemData>(services)
     {
         protected override string Type => "Worker";
 
@@ -38,8 +40,6 @@ namespace BanjoBotAssets.Exporters.Groups
         // lead:                ManagerEngineer_R_T04
         // mythic lead:         ManagerMartialArtist_SR_samurai_T03
         private static readonly Regex survivorAssetNameRegex = SurvivorAssetNameRegex();
-
-        public SurvivorExporter(IExporterContext services) : base(services) { }
 
         protected override BaseParsedItemName? ParseAssetName(string name)
         {
@@ -79,7 +79,7 @@ namespace BanjoBotAssets.Exporters.Groups
             return primaryAsset.bIsManager ? result + 1 : result;
         }
 
-        private static readonly IReadOnlyDictionary<string, string> managerSynergyToJob = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+        private static readonly Dictionary<string, string> managerSynergyToJob = new(StringComparer.OrdinalIgnoreCase)
         {
                 { "Homebase.Manager.IsDoctor", Resources.Field_Survivor_Doctor },
                 { "Homebase.Manager.IsEngineer", Resources.Field_Survivor_Engineer },
@@ -100,11 +100,15 @@ namespace BanjoBotAssets.Exporters.Groups
             if (managerSynergyToJob.TryGetValue(synergyTag, out var job))
                 return job;
 
+#pragma warning disable CA1863 // Use 'CompositeFormat'
             throw new AssetFormatException(string.Format(CultureInfo.CurrentCulture, Resources.FormatString_Error_UnexpectedManagerSynergy, synergyTag));
+#pragma warning restore CA1863 // Use 'CompositeFormat'
         }
 
+        private static readonly CompositeFormat SurvivorLeadNameFormat = CompositeFormat.Parse(Resources.FormatString_Field_Survivor_LeadNameFormat);
+
         private static string MakeSurvivorDisplayName(UFortWorkerType worker) =>
-            worker.bIsManager ? string.Format(CultureInfo.CurrentCulture, Resources.FormatString_Field_Survivor_LeadNameFormat, GetManagerJob(worker)) : Resources.Field_Survivor_DefaultName;
+            worker.bIsManager ? string.Format(CultureInfo.CurrentCulture, SurvivorLeadNameFormat, GetManagerJob(worker)) : Resources.Field_Survivor_DefaultName;
         [GeneratedRegex(@".*/([^/]+)_(C|UC|R|VR|SR|UR)_([a-z]+_)?T(\d+)(?:\..*)?$", RegexOptions.Singleline | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase)]
         private static partial Regex SurvivorAssetNameRegex();
     }

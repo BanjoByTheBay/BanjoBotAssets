@@ -17,10 +17,8 @@
  */
 namespace BanjoBotAssets.Exporters.UObjects
 {
-    internal sealed class WorldItemExporter : UObjectExporter
+    internal sealed class WorldItemExporter(IExporterContext services) : UObjectExporter(services)
     {
-        public WorldItemExporter(IExporterContext services) : base(services) { }
-
         protected override string Type => "WorldItem";
 
         protected override bool InterestedInAsset(string name) =>

@@ -29,26 +29,17 @@ namespace BanjoBotAssets.Exporters.Helpers
         AbilityDescription AbilityDescription { get; }
     }
 
-    internal sealed class ExporterContext : IExporterContext
+    internal sealed class ExporterContext(AbstractVfsFileProvider provider,
+        ILoggerFactory loggerFactory, IOptions<PerformanceOptions> performanceOptions,
+        AbilityDescription abilityDescription, IOptions<ScopeOptions> scopeOptions) : IExporterContext
     {
-        public AbstractVfsFileProvider Provider { get; set; }
+        public AbstractVfsFileProvider Provider { get; set; } = provider;
 
-        public ILoggerFactory LoggerFactory { get; set; }
+        public ILoggerFactory LoggerFactory { get; set; } = loggerFactory;
 
-        public IOptions<PerformanceOptions> PerformanceOptions { get; set; }
+        public IOptions<PerformanceOptions> PerformanceOptions { get; set; } = performanceOptions;
 
-        public AbilityDescription AbilityDescription { get; set; }
-        public IOptions<ScopeOptions> ScopeOptions { get; set; }
-
-        public ExporterContext(AbstractVfsFileProvider provider,
-            ILoggerFactory loggerFactory, IOptions<PerformanceOptions> performanceOptions,
-            AbilityDescription abilityDescription, IOptions<ScopeOptions> scopeOptions)
-        {
-            Provider = provider;
-            LoggerFactory = loggerFactory;
-            PerformanceOptions = performanceOptions;
-            AbilityDescription = abilityDescription;
-            ScopeOptions = scopeOptions;
-        }
+        public AbilityDescription AbilityDescription { get; set; } = abilityDescription;
+        public IOptions<ScopeOptions> ScopeOptions { get; set; } = scopeOptions;
     }
 }

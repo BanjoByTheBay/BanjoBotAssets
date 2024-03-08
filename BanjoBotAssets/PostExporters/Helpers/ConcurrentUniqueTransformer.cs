@@ -17,15 +17,24 @@
  */
 namespace BanjoBotAssets.PostExporters.Helpers
 {
-    internal sealed class ConcurrentUniqueTransformer<TOriginal, TTransformed>
+    /// <summary>
+    /// Constructs a new instance of <see cref="ConcurrentUniqueTransformer{TOriginal, TTransformed}"/> using the default
+    /// <see cref="EqualityComparer{T}"/> instances.
+    /// </summary>
+    /// <param name="transform">A delegate to convert a <typeparamref name="TOriginal"/> to a <typeparamref name="TTransformed"/>, which might not be unique.</param>
+    /// <param name="mutate">A delegate to modify <typeparamref name="TTransformed"/> to a new value in order to find a unique one.</param>
+    /// <param name="inputComparer">The <see cref="IEqualityComparer{T}"/> to use for comparing <typeparamref name="TOriginal"/>.</param>
+    /// <param name="outputComparer">The <see cref="IEqualityComparer{T}"/> to use for comparing <typeparamref name="TTransformed"/>.</param>
+    internal sealed class ConcurrentUniqueTransformer<TOriginal, TTransformed>(
+        Func<TOriginal, TTransformed> transform,
+        Func<TTransformed, TTransformed> mutate,
+        IEqualityComparer<TOriginal> inputComparer,
+        IEqualityComparer<TTransformed> outputComparer)
         where TOriginal : notnull
         where TTransformed : notnull
     {
-        private readonly Func<TOriginal, TTransformed> transform;
-        private readonly Func<TTransformed, TTransformed> mutate;
-
-        private readonly Dictionary<TOriginal, TTransformed> seenInputs;
-        private readonly HashSet<TTransformed> seenOutputs;
+        private readonly Dictionary<TOriginal, TTransformed> seenInputs = new(inputComparer);
+        private readonly HashSet<TTransformed> seenOutputs = new(outputComparer);
 
         /// <summary>
         /// Constructs a new instance of <see cref="ConcurrentUniqueTransformer{TOriginal, TTransformed}"/> using the default
@@ -36,24 +45,6 @@ namespace BanjoBotAssets.PostExporters.Helpers
         public ConcurrentUniqueTransformer(Func<TOriginal, TTransformed> transform, Func<TTransformed, TTransformed> mutate)
             : this(transform, mutate, EqualityComparer<TOriginal>.Default, EqualityComparer<TTransformed>.Default)
         {
-        }
-
-        /// <summary>
-        /// Constructs a new instance of <see cref="ConcurrentUniqueTransformer{TOriginal, TTransformed}"/> using the default
-        /// <see cref="EqualityComparer{T}"/> instances.
-        /// </summary>
-        /// <param name="transform">A delegate to convert a <typeparamref name="TOriginal"/> to a <typeparamref name="TTransformed"/>, which might not be unique.</param>
-        /// <param name="mutate">A delegate to modify <typeparamref name="TTransformed"/> to a new value in order to find a unique one.</param>
-        /// <param name="inputComparer">The <see cref="IEqualityComparer{T}"/> to use for comparing <typeparamref name="TOriginal"/>.</param>
-        /// <param name="outputComparer">The <see cref="IEqualityComparer{T}"/> to use for comparing <typeparamref name="TTransformed"/>.</param>
-        public ConcurrentUniqueTransformer(Func<TOriginal, TTransformed> transform, Func<TTransformed, TTransformed> mutate,
-            IEqualityComparer<TOriginal> inputComparer, IEqualityComparer<TTransformed> outputComparer)
-        {
-            this.transform = transform;
-            this.mutate = mutate;
-
-            seenInputs = new(inputComparer);
-            seenOutputs = new(outputComparer);
         }
 
         /// <summary>

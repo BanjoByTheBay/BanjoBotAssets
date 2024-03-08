@@ -34,7 +34,7 @@ namespace BanjoBotAssets.Json
         protected override IList<JsonProperty> CreateProperties(Type type, MemberSerialization memberSerialization)
         {
             var properties = base.CreateProperties(type, memberSerialization);
-            return properties.OrderBy(p => p.Order ?? DefaultOrder).ThenBy(p => p.PropertyName, StringComparer.Ordinal).ToList();
+            return [.. properties.OrderBy(p => p.Order ?? DefaultOrder).ThenBy(p => p.PropertyName, StringComparer.Ordinal)];
         }
     }
 }

@@ -17,10 +17,8 @@
  */
 namespace BanjoBotAssets.Exporters.Blueprints
 {
-    internal sealed class ZoneThemeExporter : BlueprintExporter
+    internal sealed class ZoneThemeExporter(IExporterContext services) : BlueprintExporter(services)
     {
-        public ZoneThemeExporter(IExporterContext services) : base(services) { }
-
         protected override string Type => "ZoneTheme";
 
         protected override string DisplayNameProperty => "ZoneName";

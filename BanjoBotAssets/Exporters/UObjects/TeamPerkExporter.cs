@@ -17,10 +17,8 @@
  */
 namespace BanjoBotAssets.Exporters.UObjects
 {
-    internal sealed class TeamPerkExporter : UObjectExporter
+    internal sealed class TeamPerkExporter(IExporterContext services) : UObjectExporter(services)
     {
-        public TeamPerkExporter(IExporterContext services) : base(services) { }
-
         protected override string Type => "TeamPerk";
 
         protected override bool InterestedInAsset(string name) => name.Contains("/TPID_", StringComparison.OrdinalIgnoreCase);

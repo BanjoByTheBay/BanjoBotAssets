@@ -17,12 +17,8 @@
  */
 namespace BanjoBotAssets.Exporters
 {
-    internal sealed class DifficultyExporter : BaseExporter
+    internal sealed class DifficultyExporter(IExporterContext services) : BaseExporter(services)
     {
-        public DifficultyExporter(IExporterContext services) : base(services)
-        {
-        }
-
         public override async Task ExportAssetsAsync(IProgress<ExportProgress> progress, IAssetOutput output, CancellationToken cancellationToken)
         {
             var growthBoundsPath = assetPaths.First(p => Path.GetFileNameWithoutExtension(p).Equals("GameDifficultyGrowthBounds", StringComparison.OrdinalIgnoreCase));

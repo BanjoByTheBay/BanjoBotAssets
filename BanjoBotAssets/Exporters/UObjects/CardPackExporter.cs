@@ -17,10 +17,8 @@
  */
 namespace BanjoBotAssets.Exporters.UObjects
 {
-    internal sealed class CardPackExporter : UObjectExporter
+    internal sealed class CardPackExporter(IExporterContext services) : UObjectExporter(services)
     {
-        public CardPackExporter(IExporterContext services) : base(services) { }
-
         protected override string Type => "CardPack";
 
         protected override bool InterestedInAsset(string name) => name.Contains("/Items/CardPacks/", StringComparison.OrdinalIgnoreCase);

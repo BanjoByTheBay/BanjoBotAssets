@@ -19,10 +19,8 @@ using CUE4Parse.UE4.Objects.Engine;
 
 namespace BanjoBotAssets.Exporters.UObjects
 {
-    internal sealed class GadgetExporter : UObjectExporter<UFortGadgetItemDefinition>
+    internal sealed class GadgetExporter(IExporterContext services) : UObjectExporter<UFortGadgetItemDefinition>(services)
     {
-        public GadgetExporter(IExporterContext services) : base(services) { }
-
         protected override string Type => "Gadget";
 
         protected override bool InterestedInAsset(string name) =>
@@ -38,7 +36,7 @@ namespace BanjoBotAssets.Exporters.UObjects
 
             Interlocked.Increment(ref assetsLoaded);
             var gameplayAbility = await asset.GameplayAbility.LoadAsync<UBlueprintGeneratedClass>(provider);
-            namedItemData.Description = await abilityDescription.GetForActiveAbilityAsync(gameplayAbility, this);
+            namedItemData.Description = await AbilityDescription.GetForActiveAbilityAsync(gameplayAbility, this);
             return true;
         }
     }

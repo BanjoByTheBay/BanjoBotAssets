@@ -21,19 +21,8 @@ using System.Text.Json;
 
 namespace BanjoBotAssets.Aes
 {
-    internal sealed class FileAesProvider : IAesProvider, IAesCacheUpdater
+    internal sealed class FileAesProvider(ILogger<FileAesProvider> logger, IOptions<AesOptions> options, GameDirectoryProvider gameDirectoryProvider) : IAesProvider, IAesCacheUpdater
     {
-        private readonly ILogger<FileAesProvider> logger;
-        private readonly IOptions<AesOptions> options;
-        private readonly GameDirectoryProvider gameDirectoryProvider;
-
-        public FileAesProvider(ILogger<FileAesProvider> logger, IOptions<AesOptions> options, GameDirectoryProvider gameDirectoryProvider)
-        {
-            this.logger = logger;
-            this.options = options;
-            this.gameDirectoryProvider = gameDirectoryProvider;
-        }
-
         public async Task<AesApiResponse?> TryGetAesAsync(CancellationToken cancellationToken)
         {
             string localFilePath = options.Value.LocalFilePath;

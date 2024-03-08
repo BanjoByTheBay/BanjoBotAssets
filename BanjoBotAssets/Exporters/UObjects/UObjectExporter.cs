@@ -17,30 +17,25 @@
  */
 using CUE4Parse.FN.Enums.FortniteGame;
 using System.Collections.Concurrent;
+using System.Text;
 
 namespace BanjoBotAssets.Exporters.UObjects
 {
-    internal abstract class UObjectExporter : UObjectExporter<UObject>
+    internal abstract class UObjectExporter(IExporterContext services) : UObjectExporter<UObject>(services)
     {
-        protected UObjectExporter(IExporterContext services) : base(services) { }
     }
 
-    internal abstract class UObjectExporter<TAsset> : UObjectExporter<TAsset, NamedItemData>
+    internal abstract class UObjectExporter<TAsset>(IExporterContext services) : UObjectExporter<TAsset, NamedItemData>(services)
         where TAsset : UObject
     {
-        protected UObjectExporter(IExporterContext services) : base(services)
-        {
-        }
     }
 
-    internal abstract class UObjectExporter<TAsset, TItemData> : BaseExporter
+    internal abstract class UObjectExporter<TAsset, TItemData>(IExporterContext services) : BaseExporter(services)
         where TAsset : UObject
         where TItemData : NamedItemData, new()
     {
         private int numToProcess, processedSoFar;
         private readonly ConcurrentDictionary<string, byte> failedAssets = new();
-
-        protected UObjectExporter(IExporterContext services) : base(services) { }
 
         protected abstract string Type { get; }
 
@@ -64,12 +59,14 @@ namespace BanjoBotAssets.Exporters.UObjects
             });
         }
 
+        private static readonly CompositeFormat ExportingGroupFormat = CompositeFormat.Parse(Resources.FormatString_Status_ExportingGroup);
+
         public override async Task ExportAssetsAsync(IProgress<ExportProgress> progress, IAssetOutput output, CancellationToken cancellationToken)
         {
             numToProcess = assetPaths.Count;
             processedSoFar = 0;
 
-            Report(progress, string.Format(CultureInfo.CurrentCulture, Resources.FormatString_Status_ExportingGroup, Type));
+            Report(progress, string.Format(CultureInfo.CurrentCulture, ExportingGroupFormat, Type));
 
             var assetsToProcess = scopeOptions.Value.Limit != null ? assetPaths.Take((int)scopeOptions.Value.Limit) : assetPaths;
             var opts = new ParallelOptions { CancellationToken = cancellationToken, MaxDegreeOfParallelism = performanceOptions.Value.MaxParallelism };

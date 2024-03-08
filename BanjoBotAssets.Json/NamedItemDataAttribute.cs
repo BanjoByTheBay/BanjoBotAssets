@@ -23,18 +23,13 @@ namespace BanjoBotAssets.Json
     /// based on the value of the <see cref="NamedItemData.Type"/> field.
     /// </summary>
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = false)]
-    public sealed class NamedItemDataAttribute : Attribute
+    public sealed class NamedItemDataAttribute(string typeFieldDiscriminator) : Attribute
     {
-        public NamedItemDataAttribute(string typeFieldDiscriminator)
-        {
-            TypeFieldDiscriminator = typeFieldDiscriminator;
-        }
-
         /// <summary>
         /// Gets a value that, if found in <see cref="NamedItemData.Type"/> when deserializing,
         /// will signal that the object should be deserialized as an instance of the class marked
         /// with this attribute.
         /// </summary>
-        public string TypeFieldDiscriminator { get; }
+        public string TypeFieldDiscriminator { get; } = typeFieldDiscriminator;
     }
 }

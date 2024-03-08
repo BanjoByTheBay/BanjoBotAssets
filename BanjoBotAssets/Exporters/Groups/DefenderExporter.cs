@@ -15,9 +15,11 @@
  * You should have received a copy of the GNU General Public License
  * along with BanjoBotAssets.  If not, see <http://www.gnu.org/licenses/>.
  */
+using System.Text;
+
 namespace BanjoBotAssets.Exporters.Groups
 {
-    internal sealed partial class DefenderExporter : GroupExporter<UFortHeroType>
+    internal sealed partial class DefenderExporter(IExporterContext services) : GroupExporter<UFortHeroType>(services)
     {
         protected override string Type => "Defender";
 
@@ -25,8 +27,6 @@ namespace BanjoBotAssets.Exporters.Groups
             name.Contains("Defenders/DID_", StringComparison.OrdinalIgnoreCase);
 
         private static readonly Regex defenderAssetNameRegex = DefenderAssetNameRegex();
-
-        public DefenderExporter(IExporterContext services) : base(services) { }
 
         protected override BaseParsedItemName? ParseAssetName(string name)
         {
@@ -41,6 +41,8 @@ namespace BanjoBotAssets.Exporters.Groups
             return new BaseParsedItemName(BaseName: match.Groups[1].Value, Rarity: match.Groups[2].Value, Tier: int.Parse(match.Groups[3].Value, CultureInfo.InvariantCulture));
         }
 
+        private static readonly CompositeFormat DefenderNameFormat = CompositeFormat.Parse(Resources.FormatString_Field_Defender_NameFormat);
+
         protected override async Task<BaseItemGroupFields> ExtractCommonFieldsAsync(UFortHeroType asset, IGrouping<string?, string> grouping)
         {
             var result = await base.ExtractCommonFieldsAsync(asset, grouping);
@@ -53,7 +55,7 @@ namespace BanjoBotAssets.Exporters.Groups
                 var i = category.LastIndexOf('_');
                 var weapon = category[(i + 1)..];
 
-                subType = string.Format(CultureInfo.CurrentCulture, Resources.FormatString_Field_Defender_NameFormat, weapon);
+                subType = string.Format(CultureInfo.CurrentCulture, DefenderNameFormat, weapon);
             }
             else
             {
@@ -63,13 +65,15 @@ namespace BanjoBotAssets.Exporters.Groups
             return result with { SubType = subType };
         }
 
+        private static readonly CompositeFormat DefenderDisplayNameFormat = CompositeFormat.Parse(Resources.FormatString_Field_Defender_DisplayNameFormat);
+
         protected override string GetDisplayName(BaseParsedItemName parsedName, UFortHeroType primaryAsset, BaseItemGroupFields fields)
         {
             if (primaryAsset.DisplayName is FText ft)
                 return ft.Text;
 
             var rarity = GetRarity(parsedName, primaryAsset, fields);
-            return string.Format(CultureInfo.CurrentCulture, Resources.FormatString_Field_Defender_DisplayNameFormat, rarity.GetNameText(), fields.SubType ?? Resources.Field_Defender_DefaultName);
+            return string.Format(CultureInfo.CurrentCulture, DefenderDisplayNameFormat, rarity.GetNameText(), fields.SubType ?? Resources.Field_Defender_DefaultName);
         }
 
         [GeneratedRegex(".*/([^/]+)_(C|UC|R|VR|SR|UR)_T(\\d+)(?:\\..*)?$", RegexOptions.Singleline | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase)]

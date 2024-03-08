@@ -39,7 +39,7 @@ namespace BanjoBotAssets.Json
             return result;
         }
 
-        private static readonly Dictionary<string, Type> NamedItemDataTypeMap = new();
+        private static readonly Dictionary<string, Type> NamedItemDataTypeMap = [];
 
         // TODO: use a source generator instead of NamedItemDataTypeMap
         static NamedItemDataConverter()

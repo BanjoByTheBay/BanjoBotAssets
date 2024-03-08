@@ -21,15 +21,8 @@ using CUE4Parse.UE4.Objects.Engine;
 
 namespace BanjoBotAssets.Exporters.Helpers
 {
-    internal sealed partial class AbilityDescription
+    internal sealed partial class AbilityDescription(ILogger<AbilityDescription> logger)
     {
-        private readonly ILogger<AbilityDescription> logger;
-
-        public AbilityDescription(ILogger<AbilityDescription> logger)
-        {
-            this.logger = logger;
-        }
-
         public async Task<string?> GetForPerkAbilityKitAsync(UObject grantedAbilityKit, IAssetCounter assetCounter)
         {
             var (markup, cdo) = await GetMarkupAsync(grantedAbilityKit, assetCounter);
@@ -45,15 +38,20 @@ namespace BanjoBotAssets.Exporters.Helpers
             return FormatMarkup(markup, tokens);
         }
 
-        public async Task<string?> GetForActiveAbilityAsync(UBlueprintGeneratedClass gameplayAbilityClass, IAssetCounter assetCounter)
+        public static async Task<string?> GetForActiveAbilityAsync(UBlueprintGeneratedClass gameplayAbilityClass, IAssetCounter assetCounter)
         {
             var gameplayAbilityCdo = await gameplayAbilityClass.ClassDefaultObject.LoadAsync();
             assetCounter.CountAssetLoaded();
 
+            if (gameplayAbilityCdo == null)
+                return null;
+
             return await GetForActiveAbilityAsync(gameplayAbilityClass, gameplayAbilityCdo, assetCounter);
         }
 
-        public async Task<string?> GetForActiveAbilityAsync(UBlueprintGeneratedClass gameplayAbilityClass, UObject gameplayAbilityCdo, IAssetCounter assetCounter)
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Roslynator", "RCS1163:Unused parameter", Justification = "TODO")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "TODO")]
+        public static async Task<string?> GetForActiveAbilityAsync(UBlueprintGeneratedClass gameplayAbilityClass, UObject gameplayAbilityCdo, IAssetCounter assetCounter)
         {
             // TODO: use gameplayAbilityClass to substitute the correct token values
             var tooltip = gameplayAbilityCdo.GetOrDefault<UBlueprintGeneratedClass?>("ToolTip");
@@ -68,7 +66,7 @@ namespace BanjoBotAssets.Exporters.Helpers
             var tooltipCdo = await tooltip.ClassDefaultObject.LoadAsync();
             assetCounter.CountAssetLoaded();
 
-            return tooltipCdo.GetOrDefault<FText>("Description").Text;
+            return tooltipCdo?.GetOrDefault<FText>("Description").Text;
         }
 
         private static async Task<(string? markup, UObject? tooltip)> GetMarkupAsync(UObject grantedAbilityKit, IAssetCounter assetCounter)
@@ -102,7 +100,7 @@ namespace BanjoBotAssets.Exporters.Helpers
         {
             var style = cdo.GetOrDefault("dataRows_conversionStyle", new UScriptMap());
 
-            IEnumerable<KeyValuePair<FPropertyTagType?, FPropertyTagType?>>? props = style.Properties;
+            IEnumerable<KeyValuePair<FPropertyTagType, FPropertyTagType?>>? props = style.Properties;
 
             // some tokens might only be defined in the parent...
             if (cdo.Template?.Name.Text is string and not "Default__TTT_Perks_C")

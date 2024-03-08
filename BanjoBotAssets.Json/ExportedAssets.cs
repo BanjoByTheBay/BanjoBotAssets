@@ -31,11 +31,11 @@ namespace BanjoBotAssets.Json
 
         public SortedDictionary<string, DifficultyInfo> DifficultyInfo { get; } = new(StringComparer.OrdinalIgnoreCase);
 
-        public SortedDictionary<string, string[][]> MainQuestLines { get; } = new();
+        public SortedDictionary<string, string[][]> MainQuestLines { get; } = [];
 
-        public SortedDictionary<string, string[][]> EventQuestLines { get; } = new();
+        public SortedDictionary<string, string[][]> EventQuestLines { get; } = [];
 
-        public SortedDictionary<string, VenturesSeason> VenturesSeasons { get; } = new();
+        public SortedDictionary<string, VenturesSeason> VenturesSeasons { get; } = [];
 
         /// <summary>
         /// Merges the contents of another <see cref="ExportedAssets"/> instance into this one.

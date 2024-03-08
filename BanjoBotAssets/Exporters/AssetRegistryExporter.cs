@@ -22,7 +22,7 @@ namespace BanjoBotAssets.Exporters
     /// <summary>
     /// Extracts the display names of weapons and traps so they can be applied to the exported schematics.
     /// </summary>
-    internal sealed partial class AssetRegistryExporter : BaseExporter
+    internal sealed partial class AssetRegistryExporter(IExporterContext services) : BaseExporter(services)
     {
         [GeneratedRegex("^Fort(?:Weapon(?:Ranged|Melee)|Trap)ItemDefinition$", RegexOptions.Singleline | RegexOptions.CultureInvariant | RegexOptions.Compiled)]
         private static partial Regex WeaponOrTrapAssetClassRegex();
@@ -37,7 +37,7 @@ namespace BanjoBotAssets.Exporters
             """, RegexOptions.Singleline | RegexOptions.CultureInvariant | RegexOptions.Compiled | RegexOptions.IgnorePatternWhitespace)]
         private static partial Regex NSLocTextRegex();
 
-        public override Task ExportAssetsAsync(IProgress<ExportProgress> progress, IAssetOutput output, CancellationToken cancellationToken)
+        public override async Task ExportAssetsAsync(IProgress<ExportProgress> progress, IAssetOutput output, CancellationToken cancellationToken)
         {
             var numToProcess = assetPaths.Count;
             var processedSoFar = 0;
@@ -55,7 +55,7 @@ namespace BanjoBotAssets.Exporters
 
                     Interlocked.Increment(ref assetsLoaded);
 
-                    using var reader = file.CreateReader();
+                    await using var reader = file.CreateReader();
                     var assetRegistry = new FAssetRegistryState(reader);
                     foreach (var buffer in assetRegistry.PreallocatedAssetDataBuffers)
                     {
@@ -97,12 +97,6 @@ namespace BanjoBotAssets.Exporters
                     logger.LogError(ex, Resources.Error_ExceptionWhileProcessingAsset, path);
                 }
             }
-
-            return Task.CompletedTask;
-        }
-
-        public AssetRegistryExporter(IExporterContext services) : base(services)
-        {
         }
 
         protected override bool InterestedInAsset(string name) => AssetRegistryFileRegex().IsMatch(name);

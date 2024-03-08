@@ -32,7 +32,7 @@ namespace BanjoBotAssets.Exporters.Groups
         public SchematicItemGroupFields() : this("", null, null, "", "", "", "", "", "") { }
     }
 
-    internal sealed partial class SchematicExporter : GroupExporter<UObject, ParsedSchematicName, SchematicItemGroupFields, SchematicItemData>
+    internal sealed partial class SchematicExporter(IExporterContext services) : GroupExporter<UObject, ParsedSchematicName, SchematicItemGroupFields, SchematicItemData>(services)
     {
         private readonly Dictionary<string, string> craftingResultPaths = new(StringComparer.OrdinalIgnoreCase);
         private string? craftingPath, alterationGroupPath, slotDefsPath, slotLoadoutsPath, meleeWeaponsPath, rangedWeaponsPath, trapsPath, durabilityPath, namedExclusionsPath;
@@ -299,10 +299,6 @@ namespace BanjoBotAssets.Exporters.Groups
             return rowName;
         }
 
-        public SchematicExporter(IExporterContext services) : base(services)
-        {
-        }
-
         [GeneratedRegex(@"^(?:Weapon\.(?:Ranged|Melee\.(?:Edged|Blunt|Piercing))|Trap(?=\.(?:Ceiling|Floor|Wall)))\.([^.]+)", RegexOptions.Singleline | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase)]
         private static partial Regex SchematicSubTypeRegex();
 
@@ -459,7 +455,7 @@ namespace BanjoBotAssets.Exporters.Groups
                     }
                 }
 
-                itemData.AlterationSlots = convertedSlots.ToArray();
+                itemData.AlterationSlots = [.. convertedSlots];
             }
 
             return Task.FromResult(true);

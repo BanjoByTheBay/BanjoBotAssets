@@ -19,10 +19,8 @@ using CUE4Parse.FN.Exports.FortniteGame.NoProperties;
 
 namespace BanjoBotAssets.Exporters.UObjects
 {
-    internal sealed class IngredientExporter : UObjectExporter<UFortIngredientItemDefinition>
+    internal sealed class IngredientExporter(IExporterContext services) : UObjectExporter<UFortIngredientItemDefinition>(services)
     {
-        public IngredientExporter(IExporterContext services) : base(services) { }
-
         protected override string Type => "Ingredient";
 
         protected override bool InterestedInAsset(string name) =>

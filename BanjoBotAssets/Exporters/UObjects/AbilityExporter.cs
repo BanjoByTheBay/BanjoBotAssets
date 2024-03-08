@@ -21,12 +21,10 @@ using CUE4Parse.UE4.Objects.Engine;
 
 namespace BanjoBotAssets.Exporters.UObjects
 {
-    internal sealed class AbilityExporter : UObjectExporter<UObject, AbilityItemData>
+    internal sealed class AbilityExporter(IExporterContext services) : UObjectExporter<UObject, AbilityItemData>(services)
     {
         private string? gadgetPath;
         private Dictionary<string, FStructFallback>? gadgetTable;
-
-        public AbilityExporter(IExporterContext services) : base(services) { }
 
         protected override string Type => "Ability";
 
@@ -143,6 +141,11 @@ namespace BanjoBotAssets.Exporters.UObjects
             Interlocked.Increment(ref assetsLoaded);
             var gaCdo = await ga.ClassDefaultObject.LoadAsync();
 
+            if (gaCdo == null)
+            {
+                return;
+            }
+
             var abilityCosts = gaCdo.GetOrDefault<FFortAbilityCost[]>("AbilityCosts");
             var staminaCost = abilityCosts.SingleOrDefault(ac => ac.CostSource == EFortAbilityCostSource.Stamina);
             namedItemData.EnergyCost ??= staminaCost?.CostValue?.GetScaledValue(logger);
@@ -153,12 +156,12 @@ namespace BanjoBotAssets.Exporters.UObjects
             Interlocked.Increment(ref assetsLoaded);
             var cooldownCdo = await cooldownEffect.ClassDefaultObject.LoadAsync();
 
-            var dm = cooldownCdo.GetOrDefault<FStructFallback>("DurationMagnitude");
-            var sfm = dm.GetOrDefault<FScalableFloat>("ScalableFloatMagnitude");
-            namedItemData.CooldownSeconds ??= sfm.GetScaledValue(logger);
+            var dm = cooldownCdo?.GetOrDefault<FStructFallback>("DurationMagnitude");
+            var sfm = dm?.GetOrDefault<FScalableFloat>("ScalableFloatMagnitude");
+            namedItemData.CooldownSeconds ??= sfm?.GetScaledValue(logger);
 
             // load tooltip
-            namedItemData.Description ??= await abilityDescription.GetForActiveAbilityAsync(ga, gaCdo, this);
+            namedItemData.Description ??= await AbilityDescription.GetForActiveAbilityAsync(ga, gaCdo, this);
         }
 
         private async Task LoadFromGameplayEffectAsync(AbilityItemData namedItemData, FGameplayEffectApplicationInfoHard geaih)
@@ -169,7 +172,7 @@ namespace BanjoBotAssets.Exporters.UObjects
 
             Interlocked.Increment(ref assetsLoaded);
             var cdo = await ge.ClassDefaultObject.LoadAsync();
-            var tags = cdo.GetOrDefault<FInheritedTagContainer?>("InheritableOwnedTagsContainer");
+            var tags = cdo?.GetOrDefault<FInheritedTagContainer?>("InheritableOwnedTagsContainer");
             namedItemData.GrantedTag ??= tags?.Added.First(t => t.ToString().StartsWith("Granted.Ability.", StringComparison.OrdinalIgnoreCase)).ToString();
         }
     }

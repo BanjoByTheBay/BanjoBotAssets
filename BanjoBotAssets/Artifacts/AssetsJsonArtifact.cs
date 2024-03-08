@@ -21,20 +21,12 @@ using Newtonsoft.Json;
 
 namespace BanjoBotAssets.Artifacts
 {
-    internal sealed class AssetsJsonArtifact : IExportArtifact
+    internal sealed class AssetsJsonArtifact(
+        ExportedFileOptions options,
+        ILogger<AssetsJsonArtifact> logger,
+        IOptions<ImageExportOptions> imageExportOptions) : IExportArtifact
     {
-        private readonly ExportedFileOptions options;
-        private readonly ILogger<AssetsJsonArtifact> logger;
-        private readonly IOptions<ImageExportOptions> imageExportOptions;
-
-        public AssetsJsonArtifact(ExportedFileOptions options, ILogger<AssetsJsonArtifact> logger, IOptions<ImageExportOptions> imageExportOptions)
-        {
-            this.options = options;
-            this.logger = logger;
-            this.imageExportOptions = imageExportOptions;
-        }
-
-        public Task RunAsync(ExportedAssets exportedAssets, IList<ExportedRecipe> exportedRecipes, CancellationToken cancellationToken = default)
+        public async Task RunAsync(ExportedAssets exportedAssets, IList<ExportedRecipe> exportedRecipes, CancellationToken cancellationToken = default)
         {
             // export assets.json
             var path = string.IsNullOrEmpty(options.Path) ? Resources.File_assets_json : options.Path;
@@ -52,8 +44,10 @@ namespace BanjoBotAssets.Artifacts
                 using (var stream = File.OpenText(path))
                 {
                     var rdr = new JsonTextReader(stream);
+#pragma warning disable CA1863 // Use 'CompositeFormat'
                     previous = serializer.Deserialize<ExportedAssets>(rdr)
                         ?? throw new InvalidOperationException(string.Format(CultureInfo.CurrentCulture, Resources.FormatString_Error_CannotReadPreviousArtifact, path));
+#pragma warning restore CA1863 // Use 'CompositeFormat'
                 }
 
                 previous.Merge(exportedAssets);
@@ -64,12 +58,8 @@ namespace BanjoBotAssets.Artifacts
                 logger.LogInformation(Resources.Status_WritingFreshArtifact, path);
             }
 
-            using (var file = File.CreateText(path))
-            {
-                serializer.Serialize(file, exportedAssets);
-            }
-
-            return Task.CompletedTask;
+            await using var file = File.CreateText(path);
+            serializer.Serialize(file, exportedAssets);
         }
     }
 }

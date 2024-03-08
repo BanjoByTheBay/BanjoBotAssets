@@ -22,7 +22,7 @@ namespace BanjoBotAssets.Exporters
 {
     internal abstract class BaseExporter : IExporter
     {
-        protected readonly List<string> assetPaths = new();
+        protected readonly List<string> assetPaths = [];
         protected int assetsLoaded;
 
         protected readonly AbstractVfsFileProvider provider;

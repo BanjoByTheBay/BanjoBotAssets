@@ -39,7 +39,7 @@ namespace BanjoBotAssets.Extensions
                 StringComparer.OrdinalIgnoreCase);
         }
 
-        private static readonly Type[] ctorParamTypes = { typeof(FStructFallback) };
+        private static readonly Type[] ctorParamTypes = [typeof(FStructFallback)];
 
         private static Func<KeyValuePair<FName, FStructFallback>, T> GetFallbackCtorDelegate<T>()
         {

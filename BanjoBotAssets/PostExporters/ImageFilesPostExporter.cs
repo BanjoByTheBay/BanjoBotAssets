@@ -22,22 +22,11 @@ using Microsoft.Extensions.Options;
 
 namespace BanjoBotAssets.PostExporters
 {
-    internal sealed partial class ImageFilesPostExporter : IPostExporter
+    internal sealed partial class ImageFilesPostExporter(AbstractVfsFileProvider provider, IOptions<ImageExportOptions> options, ILogger<ImageFilesPostExporter> logger) : IPostExporter
     {
-        private readonly AbstractVfsFileProvider provider;
-        private readonly IOptions<ImageExportOptions> options;
-        private readonly ILogger<ImageFilesPostExporter> logger;
-
         private int assetsLoaded;
 
         public int AssetsLoaded => assetsLoaded;
-
-        public ImageFilesPostExporter(AbstractVfsFileProvider provider, IOptions<ImageExportOptions> options, ILogger<ImageFilesPostExporter> logger)
-        {
-            this.provider = provider;
-            this.options = options;
-            this.logger = logger;
-        }
 
         public void CountAssetLoaded()
         {
@@ -89,7 +78,7 @@ namespace BanjoBotAssets.PostExporters
                                 continue;
                             }
 
-                            using var stream = new FileStream(exportedPath, FileMode.Create, FileAccess.Write);
+                            await using var stream = new FileStream(exportedPath, FileMode.Create, FileAccess.Write);
                             if (!bitmap.Encode(stream, SkiaSharp.SKEncodedImageFormat.Png, 100))
                             {
                                 logger.LogError(Resources.Error_CannotEncodeTexture, imagePath);

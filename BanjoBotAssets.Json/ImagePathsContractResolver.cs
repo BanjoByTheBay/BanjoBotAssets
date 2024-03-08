@@ -21,15 +21,8 @@ using System.Reflection;
 
 namespace BanjoBotAssets.Json
 {
-    internal sealed class ImagePathsContractResolver : OrderedPropertiesContractResolver
+    internal sealed class ImagePathsContractResolver(bool wantImagePaths) : OrderedPropertiesContractResolver
     {
-        private readonly bool wantImagePaths;
-
-        public ImagePathsContractResolver(bool wantImagePaths)
-        {
-            this.wantImagePaths = wantImagePaths;
-        }
-
         protected override JsonProperty CreateProperty(MemberInfo member, MemberSerialization memberSerialization)
         {
             var result = base.CreateProperty(member, memberSerialization);

@@ -25,10 +25,10 @@ namespace BanjoBotAssets.Exporters.Groups
         PerkRequirement? HeroPerkRequirement, string[] HeroAbilities)
         : BaseItemGroupFields(DisplayName, Description, SubType)
     {
-        public HeroItemGroupFields() : this("", null, null, "", "", "", "", null, Array.Empty<string>()) { }
+        public HeroItemGroupFields() : this("", null, null, "", "", "", "", null, []) { }
     }
 
-    internal sealed partial class HeroExporter : GroupExporter<UFortHeroType, BaseParsedItemName, HeroItemGroupFields, HeroItemData>
+    internal sealed partial class HeroExporter(IExporterContext services) : GroupExporter<UFortHeroType, BaseParsedItemName, HeroItemGroupFields, HeroItemData>(services)
     {
         private string? itemToQuestPath, questRewardsPath;
         private readonly Dictionary<string, string> heroToTeamPerk = new(StringComparer.OrdinalIgnoreCase);
@@ -62,8 +62,6 @@ namespace BanjoBotAssets.Exporters.Groups
         }
 
         private static readonly Regex heroAssetNameRegex = HeroAssetNameRegex();
-
-        public HeroExporter(IExporterContext services) : base(services) { }
 
         protected override BaseParsedItemName? ParseAssetName(string name)
         {

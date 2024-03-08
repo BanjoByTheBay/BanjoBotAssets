@@ -19,10 +19,8 @@ using CUE4Parse.UE4.Objects.Engine;
 
 namespace BanjoBotAssets.Exporters.Blueprints
 {
-    internal sealed class MissionGenExporter : BlueprintExporter
+    internal sealed class MissionGenExporter(IExporterContext services) : BlueprintExporter(services)
     {
-        public MissionGenExporter(IExporterContext services) : base(services) { }
-
         protected override string Type => "MissionGen";
 
         protected override string DisplayNameProperty => "MissionName";

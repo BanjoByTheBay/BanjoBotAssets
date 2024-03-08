@@ -19,12 +19,8 @@ using CUE4Parse.FN.Structs.CoreUObject;
 
 namespace BanjoBotAssets.Exporters
 {
-    internal sealed class QuestMapExporter : BaseExporter
+    internal sealed class QuestMapExporter(IExporterContext services) : BaseExporter(services)
     {
-        public QuestMapExporter(IExporterContext services) : base(services)
-        {
-        }
-
         public override async Task ExportAssetsAsync(IProgress<ExportProgress> progress, IAssetOutput output, CancellationToken cancellationToken)
         {
             progress.Report(new ExportProgress { TotalSteps = 1, CompletedSteps = 0, AssetsLoaded = assetsLoaded, CurrentItem = Resources.Status_ExportingQuestMap });
@@ -43,7 +39,7 @@ namespace BanjoBotAssets.Exporters
                 return;
             }
 
-            List<Task<IEnumerable<QuestLine>>> tasks = new();
+            List<Task<IEnumerable<QuestLine>>> tasks = [];
 
             var campaignLink = mapData.GetOrDefault("CampaignQuestMapDataAsset", default(ResolvedObject));
             if (campaignLink == null)
@@ -111,7 +107,7 @@ namespace BanjoBotAssets.Exporters
             if (await questMapDataAssetLink.LoadAsync() is not UObject uo)
             {
                 logger.LogError(Resources.Warning_MissingCampaignQuestMapData);
-                return Enumerable.Empty<QuestLine>();
+                return [];
             }
 
             cancellationToken.ThrowIfCancellationRequested();
@@ -126,14 +122,14 @@ namespace BanjoBotAssets.Exporters
                     logger.LogError(Resources.Warning_MissingCampaignQuestMapData);
                 }
 
-                return Enumerable.Empty<QuestLine>();
+                return [];
             }
 
             // load the DataTable with the quest line pages
             if (await tableLink.LoadAsync() is not UDataTable table)
             {
                 logger.LogError(Resources.Warning_MissingCampaignQuestMapData);
-                return Enumerable.Empty<QuestLine>();
+                return [];
             }
 
             // group the pages into quest lines and return them
@@ -143,7 +139,7 @@ namespace BanjoBotAssets.Exporters
                                 let qid = q.Get<FPrimaryAssetId>("QuestItemDefinitionId")
                                 select $"{qid.PrimaryAssetType.Name.Text}:{qid.PrimaryAssetName}"
                    group quests.ToArray() by page.Get<FText>("PageTitle").Text into g
-                   select new QuestLine(g.Key, g.ToArray(), isMainCampaign);
+                   select new QuestLine(g.Key, [.. g], isMainCampaign);
         }
 
         protected override bool InterestedInAsset(string name) => Path.GetFileName(name).Equals("QuestMapData.uasset", StringComparison.OrdinalIgnoreCase);

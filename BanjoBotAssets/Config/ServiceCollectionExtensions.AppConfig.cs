@@ -171,7 +171,7 @@ namespace BanjoBotAssets.Extensions
                 .Configure<IConfiguration>((options, config) =>
                 {
                     options.ELanguage = "";
-                    options.GameDirectories = Array.Empty<string>();
+                    options.GameDirectories = [];
                     config.GetSection(nameof(GameFileOptions)).Bind(options);
                 });
 
