@@ -69,7 +69,7 @@ namespace BanjoBotAssets.Exporters.Groups
 
         protected override string GetDisplayName(BaseParsedItemName parsedName, UFortHeroType primaryAsset, BaseItemGroupFields fields)
         {
-            if (primaryAsset.DisplayName is FText ft)
+            if (primaryAsset.ItemName is FText ft)
                 return ft.Text;
 
             var rarity = GetRarity(parsedName, primaryAsset, fields);

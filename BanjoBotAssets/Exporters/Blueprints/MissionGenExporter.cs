@@ -39,7 +39,7 @@ namespace BanjoBotAssets.Exporters.Blueprints
             }
 
             var loadingScreenConfig = await classDefaultObject.GetInheritedOrDefaultAsync<FStructFallback>("LoadingScreenConfig", this);
-            if (loadingScreenConfig?.GetSoftAssetPath("BackgroundImage") is string bgImage)
+            if (loadingScreenConfig?.GetSoftAssetPath("BackgroundImage") is string bgImage && !string.IsNullOrEmpty(bgImage))
             {
                 imagePaths.Add(ImageType.LoadingScreen, bgImage);
             }

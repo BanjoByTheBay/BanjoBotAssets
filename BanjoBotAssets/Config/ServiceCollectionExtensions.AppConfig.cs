@@ -140,6 +140,7 @@ namespace BanjoBotAssets.Extensions
         {
             services
                 .AddSingleton<GameDirectoryProvider>()
+                .AddSingleton<LanguageProvider>()
                 .AddSingleton((Func<IServiceProvider, AbstractVfsFileProvider>)(sp =>
                  {
                      var gd = sp.GetRequiredService<GameDirectoryProvider>();

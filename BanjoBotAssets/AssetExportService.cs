@@ -22,7 +22,6 @@ using BanjoBotAssets.Exporters;
 using BanjoBotAssets.PostExporters;
 using CUE4Parse.Encryption.Aes;
 using CUE4Parse.UE4.Objects.Core.Misc;
-using CUE4Parse.UE4.Versions;
 using Microsoft.Extensions.Options;
 using System.Collections.Concurrent;
 using System.Diagnostics;
@@ -33,14 +32,14 @@ namespace BanjoBotAssets
         ILogger<AssetExportService> logger,
             IHostApplicationLifetime lifetime,
             IEnumerable<IExporter> allExporters,
-            IOptions<GameFileOptions> options,
             IEnumerable<IAesProvider> aesProviders,
             IAesCacheUpdater aesCacheUpdater,
             IEnumerable<IExportArtifact> exportArtifacts,
             AbstractVfsFileProvider provider,
             ITypeMappingsProviderFactory typeMappingsProviderFactory,
             IOptions<ScopeOptions> scopeOptions,
-            IEnumerable<IPostExporter> allPostExporters) : BackgroundService
+            IEnumerable<IPostExporter> allPostExporters,
+            LanguageProvider languageProvider) : BackgroundService
     {
         private readonly List<IExporter> exportersToRun = MakeExportersToRun(allExporters, scopeOptions);
         private readonly ConcurrentDictionary<string, byte> failedAssets = new();
@@ -337,17 +336,8 @@ namespace BanjoBotAssets
 
         private void LoadLocalization(CancellationToken cancellationToken)
         {
-            var language = GetLocalizationLanguage();
-            logger.LogInformation(Resources.Status_LoadingLocalization, language.ToString());
-            provider.LoadLocalization(language, cancellationToken);
-        }
-
-        private ELanguage GetLocalizationLanguage()
-        {
-            if (!string.IsNullOrEmpty(options.Value.ELanguage) && Enum.TryParse<ELanguage>(options.Value.ELanguage, out var result))
-                return result;
-
-            return Enum.Parse<ELanguage>(Resources.ELanguage);
+            logger.LogInformation(Resources.Status_LoadingLocalization, languageProvider.Language.ToString());
+            provider.LoadLocalization(languageProvider.Language, cancellationToken);
         }
     }
 }

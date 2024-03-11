@@ -1,6 +1,6 @@
 ﻿extensions: designer.cs generated.cs
 extensions: .cs .cpp .h
-/* Copyright 2023 Tara "Dino" Cassatt
+/* Copyright %CurrentYear% Tara "Dino" Cassatt
  * 
  * This file is part of BanjoBotAssets.
  * 
@@ -19,7 +19,7 @@ extensions: .cs .cpp .h
  */
 extensions: .aspx .ascx
 <%-- 
-Copyright 2023 Tara "Dino" Cassatt
+Copyright %CurrentYear% Tara "Dino" Cassatt
 
 This file is part of BanjoBotAssets.
 
@@ -38,7 +38,7 @@ along with BanjoBotAssets.  If not, see <http://www.gnu.org/licenses/>.
 --%>
 extensions:  .xml .config .xsd
 <!--
-Copyright 2023 Tara "Dino" Cassatt
+Copyright %CurrentYear% Tara "Dino" Cassatt
 
 This file is part of BanjoBotAssets.
 

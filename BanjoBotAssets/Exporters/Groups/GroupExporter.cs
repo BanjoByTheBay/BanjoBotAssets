@@ -275,8 +275,8 @@ namespace BanjoBotAssets.Exporters.Groups
         {
             return Task.FromResult(new TFields() with
             {
-                Description = asset.GetOrDefault<FText>("Description")?.Text,
-                DisplayName = asset.GetOrDefault<FText>("DisplayName")?.Text ?? $"<{grouping.Key}>",
+                Description = asset.GetOrDefault<FText>("ItemDescription")?.Text ?? asset.GetOrDefault<FText>("Description")?.Text,
+                DisplayName = asset.GetOrDefault<FText>("ItemName")?.Text ?? asset.GetOrDefault<FText>("DisplayName")?.Text ?? $"<{grouping.Key}>",
                 SubType = null,
                 SmallPreviewImagePath = asset.GetSoftAssetPath("SmallPreviewImage"),
                 LargePreviewImagePath = asset.GetSoftAssetPath("LargePreviewImage"),

@@ -17,6 +17,7 @@
  */
 using Newtonsoft.Json;
 using System.Diagnostics.CodeAnalysis;
+using System.Text;
 
 namespace BanjoBotAssets.Json
 {
@@ -43,5 +44,23 @@ namespace BanjoBotAssets.Json
         public int? Tier { get; set; }
         [JsonProperty(Order = OrderedPropertiesContractResolver.DefaultOrder + 2)]
         public SortedDictionary<ImageType, string>? ImagePaths { get; set; }
+
+        public override string ToString()
+        {
+            var sb = new StringBuilder();
+
+            sb.Append(Type);
+            sb.Append(": ");
+            sb.Append(Name);
+
+            if (DisplayName != null)
+            {
+                sb.Append(" (");
+                sb.Append(DisplayName);
+                sb.Append(')');
+            }
+
+            return sb.ToString();
+        }
     }
 }

@@ -27,7 +27,7 @@ namespace BanjoBotAssets.Exporters.UObjects
 
         protected override Task<bool> ExportAssetAsync(UFortItemDefinition asset, NamedItemData namedItemData, Dictionary<ImageType, string> imagePaths)
         {
-            namedItemData.DisplayName = asset.Description?.Text ?? $"<Alteration:{asset.Name}>";
+            namedItemData.DisplayName = asset.ItemDescription?.Text ?? $"<Alteration:{asset.Name}>";
             namedItemData.Description = null;
             return Task.FromResult(true);
         }

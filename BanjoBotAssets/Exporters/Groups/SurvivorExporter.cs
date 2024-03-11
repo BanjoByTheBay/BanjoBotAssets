@@ -58,7 +58,7 @@ namespace BanjoBotAssets.Exporters.Groups
         {
             var result = await base.ExtractCommonFieldsAsync(asset, grouping);
             var subType = asset.bIsManager ? GetManagerJob(asset) : null;
-            var displayName = asset.DisplayName?.Text ?? MakeSurvivorDisplayName(asset);
+            var displayName = asset.ItemName?.Text ?? MakeSurvivorDisplayName(asset);
             var personality = asset.FixedPersonalityTag.GameplayTags is { Length: 1 }
                 ? asset.FixedPersonalityTag.GameplayTags[0].ToString().Split('.')[^1]
                 : null;

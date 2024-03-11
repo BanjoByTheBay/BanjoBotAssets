@@ -92,9 +92,13 @@ namespace BanjoBotAssets.Exporters.UObjects
 
                         cancellationToken.ThrowIfCancellationRequested();
 
-                        if (pkg?.GetExport(0) is TAsset asset)
+                        if (pkg?.GetExport(file.NameWithoutExtension, StringComparison.OrdinalIgnoreCase) is TAsset asset)
                         {
                             uobject = asset;
+                        }
+                        else if (pkg?.GetExport(file.NameWithoutExtension + "_C", StringComparison.OrdinalIgnoreCase) is TAsset assetC)
+                        {
+                            uobject = assetC;
                         }
                         else
                         {
@@ -108,7 +112,9 @@ namespace BanjoBotAssets.Exporters.UObjects
                         {
                             var pkg = await provider.LoadPackageAsync(file);
                             cancellationToken.ThrowIfCancellationRequested();
-                            uobject = pkg.GetExport(0) as TAsset;
+
+                            uobject = pkg.GetExportOrNull(file.NameWithoutExtension, StringComparison.OrdinalIgnoreCase) as TAsset ??
+                                pkg.GetExport(file.NameWithoutExtension + "_C", StringComparison.OrdinalIgnoreCase) as TAsset;
                         }
                         catch (Exception ex)
                         {
@@ -126,8 +132,8 @@ namespace BanjoBotAssets.Exporters.UObjects
                     }
 
                     var templateId = $"{Type}:{uobject.Name}";
-                    var displayName = uobject.GetOrDefault<FText>("DisplayName")?.Text ?? $"<{uobject.Name}>";
-                    var description = uobject.GetOrDefault<FText>("Description")?.Text;
+                    var displayName = uobject.GetOrDefault<FText>("ItemName")?.Text ?? uobject.GetOrDefault<FText>("DisplayName")?.Text ?? $"<{uobject.Name}>";
+                    var description = uobject.GetOrDefault<FText>("ItemDescription")?.Text ?? uobject.GetOrDefault<FText>("Description")?.Text;
                     var isInventoryLimitExempt = !uobject.GetOrDefault("bInventorySizeLimited", true);
 
                     var itemData = new TItemData

@@ -43,6 +43,7 @@ namespace BanjoBotAssets.Exporters.UObjects
                 homebaseRatingDifficultyMappingPath = name;
             }
 
+            // TODO: use AssetRegistry to exclude non-quest assets, e.g. /Game/Items/Quests/Summer2019/SummerQuest_2019_Ice.SummerQuest_2019_Ice
             return name.Contains("/Content/Quests/", StringComparison.OrdinalIgnoreCase);
         }
 
@@ -76,10 +77,10 @@ namespace BanjoBotAssets.Exporters.UObjects
                         var row = o.ObjectiveStatHandle.RowName;
                         qo.ZonePowerLevel = TryGetZonePowerLevelCondition(row.Text);
 
-                        if (qo.ZonePowerLevel != null)
+                        if (qo.ZonePowerLevel is int powerLevel)
                         {
-                            qo.Description = qo.Description.Replace("[UIRating]", qo.ZonePowerLevel.ToString(), StringComparison.OrdinalIgnoreCase);
-                            qo.HudShortDescription = qo.HudShortDescription.Replace("[UIRating]", qo.ZonePowerLevel.ToString(), StringComparison.OrdinalIgnoreCase);
+                            qo.Description = qo.Description.Replace("[UIRating]", powerLevel.ToString(exportCulture), StringComparison.OrdinalIgnoreCase);
+                            qo.HudShortDescription = qo.HudShortDescription.Replace("[UIRating]", powerLevel.ToString(exportCulture), StringComparison.OrdinalIgnoreCase);
                         }
                     }
 
