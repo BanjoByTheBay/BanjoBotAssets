@@ -16,7 +16,6 @@
  * along with BanjoBotAssets.  If not, see <http://www.gnu.org/licenses/>.
  */
 using System.Collections.Concurrent;
-using System.Text;
 
 namespace BanjoBotAssets.Exporters.Groups
 {
@@ -93,9 +92,6 @@ namespace BanjoBotAssets.Exporters.Groups
             });
         }
 
-        // TODO: extract a static class for all these CompositeFormats
-        private static readonly CompositeFormat ExportingGroupFormat = CompositeFormat.Parse(Resources.FormatString_Status_ExportingGroup);
-
         /// <inheritdoc/>
         public override async Task ExportAssetsAsync(IProgress<ExportProgress> progress, IAssetOutput output, CancellationToken cancellationToken)
         {
@@ -104,7 +100,7 @@ namespace BanjoBotAssets.Exporters.Groups
             var uniqueAssets = assetPaths.ToLookup(path => ParseAssetName(path) == null ? null : path, StringComparer.OrdinalIgnoreCase);
             numToProcess = uniqueAssets.Count;
 
-            Report(progress, string.Format(CultureInfo.CurrentCulture, ExportingGroupFormat, Type));
+            Report(progress, string.Format(CultureInfo.CurrentCulture, FormatStrings.ExportingGroup, Type));
 
             var assetsToProcess = scopeOptions.Value.Limit != null ? uniqueAssets.Take((int)scopeOptions.Value.Limit) : uniqueAssets;
             var opts = new ParallelOptions { CancellationToken = cancellationToken, MaxDegreeOfParallelism = performanceOptions.Value.MaxParallelism };

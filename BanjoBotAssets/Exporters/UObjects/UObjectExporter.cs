@@ -17,7 +17,6 @@
  */
 using CUE4Parse.FN.Enums.FortniteGame;
 using System.Collections.Concurrent;
-using System.Text;
 
 namespace BanjoBotAssets.Exporters.UObjects
 {
@@ -59,14 +58,12 @@ namespace BanjoBotAssets.Exporters.UObjects
             });
         }
 
-        private static readonly CompositeFormat ExportingGroupFormat = CompositeFormat.Parse(Resources.FormatString_Status_ExportingGroup);
-
         public override async Task ExportAssetsAsync(IProgress<ExportProgress> progress, IAssetOutput output, CancellationToken cancellationToken)
         {
             numToProcess = assetPaths.Count;
             processedSoFar = 0;
 
-            Report(progress, string.Format(CultureInfo.CurrentCulture, ExportingGroupFormat, Type));
+            Report(progress, string.Format(CultureInfo.CurrentCulture, FormatStrings.ExportingGroup, Type));
 
             var assetsToProcess = scopeOptions.Value.Limit != null ? assetPaths.Take((int)scopeOptions.Value.Limit) : assetPaths;
             var opts = new ParallelOptions { CancellationToken = cancellationToken, MaxDegreeOfParallelism = performanceOptions.Value.MaxParallelism };

@@ -17,8 +17,6 @@
  */
 // TODO: fix Halloween survivors all getting the same name: they should be separated by rarity (WorkerHalloween_VR_T04 is Lobber, WorkerHalloween_UC_T01 is Husky, etc.)
 
-using System.Text;
-
 namespace BanjoBotAssets.Exporters.Groups
 {
     internal sealed record SurvivorItemGroupFields(string DisplayName, string? Description, string? SubType,
@@ -105,10 +103,8 @@ namespace BanjoBotAssets.Exporters.Groups
 #pragma warning restore CA1863 // Use 'CompositeFormat'
         }
 
-        private static readonly CompositeFormat SurvivorLeadNameFormat = CompositeFormat.Parse(Resources.FormatString_Field_Survivor_LeadNameFormat);
-
         private static string MakeSurvivorDisplayName(UFortWorkerType worker) =>
-            worker.bIsManager ? string.Format(CultureInfo.CurrentCulture, SurvivorLeadNameFormat, GetManagerJob(worker)) : Resources.Field_Survivor_DefaultName;
+            worker.bIsManager ? string.Format(CultureInfo.CurrentCulture, FormatStrings.SurvivorLeadName, GetManagerJob(worker)) : Resources.Field_Survivor_DefaultName;
         [GeneratedRegex(@".*/([^/]+)_(C|UC|R|VR|SR|UR)_([a-z]+_)?T(\d+)(?:\..*)?$", RegexOptions.Singleline | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase)]
         private static partial Regex SurvivorAssetNameRegex();
     }
