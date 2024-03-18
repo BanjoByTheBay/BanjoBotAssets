@@ -17,8 +17,11 @@
  */
 #pragma warning disable CA1852 // https://github.com/dotnet/roslyn-analyzers/issues/6141
 
-using BanjoBotAssets.Config;
 using System.Reflection;
+using System.Runtime.CompilerServices;
+using BanjoBotAssets.Config;
+
+[assembly: InternalsVisibleTo("BanjoBotAssets.SourceGenerators.Tests")]
 
 // TODO: export per-difficulty stat clamp tables (GameDifficultyGrowthBounds, CombatStatClampsPerTheater)
 // TODO: export collection book categories and recruitment/research/voucher options (CollectionBookSlots)

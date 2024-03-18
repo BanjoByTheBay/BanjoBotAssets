@@ -29,6 +29,11 @@ namespace BanjoBotAssets.Extensions
 {
     internal static partial class ServiceCollectionExtensions
     {
+        /// <summary>
+        /// Registers implementations of <see cref="IAesProvider"/> and <see cref="IAesCacheUpdater"/>, and their options.
+        /// </summary>
+        /// <param name="services">The <see cref="IServiceCollection"/> to add the services to.</param>
+        /// <returns>The <see cref="IServiceCollection"/> so that additional calls can be chained.</returns>
         public static IServiceCollection AddAesProviders(this IServiceCollection services)
         {
             services
@@ -48,12 +53,18 @@ namespace BanjoBotAssets.Extensions
             return services;
         }
 
+        /// <summary>
+        /// Registers implementations of <see cref="IExporter"/>, <see cref="IPostExporter"/>, and <see cref="IExportArtifact"/>,
+        /// and their options.
+        /// </summary>
+        /// <param name="services">The <see cref="IServiceCollection"/> to add the services to.</param>
+        /// <returns>The <see cref="IServiceCollection"/> so that additional calls can be chained.</returns>
         public static IServiceCollection AddAssetExporters(this IServiceCollection services)
         {
             // all IExporter implementations derived from BaseExporter,
             // and their service aggregator and helpers
             services
-                .AddDerivedServices<IExporter, BaseExporter>(ServiceLifetime.Transient)
+                .AddExporterServices(ServiceLifetime.Transient)
                 .AddTransient<IExporterContext, ExporterContext>()
                 .AddTransient<AbilityDescription>();
 
@@ -109,33 +120,13 @@ namespace BanjoBotAssets.Extensions
             return services;
         }
 
-        public static IServiceCollection ConfigureAll<TOptions, TDep1>(this IServiceCollection services, Action<TOptions, TDep1> configureOptions)
-            where TOptions : class
-            where TDep1 : class
-        {
-            return services
-                .AddTransient<IConfigureOptions<TOptions>>(sp =>
-                    new ConfigureNamedOptions<TOptions, TDep1>(
-                        name: null,
-                        sp.GetRequiredService<TDep1>(),
-                        configureOptions));
-        }
-
-        public static OptionsBuilder<TOptions> AddTransientWithNamedOptions<TService, TImplementation, TOptions>(this IServiceCollection services)
-            where TService : class
-            where TImplementation : TService
-            where TOptions : class
-        {
-            return services
-                .AddTransient<TService>(sp =>
-                {
-                    using var scope = sp.CreateScope();
-                    var opts = scope.ServiceProvider.GetRequiredService<IOptionsSnapshot<TOptions>>();
-                    return ActivatorUtilities.CreateInstance<TImplementation>(sp, opts.Get(typeof(TImplementation).FullName));
-                })
-                .AddOptions<TOptions>(typeof(TImplementation).FullName);
-        }
-
+        /// <summary>
+        /// Registers an implementation of <see cref="AbstractVfsFileProvider"/>, the helper services
+        /// <see cref="AssetCache"/>, <see cref="GameDirectoryProvider"/>, and <see cref="LanguageProvider"/>,
+        /// and their options.
+        /// </summary>
+        /// <param name="services">The <see cref="IServiceCollection"/> to add the services to.</param>
+        /// <returns>The <see cref="IServiceCollection"/> so that additional calls can be chained.</returns>
         public static IServiceCollection AddGameFileProvider(this IServiceCollection services)
         {
             services
@@ -188,6 +179,11 @@ namespace BanjoBotAssets.Extensions
             return services;
         }
 
+        /// <summary>
+        /// Registers an implementation of <see cref="ITypeMappingsProviderFactory"/> and its options.
+        /// </summary>
+        /// <param name="services">The <see cref="IServiceCollection"/> to add the services to.</param>
+        /// <returns>The <see cref="IServiceCollection"/> so that additional calls can be chained.</returns>
         public static IServiceCollection AddMappingsProviders(this IServiceCollection services)
         {
             services

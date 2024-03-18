@@ -19,6 +19,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CUE4Parse-FortniteTypes", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BanjoBotAssets.Json", "BanjoBotAssets.Json\BanjoBotAssets.Json.csproj", "{8C061955-789F-4EC9-9972-53621D81DE94}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BanjoBotAssets.SourceGenerators", "BanjoBotAssets.SourceGenerators\BanjoBotAssets.SourceGenerators.csproj", "{7D76698D-A16B-4D67-ADC6-87D97FF1400C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BanjoBotAssets.SourceGenerators.Tests", "BanjoBotAssets.SourceGenerators.Tests\BanjoBotAssets.SourceGenerators.Tests.csproj", "{A786A866-CE3F-49D4-A54A-CC6488B732E3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +49,14 @@ Global
 		{8C061955-789F-4EC9-9972-53621D81DE94}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8C061955-789F-4EC9-9972-53621D81DE94}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8C061955-789F-4EC9-9972-53621D81DE94}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7D76698D-A16B-4D67-ADC6-87D97FF1400C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7D76698D-A16B-4D67-ADC6-87D97FF1400C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7D76698D-A16B-4D67-ADC6-87D97FF1400C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7D76698D-A16B-4D67-ADC6-87D97FF1400C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A786A866-CE3F-49D4-A54A-CC6488B732E3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A786A866-CE3F-49D4-A54A-CC6488B732E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A786A866-CE3F-49D4-A54A-CC6488B732E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A786A866-CE3F-49D4-A54A-CC6488B732E3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
