@@ -17,11 +17,13 @@
  */
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using System.Reflection;
+using System.Runtime.CompilerServices;
+
+[assembly: InternalsVisibleTo("BanjoBotAssets.SourceGenerators.Tests")]
 
 namespace BanjoBotAssets.Json
 {
-    public sealed class NamedItemDataConverter : JsonConverter
+    public sealed partial class NamedItemDataConverter : JsonConverter
     {
         public override bool CanConvert(Type objectType) => typeof(NamedItemData).IsAssignableFrom(objectType);
 
@@ -37,34 +39,6 @@ namespace BanjoBotAssets.Json
 
             serializer.Populate(jo.CreateReader(), result);
             return result;
-        }
-
-        private static readonly Dictionary<string, Type> NamedItemDataTypeMap = [];
-
-        // TODO: use a source generator instead of NamedItemDataTypeMap
-        static NamedItemDataConverter()
-        {
-            foreach (var type in typeof(NamedItemData).Assembly.GetTypes())
-            {
-                if (type == typeof(NamedItemData) || !typeof(NamedItemData).IsAssignableFrom(type))
-                    continue;
-
-                var attrs = type.GetCustomAttributes<NamedItemDataAttribute>().ToList();
-
-                if (attrs.Count == 0)
-                    throw new InvalidOperationException($"Type '{type.FullName}' derives from {nameof(NamedItemData)} but has no {nameof(NamedItemDataAttribute)}");
-
-                foreach (var a in attrs)
-                    NamedItemDataTypeMap.Add(a.TypeFieldDiscriminator, type);
-            }
-        }
-
-        private static NamedItemData? CreateNamedItemDataFromTypeField(string discriminator)
-        {
-            if (NamedItemDataTypeMap.TryGetValue(discriminator, out var type))
-                return (NamedItemData?)Activator.CreateInstance(type);
-
-            return null;
         }
 
         public override bool CanWrite => false;

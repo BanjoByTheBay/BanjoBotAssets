@@ -33,7 +33,8 @@ namespace BanjoBotAssets.SourceGenerators.Tests
             VerifySourceGenerators.Initialize();
         }
 
-        private Task VerifyOutput(string source, CancellationToken cancellationToken = default)
+        private Task VerifyOutput<T>(string source, CancellationToken cancellationToken = default)
+            where T : IIncrementalGenerator, new()
         {
             var syntaxTree = CSharpSyntaxTree.ParseText(source, cancellationToken: cancellationToken);
 
@@ -54,7 +55,7 @@ namespace BanjoBotAssets.SourceGenerators.Tests
                 references: references,
                 options: new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
 
-            var generator = new ExporterRegistrationGenerator();
+            var generator = new T();
 
             var driver = CSharpGeneratorDriver.Create(generator)
                 .RunGenerators(compilation, cancellationToken);
@@ -74,7 +75,28 @@ class TestExporter(IExporterContext services) : UObjectExporter(services)
     protected override bool InterestedInAsset(string name) => false;
 }";
 
-            return VerifyOutput(source);
+            return VerifyOutput<ExporterRegistrationGenerator>(source);
+        }
+
+        [TestMethod]
+        public Task GeneratesNamedItemDataTypeMapCorrectly()
+        {
+            var source = @"
+namespace BanjoBotAssets.Json;
+
+[NamedItemData(""Foo"")]
+public class FooNamedItemData : NamedItemData
+{
+    public string FooProperty { get; set; }
+}
+
+[NamedItemData(""Bar"")]
+public class BarNamedItemData : NamedItemData
+{
+    public string BarProperty { get; set; }
+}";
+
+            return VerifyOutput<NamedItemDataTypeMapGenerator>(source);
         }
     }
 }

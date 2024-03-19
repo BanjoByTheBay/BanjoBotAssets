@@ -91,6 +91,12 @@ namespace BanjoBotAssets.SourceGenerators
 
         private static void Execute(SourceProductionContext spc, ImmutableArray<string?> classes)
         {
+            if (classes.IsEmpty)
+            {
+                // don't generate anything if this project doesn't contain any exporter classes
+                return;
+            }
+
             var sb = new StringBuilder();
 
             const string SXmlComment = $@"
