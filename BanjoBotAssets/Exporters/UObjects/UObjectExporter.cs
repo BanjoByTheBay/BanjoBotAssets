@@ -89,11 +89,11 @@ namespace BanjoBotAssets.Exporters.UObjects
 
                         cancellationToken.ThrowIfCancellationRequested();
 
-                        if (pkg?.GetExport(file.NameWithoutExtension, StringComparison.OrdinalIgnoreCase) is TAsset asset)
+                        if (pkg?.GetExportOrNull(file.NameWithoutExtension, StringComparison.OrdinalIgnoreCase) is TAsset asset)
                         {
                             uobject = asset;
                         }
-                        else if (pkg?.GetExport(file.NameWithoutExtension + "_C", StringComparison.OrdinalIgnoreCase) is TAsset assetC)
+                        else if (pkg?.GetExportOrNull(file.NameWithoutExtension + "_C", StringComparison.OrdinalIgnoreCase) is TAsset assetC)
                         {
                             uobject = assetC;
                         }
