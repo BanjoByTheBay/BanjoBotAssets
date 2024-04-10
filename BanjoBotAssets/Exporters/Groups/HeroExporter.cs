@@ -21,11 +21,11 @@ using CUE4Parse.Utils;
 namespace BanjoBotAssets.Exporters.Groups
 {
     internal sealed record HeroItemGroupFields(string DisplayName, string? Description, string? SubType,
-        string HeroPerk, string HeroPerkDescription, string CommanderPerk, string CommanderPerkDescription,
+        string? HeroPerkName, string HeroPerk, string HeroPerkDescription, string? CommanderPerkName, string CommanderPerk, string CommanderPerkDescription,
         PerkRequirement? HeroPerkRequirement, string[] HeroAbilities)
         : BaseItemGroupFields(DisplayName, Description, SubType)
     {
-        public HeroItemGroupFields() : this("", null, null, "", "", "", "", null, []) { }
+        public HeroItemGroupFields() : this("", null, null, null, "", "", null, "", "", null, []) { }
     }
 
     internal sealed partial class HeroExporter(IExporterContext services) : GroupExporter<UFortHeroType, BaseParsedItemName, HeroItemGroupFields, HeroItemData>(services)
@@ -83,8 +83,8 @@ namespace BanjoBotAssets.Exporters.Groups
             var hgd = asset.HeroGameplayDefinition;
 
             // hero/commander perk
-            var (heroPerk, heroPerkDesc, heroPerkRequirement) = await GetPerkAsync(hgd, "HeroPerk");
-            var (commanderPerk, commanderPerkDesc, _) = await GetPerkAsync(hgd, "CommanderPerk");
+            var (heroPerkName, heroPerk, heroPerkDesc, heroPerkRequirement) = await GetPerkAsync(hgd, "HeroPerk");
+            var (commanderPerkName, commanderPerk, commanderPerkDesc, _) = await GetPerkAsync(hgd, "CommanderPerk");
 
             // abilities
             var tierAbilityKits = hgd?.GetOrDefault<FStructFallback[]>("TierAbilityKits");
@@ -92,9 +92,11 @@ namespace BanjoBotAssets.Exporters.Groups
 
             return result with
             {
+                HeroPerkName = heroPerkName,
                 HeroPerk = heroPerk,
                 HeroPerkDescription = heroPerkDesc,
                 HeroPerkRequirement = heroPerkRequirement,
+                CommanderPerkName = commanderPerkName,
                 CommanderPerk = commanderPerk,
                 CommanderPerkDescription = commanderPerkDesc,
                 SubType = GetHeroClass(asset.GameplayTags),
@@ -114,13 +116,14 @@ namespace BanjoBotAssets.Exporters.Groups
             return base.GetRarity(parsedName, primaryAsset, fields);
         }
 
-        private async Task<(string displayName, string description, PerkRequirement? requirement)> GetPerkAsync(UObject? gameplayDefinition, string perkProperty)
+        private async Task<(string? perkName, string displayName, string description, PerkRequirement? requirement)> GetPerkAsync(UObject? gameplayDefinition, string perkProperty)
         {
             var perk = gameplayDefinition?.GetOrDefault<FStructFallback>(perkProperty);
             if (perk == null)
-                return ($"<{Resources.Field_Hero_NoGrantedAbility}>", $"<{Resources.Field_NoDescription}>", null);
+                return (null, $"<{Resources.Field_Hero_NoGrantedAbility}>", $"<{Resources.Field_NoDescription}>", null);
 
             Interlocked.Increment(ref assetsLoaded);
+            var perkName = perk.GetOrDefault<FSoftObjectPath>("GrantedAbilityKit").AssetPathName.Text.Split(".")[^1];
             var grantedAbilityKit = await perk.GetOrDefault<FSoftObjectPath>("GrantedAbilityKit").LoadAsync(provider);
             var displayName = grantedAbilityKit.GetOrDefault<FText>("ItemName")?.Text ?? grantedAbilityKit.GetOrDefault<FText>("DisplayName")?.Text ?? $"<{grantedAbilityKit.Name ?? Resources.Field_Hero_NoGrantedAbility}>";
             var description = await abilityDescription.GetForPerkAbilityKitAsync(grantedAbilityKit, this) ?? $"<{Resources.Field_NoDescription}>";
@@ -152,7 +155,7 @@ namespace BanjoBotAssets.Exporters.Groups
                 }
             }
 
-            return (displayName, description, requirement);
+            return (perkName, displayName, description, requirement);
         }
 
         [GeneratedRegex("^\\s*(?:ANY|ALL)\\(\\s*(?<tag>[a-z0-9.]+)(?:\\s*,\\s*(?<tag>[a-z0-9.]+))*\\s*\\)\\s*$", RegexOptions.Singleline | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase)]
@@ -200,8 +203,10 @@ namespace BanjoBotAssets.Exporters.Groups
 
         protected override Task<bool> ExportAssetAsync(BaseParsedItemName parsed, UFortHeroType primaryAsset, HeroItemGroupFields fields, string path, HeroItemData itemData)
         {
+            itemData.HeroPerkName = fields.HeroPerkName;
             itemData.HeroPerk = fields.HeroPerk;
             itemData.HeroPerkDescription = fields.HeroPerkDescription;
+            itemData.CommanderPerkName = fields.CommanderPerkName;
             itemData.CommanderPerk = fields.CommanderPerk;
             itemData.CommanderPerkDescription = fields.CommanderPerkDescription;
             itemData.HeroAbilities = fields.HeroAbilities;
