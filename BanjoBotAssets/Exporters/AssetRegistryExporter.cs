@@ -86,8 +86,7 @@ namespace BanjoBotAssets.Exporters
                             }
                             else
                             {
-                                // shouldn't get here...
-                                output.AddDisplayNameCorrection(schematicTemplateId, $"<{displayName.Trim()}>");
+                                output.AddDisplayNameCorrection(schematicTemplateId, displayName.Trim());
                             }
                         }
                     }
