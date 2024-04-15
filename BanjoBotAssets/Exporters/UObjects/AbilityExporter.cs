@@ -35,7 +35,7 @@ namespace BanjoBotAssets.Exporters.UObjects
                 gadgetPath = name;
             }
 
-            return name.Contains("/Actives/", StringComparison.OrdinalIgnoreCase) && name.Contains("/Kit_", StringComparison.OrdinalIgnoreCase);
+            return (name.Contains("/Actives/", StringComparison.OrdinalIgnoreCase) || name.Contains("/Perks/", StringComparison.OrdinalIgnoreCase)) && name.Contains("/Kit_", StringComparison.OrdinalIgnoreCase);
         }
 
         public override async Task ExportAssetsAsync(IProgress<ExportProgress> progress, IAssetOutput output, CancellationToken cancellationToken)
@@ -81,8 +81,12 @@ namespace BanjoBotAssets.Exporters.UObjects
 
             if (gadgets == null)
             {
-                // not a hero ability
-                return false;
+                // not a hero ability, might be a hero perk
+                var itemDescription = await abilityDescription.GetForPerkAbilityKitAsync(asset, this);
+                if (itemDescription is null)// wasnt a hero perk
+                    return false;
+                namedItemData.Description ??= itemDescription;
+                return true;
             }
 
             if (gadgets.Length != 1)
