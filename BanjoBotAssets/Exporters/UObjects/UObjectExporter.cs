@@ -148,7 +148,7 @@ namespace BanjoBotAssets.Exporters.UObjects
                         itemData.Tier = (int)tier;
                     }
 
-                    if (uobject.GetOrDefault<EFortRarity>("Rarity") is EFortRarity rarity && rarity != default)
+                    if (uobject.GetOrDefault("Rarity", EFortRarity.Uncommon) is EFortRarity rarity && rarity != EFortRarity.Uncommon)
                     {
                         itemData.Rarity = rarity.GetNameText().Text;
                     }
