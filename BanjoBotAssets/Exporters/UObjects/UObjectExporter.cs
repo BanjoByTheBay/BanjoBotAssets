@@ -16,6 +16,7 @@
  * along with BanjoBotAssets.  If not, see <http://www.gnu.org/licenses/>.
  */
 using CUE4Parse.FN.Enums.FortniteGame;
+using Microsoft.Extensions.Logging;
 using System.Collections.Concurrent;
 
 namespace BanjoBotAssets.Exporters.UObjects
@@ -28,6 +29,7 @@ namespace BanjoBotAssets.Exporters.UObjects
         where TAsset : UObject
     {
     }
+
 
     internal abstract class UObjectExporter<TAsset, TItemData>(IExporterContext services) : BaseExporter(services)
         where TAsset : UObject
@@ -109,7 +111,7 @@ namespace BanjoBotAssets.Exporters.UObjects
                         {
                             var pkg = await provider.LoadPackageAsync(file);
                             cancellationToken.ThrowIfCancellationRequested();
-
+                            
                             uobject = pkg.GetExportOrNull(file.NameWithoutExtension, StringComparison.OrdinalIgnoreCase) as TAsset ??
                                 pkg.GetExport(file.NameWithoutExtension + "_C", StringComparison.OrdinalIgnoreCase) as TAsset;
                         }
@@ -142,8 +144,8 @@ namespace BanjoBotAssets.Exporters.UObjects
                         Description = description,
                         IsInventoryLimitExempt = isInventoryLimitExempt,
                     };
-
-                    if (uobject.GetOrDefault<EFortItemTier>("Tier") is EFortItemTier tier && tier != default)
+                    
+                    if (uobject.GetOrDefaultFromDataList<EFortItemTier>("Tier") is EFortItemTier tier && tier != default)
                     {
                         itemData.Tier = (int)tier;
                     }
@@ -157,10 +159,10 @@ namespace BanjoBotAssets.Exporters.UObjects
 
                     var imagePaths = new Dictionary<ImageType, string>();
 
-                    if (uobject.GetSoftAssetPath("SmallPreviewImage") is string smallPreviewPath)
+                    if (uobject.GetSoftAssetPathFromDataList("Image") is string smallPreviewPath)
                         imagePaths.Add(ImageType.SmallPreview, smallPreviewPath);
 
-                    if (uobject.GetSoftAssetPath("LargePreviewImage") is string largePreviewPath)
+                    if (uobject.GetSoftAssetPathFromDataList("LargeImage") is string largePreviewPath)
                         imagePaths.Add(ImageType.LargePreview, largePreviewPath);
 
                     if (!await ExportAssetAsync(uobject, itemData, imagePaths))

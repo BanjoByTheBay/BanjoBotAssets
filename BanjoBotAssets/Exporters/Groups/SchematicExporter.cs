@@ -237,8 +237,8 @@ namespace BanjoBotAssets.Exporters.Groups
                 WeaponOrTrapStatRowPrefix = statRowPrefix,
                 CraftingRowPrefix = craftingRowPrefix,
                 TriggerType = triggerType,
-                SmallPreviewImagePath = weaponOrTrapDef.GetSoftAssetPath("SmallPreviewImage"),
-                LargePreviewImagePath = weaponOrTrapDef.GetSoftAssetPath("LargePreviewImage"),
+                SmallPreviewImagePath = weaponOrTrapDef.GetSoftAssetPathFromDataList("Icon"),
+                LargePreviewImagePath = weaponOrTrapDef.GetSoftAssetPathFromDataList("LargeIcon"),
             };
         }
 
