@@ -51,5 +51,25 @@ namespace BanjoBotAssets.Extensions
                 { IsNone: false, Text: var t } => t,
                 _ => null
             };
+
+        public static string? GetSoftAssetPathFromDataList(this IPropertyHolder obj, string property)
+        {
+            var dataList = PropertyUtil.GetOrDefault<FInstancedStruct[]>(obj, "DataList");
+            if(dataList is null)
+                return null;
+            foreach (var item in dataList)
+            {
+                if (item.NonConstStruct?.Properties.Exists(p => p.Name.Text == property) == true)
+                {
+                    return PropertyUtil.GetOrDefault<FSoftObjectPath>(item.NonConstStruct, property).AssetPathName switch
+                    {
+                        { IsNone: false, Text: var t } => t,
+                        _ => null
+                    };
+                }
+            }
+            return null;
+        }
+
     }
 }
