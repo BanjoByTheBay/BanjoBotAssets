@@ -159,10 +159,10 @@ namespace BanjoBotAssets.Exporters.UObjects
 
                     var imagePaths = new Dictionary<ImageType, string>();
 
-                    if (uobject.GetSoftAssetPathFromDataList("Image") is string smallPreviewPath)
+                    if (uobject.GetSoftAssetPathFromDataList("Icon") is string smallPreviewPath)
                         imagePaths.Add(ImageType.SmallPreview, smallPreviewPath);
 
-                    if (uobject.GetSoftAssetPathFromDataList("LargeImage") is string largePreviewPath)
+                    if (uobject.GetSoftAssetPathFromDataList("LargeIcon") is string largePreviewPath)
                         imagePaths.Add(ImageType.LargePreview, largePreviewPath);
 
                     if (!await ExportAssetAsync(uobject, itemData, imagePaths))
