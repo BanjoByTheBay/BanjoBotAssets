@@ -274,8 +274,8 @@ namespace BanjoBotAssets.Exporters.Groups
                 Description = asset.GetOrDefault<FText>("ItemDescription")?.Text ?? asset.GetOrDefault<FText>("Description")?.Text,
                 DisplayName = asset.GetOrDefault<FText>("ItemName")?.Text ?? asset.GetOrDefault<FText>("DisplayName")?.Text ?? $"<{grouping.Key}>",
                 SubType = null,
-                SmallPreviewImagePath = asset.GetSoftAssetPath("SmallPreviewImage"),
-                LargePreviewImagePath = asset.GetSoftAssetPath("LargePreviewImage"),
+                SmallPreviewImagePath = asset.GetSoftAssetPathFromDataList("Icon"),
+                LargePreviewImagePath = asset.GetSoftAssetPathFromDataList("LargeIcon"),
                 IsPermanent = asset.GetOrDefault<FDataTableRowHandle>("SacrificeRecipe") is null or { RowName.IsNone: true } or { DataTable: null },
                 IsInventoryLimitExempt = !asset.GetOrDefault("bInventorySizeLimited", true),
         });
