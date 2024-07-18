@@ -16,7 +16,7 @@
  * along with BanjoBotAssets.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-// TODO: include accolade XP amounts (XpRewardAmount property -> STWAccoladeXP curve table)
+using CUE4Parse.FN.Structs.GA;
 
 namespace BanjoBotAssets.Exporters.UObjects
 {
@@ -25,5 +25,15 @@ namespace BanjoBotAssets.Exporters.UObjects
         protected override string Type => "Accolades";
 
         protected override bool InterestedInAsset(string name) => name.Contains("/AccoladeId_STW_", StringComparison.OrdinalIgnoreCase);
+
+        protected override Task<bool> ExportAssetAsync(UObject asset, NamedItemData itemData, Dictionary<ImageType, string> imagePaths)
+        {
+            if(asset.GetOrDefault<FScalableFloat>("XpRewardAmount") is FScalableFloat xpAmount)
+            {
+                //this should probably be moved to its own property in an ccolade-specific version of NamedItemData
+                itemData.Tier = (int)xpAmount.GetScaledValue(logger);
+            }
+            return base.ExportAssetAsync(asset, itemData, imagePaths);
+        }
     }
 }
