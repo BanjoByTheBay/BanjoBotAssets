@@ -20,18 +20,17 @@ using CUE4Parse.FN.Structs.GA;
 
 namespace BanjoBotAssets.Exporters.UObjects
 {
-    internal sealed class AccoladeExporter(IExporterContext services) : UObjectExporter(services)
+    internal sealed class AccoladeExporter(IExporterContext services) : UObjectExporter<UObject, AccoladeItemData>(services)
     {
         protected override string Type => "Accolades";
 
         protected override bool InterestedInAsset(string name) => name.Contains("/AccoladeId_STW_", StringComparison.OrdinalIgnoreCase);
 
-        protected override Task<bool> ExportAssetAsync(UObject asset, NamedItemData itemData, Dictionary<ImageType, string> imagePaths)
+        protected override Task<bool> ExportAssetAsync(UObject asset, AccoladeItemData itemData, Dictionary<ImageType, string> imagePaths)
         {
             if(asset.GetOrDefault<FScalableFloat>("XpRewardAmount") is FScalableFloat xpAmount)
             {
-                //this should probably be moved to its own property in an ccolade-specific version of NamedItemData
-                itemData.Tier = (int)xpAmount.GetScaledValue(logger);
+                itemData.AccoladeXP = (int)xpAmount.GetScaledValue(logger);
             }
             return base.ExportAssetAsync(asset, itemData, imagePaths);
         }
