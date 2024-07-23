@@ -15,6 +15,8 @@
  * You should have received a copy of the GNU General Public License
  * along with BanjoBotAssets.  If not, see <http://www.gnu.org/licenses/>.
  */
+using CUE4Parse.UE4.Objects.Engine;
+
 namespace BanjoBotAssets.Exporters.Blueprints
 {
     internal sealed class ZoneThemeExporter(IExporterContext services) : BlueprintExporter(services)
@@ -27,5 +29,16 @@ namespace BanjoBotAssets.Exporters.Blueprints
 
         protected override bool InterestedInAsset(string name) =>
             name.Contains("/ZoneThemes/", StringComparison.OrdinalIgnoreCase) && name.Contains("/BP_ZT_", StringComparison.OrdinalIgnoreCase);
+
+        protected override Task<bool> ExportAssetAsync(UBlueprintGeneratedClass bpClass, UObject classDefaultObject, NamedItemData namedItemData, Dictionary<ImageType, string> imagePaths)
+        {
+            namedItemData.ImagePaths = [];
+            if (classDefaultObject.GetSoftAssetPath("BackgroundImage") is string smallImagePath)
+            {
+                namedItemData.ImagePaths.Add(ImageType.LoadingScreen, smallImagePath);
+                imagePaths.Add(ImageType.LoadingScreen, smallImagePath);
+            }
+            return base.ExportAssetAsync(bpClass, classDefaultObject, namedItemData, imagePaths);
+        }
     }
 }
