@@ -15,6 +15,8 @@
  * You should have received a copy of the GNU General Public License
  * along with BanjoBotAssets.  If not, see <http://www.gnu.org/licenses/>.
  */
+using Newtonsoft.Json;
+
 namespace BanjoBotAssets.Json
 {
     [NamedItemData("Ability")]
@@ -31,6 +33,7 @@ namespace BanjoBotAssets.Json
     /// <summary>
     /// Ability damage stats from the GadgetScaling table
     /// </summary>
+    [JsonObject(ItemNullValueHandling = NullValueHandling.Ignore)]
     public sealed class AbilityStats
     {
         public float? Damage { get; set; }
@@ -39,5 +42,13 @@ namespace BanjoBotAssets.Json
         public float? BaseCritChance { get; set; }
         public float? BaseCritDamage { get; set; }
         public float? StunTime { get; set; }
+        public float? Duration { get; set; }
+        public float? FireRate { get; set; }
+        public float? Distance { get; set; }
+        public float? Radius { get; set; }
+        public float? AbilityLine2 { get; set; }
+        public float? AbilityLine3 { get; set; }
+        public float? AbilityLine4 { get; set; }
+        public float? AbilityLine5 { get; set; }
     }
 }

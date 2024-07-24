@@ -15,24 +15,40 @@
  * You should have received a copy of the GNU General Public License
  * along with BanjoBotAssets.  If not, see <http://www.gnu.org/licenses/>.
  */
+using BanjoBotAssets.Exporters.Helpers;
+using BanjoBotAssets.Json;
 using BanjoBotAssets.UExports;
 using CUE4Parse.FN.Structs.GA;
+using CUE4Parse.UE4.Assets.Objects.Properties;
 using CUE4Parse.UE4.Objects.Engine;
+using System.Data;
 
 namespace BanjoBotAssets.Exporters.UObjects
 {
     internal sealed class AbilityExporter(IExporterContext services) : UObjectExporter<UObject, AbilityItemData>(services)
     {
         private string? gadgetPath;
+        private string? meleePath;
+        private string? rangedPath;
         private Dictionary<string, FStructFallback>? gadgetTable;
+        private Dictionary<string, FStructFallback>? meleeTable;
+        private Dictionary<string, FStructFallback>? rangedTable;
 
         protected override string Type => "Ability";
 
         protected override bool InterestedInAsset(string name)
         {
-            if (Path.GetFileName(name).Equals("GadgetScaling.uasset", StringComparison.OrdinalIgnoreCase))
+            if (name.Contains("DataTables/GadgetScaling.uasset", StringComparison.OrdinalIgnoreCase))
             {
                 gadgetPath = name;
+            }
+            if (name.Contains("DataTables/MeleeWeapons.uasset", StringComparison.OrdinalIgnoreCase))
+            {
+                meleePath = name;
+            }
+            if (name.Contains("DataTables/RangedWeapons.uasset", StringComparison.OrdinalIgnoreCase))
+            {
+                rangedPath = name;
             }
 
             return (name.Contains("/Actives/", StringComparison.OrdinalIgnoreCase) || name.Contains("/Perks/", StringComparison.OrdinalIgnoreCase)) && name.Contains("/Kit_", StringComparison.OrdinalIgnoreCase);
@@ -41,6 +57,8 @@ namespace BanjoBotAssets.Exporters.UObjects
         public override async Task ExportAssetsAsync(IProgress<ExportProgress> progress, IAssetOutput output, CancellationToken cancellationToken)
         {
             gadgetTable = (await TryLoadTableAsync(gadgetPath))?.ToDictionary();
+            meleeTable = (await TryLoadTableAsync(meleePath))?.ToDictionary();
+            rangedTable = (await TryLoadTableAsync(rangedPath))?.ToDictionary();
             await base.ExportAssetsAsync(progress, output, cancellationToken);
         }
 
@@ -117,23 +135,33 @@ namespace BanjoBotAssets.Exporters.UObjects
         private async Task LoadFromGadgetAsync(AbilityItemData namedItemData, FSoftObjectPath gadgetPath)
         {
             Interlocked.Increment(ref assetsLoaded);
+            //logger.LogInformation($"{gadgetPath.AssetPathName} ==== {gadgetPath.SubPathString}");
             var gadget = await gadgetPath.LoadAsync<UFortGadgetItemDefinition>(provider);
 
             var damageStats = gadget.DamageStatHandle;
-            if (damageStats != null && gadgetTable?.TryGetValue(damageStats.RowName.Text, out var row) == true)
+            if (damageStats != null)
             {
-                namedItemData.AbilityStats ??= new AbilityStats
-                {
-                    Damage = row.GetOrDefault<float>("DmgPB"),
-                    EnvDamage = row.GetOrDefault<float>("EnvDmgPB"),
-                    ImpactDamage = row.GetOrDefault<float>("ImpactDmgPB"),
-                    BaseCritChance = row.GetOrDefault<float>("DiceCritChance"),
-                    BaseCritDamage = row.GetOrDefault<float>("DiceCritDamageMultiplier"),
-                    StunTime = row.GetOrDefault<float>("StunTime"),
-                };
-            }
+                FStructFallback? row = gadgetTable?.TryGetValue(damageStats.RowName.Text, out var gadgetRow)==true ? gadgetRow : null;
+                row ??= meleeTable?.TryGetValue(damageStats.RowName.Text, out var meleeRow) == true ? meleeRow : null;
+                row ??= rangedTable?.TryGetValue(damageStats.RowName.Text, out var rangedRow) == true ? rangedRow : null;
 
-            namedItemData.PreferredQuickbarSlot ??= gadget.GetOrDefault<int?>("PreferredQuickbarSlot");
+                if (row is not null)
+                {
+                    namedItemData.AbilityStats ??= new AbilityStats
+                    {
+                        Damage = row.GetOrDefault<float?>("DmgPB"),
+                        EnvDamage = row.GetOrDefault<float?>("EnvDmgPB"),
+                        ImpactDamage = row.GetOrDefault<float?>("ImpactDmgPB"),
+                        BaseCritChance = row.GetOrDefault<float?>("DiceCritChance"),
+                        BaseCritDamage = row.GetOrDefault<float?>("DiceCritDamageMultiplier"),
+                        StunTime = row.GetOrDefault<float?>("StunTime"),
+                        FireRate = row.GetOrDefault<float?>("FiringRate")
+                    };
+                }
+            }
+            namedItemData.AbilityStats ??= new();
+
+            namedItemData.PreferredQuickbarSlot ??= gadget.GetOrDefaultFromDataList<int?>("PreferredQuickbarSlot");
 
             await LoadFromGameplayAbilityAsync(namedItemData, gadget.GameplayAbility);
         }
@@ -151,21 +179,119 @@ namespace BanjoBotAssets.Exporters.UObjects
             }
 
             var abilityCosts = gaCdo.GetOrDefault<FFortAbilityCost[]>("AbilityCosts");
-            var staminaCost = abilityCosts.SingleOrDefault(ac => ac.CostSource == EFortAbilityCostSource.Stamina);
+            var staminaCost = abilityCosts?.SingleOrDefault(ac => ac.CostSource == EFortAbilityCostSource.Stamina);
             namedItemData.EnergyCost ??= staminaCost?.CostValue?.GetScaledValue(logger);
 
             // load from cooldown effect
             Interlocked.Increment(ref assetsLoaded);
             var cooldownEffect = gaCdo.GetOrDefault<UBlueprintGeneratedClass>("CooldownGameplayEffectClass");
             Interlocked.Increment(ref assetsLoaded);
-            var cooldownCdo = await cooldownEffect.ClassDefaultObject.LoadAsync();
+            var cooldownCdo = cooldownEffect is not null ? (await cooldownEffect.ClassDefaultObject.LoadAsync()) : null;
 
             var dm = cooldownCdo?.GetOrDefault<FStructFallback>("DurationMagnitude");
             var sfm = dm?.GetOrDefault<FScalableFloat>("ScalableFloatMagnitude");
             namedItemData.CooldownSeconds ??= sfm?.GetScaledValue(logger);
 
-            // load tooltip
-            namedItemData.Description ??= await AbilityDescription.GetForActiveAbilityAsync(ga, gaCdo, this);
+            namedItemData.AbilityStats ??= new();
+
+            // load extra ability stats from GameplayAbility
+            // plasma pulse
+            namedItemData.AbilityStats.Duration ??= GetStatFromGameplayAbility(gaCdo, "Pulse Duration");
+            //namedItemData.AbilityStats.Debug = gaCdo.Properties.Find(p=>p.Name.Text=="Pulse Duration")?.PropertyType.Text ?? "=/";
+            //namedItemData.AbilityStats.Debug += " [][] " + ;
+
+            // teddy
+            namedItemData.AbilityStats.FireRate ??= GetStatFromGameplayAbility(gaCdo, "F_BearRoundsPerSec");
+            namedItemData.AbilityStats.Duration ??= GetStatFromGameplayAbility(gaCdo, "F_BearLifeSpanDefault", true);
+
+            // frag grenade
+            namedItemData.AbilityStats.Radius ??= GetStatFromGameplayAbility(gaCdo, "ExplosionRadiusDefault");
+
+            //bull rush (using this because the text says 3 tiles and all other distances are only 2 tiles so \_(:/)_/ )
+            namedItemData.AbilityStats.Duration ??= GetStatFromGameplayAbility(gaCdo, "UpgradeDistance");
+
+            // generic duration
+            namedItemData.AbilityStats.Duration ??= gaCdo.GetOrDefault<FScalableFloat>("AbilityDuration")?.GetScaledValue(logger);
+            namedItemData.AbilityStats.Duration ??= gaCdo.GetOrDefault<FScalableFloat>("SF_AbilityDuration")?.GetScaledValue(logger);
+
+
+            // load extra ability stats from Tooltip
+            Interlocked.Increment(ref assetsLoaded);
+            var tooltip = gaCdo.GetOrDefault<UBlueprintGeneratedClass?>("ToolTip");
+
+            Interlocked.Increment(ref assetsLoaded);
+            UObject? tooltipCdo = tooltip is null ? null : await tooltip.ClassDefaultObject.LoadAsync();
+
+            // war cry
+            namedItemData.AbilityStats.Damage ??= GetStatFromTooltip(tooltipCdo, "SF_DamageMult");
+            namedItemData.AbilityStats.AbilityLine4 ??= GetStatFromTooltip(tooltipCdo, "SF_AttackSpeed", true);
+            namedItemData.AbilityStats.FireRate ??= 
+            namedItemData.AbilityStats.AbilityLine5 ??= GetStatFromTooltip(tooltipCdo, "SF_FireRate", true);
+
+            // goin constructor
+            namedItemData.AbilityStats.AbilityLine2 ??= GetStatFromTooltip(tooltipCdo, "ShieldBlock_Percentage");
+            namedItemData.AbilityStats.AbilityLine3 ??= GetStatFromTooltip(tooltipCdo, "BaseArmor_Value", true);
+
+            // rosie
+            namedItemData.AbilityStats.Duration ??= GetStatFromTooltip(tooltipCdo, "TotalShots");
+
+            // bull rush
+            //namedItemData.AbilityStats.Distance ??= GetStatFromTooltip(tooltipCdo, "SF_Distance");
+
+            //phase shift
+            namedItemData.AbilityStats.AbilityLine2 ??= GetStatFromTooltip(tooltipCdo, "Row_MovementDuration");
+            namedItemData.AbilityStats.AbilityLine3 ??= GetStatFromTooltip(tooltipCdo, "Row_Movementspeed", true);
+
+            // generic duration
+            namedItemData.AbilityStats.Duration ??= GetStatFromTooltip(tooltipCdo, "SF_Duration");
+
+
+            // generate tooltip text
+            namedItemData.Description ??= await AbilityDescription.GetForActiveAbilityAsync(ga, gaCdo, this, tooltipCdo, namedItemData.AbilityStats);
+        }
+
+
+        private Dictionary<string, float>? GetStatDictionaryFromGameplayEffectCdo(UObject? modifierGeCdo)
+        {
+            var modifiers = modifierGeCdo?.GetOrDefault<FStructFallback[]>("Modifiers");
+            return modifiers
+                ?.Select(m => m
+                    .GetOrDefault<FStructFallback>("ModifierMagnitude")
+                    ?.GetOrDefault<FScalableFloat>("ScalableFloatMagnitude")
+                    )
+                .Where(f => f is not null)
+                .GroupBy(f => f?.Curve.RowName)
+                .Select(f => new KeyValuePair<string, float>(f.Key?.Text!, f.First()!.GetScaledValue(logger)))
+                .ToDictionary();
+        }
+
+        bool tooltipStatLastSuccess;
+        private float? GetStatFromTooltip(UObject? tooltipCdo, string property, bool chain = false)
+        {
+            if (chain && !tooltipStatLastSuccess)
+                return null;
+            var sf = tooltipCdo?.GetOrDefault<FScalableFloat>(property);
+            float? result = sf?.Curve.RowName is null ? null : sf.GetScaledValue(logger);
+            tooltipStatLastSuccess = result is not null;
+            return result;
+        }
+        bool gameplayAbilityStatLastSuccess;
+        private float? GetStatFromGameplayAbility(UObject gaCdo, string property, bool chain = false)
+        {
+            if (chain && !gameplayAbilityStatLastSuccess)
+                return null;
+
+            var matchedProp = gaCdo.Properties.Find(p => p.Name.Text == property);
+            //scuffed workaround because GetOrDefault was being weird
+            float? result = matchedProp?.PropertyType.Text switch
+            {
+                "DoubleProperty" => (float?)matchedProp?.Tag?.GetValue<double>(),
+                "IntProperty" => matchedProp?.Tag?.GetValue<int>(),
+                "LongProperty" => matchedProp?.Tag?.GetValue<long>(),
+                _ => null
+            };
+            gameplayAbilityStatLastSuccess = result is not null;
+            return result;
         }
 
         private async Task LoadFromGameplayEffectAsync(AbilityItemData namedItemData, FGameplayEffectApplicationInfoHard geaih)
@@ -177,7 +303,9 @@ namespace BanjoBotAssets.Exporters.UObjects
             Interlocked.Increment(ref assetsLoaded);
             var cdo = await ge.ClassDefaultObject.LoadAsync();
             var tags = cdo?.GetOrDefault<FInheritedTagContainer?>("InheritableOwnedTagsContainer");
-            namedItemData.GrantedTag ??= tags?.Added.First(t => t.ToString().StartsWith("Granted.Ability.", StringComparison.OrdinalIgnoreCase)).ToString();
+            var tagToAdd = tags?.Added.FirstOrDefault(t => t.ToString().StartsWith("Granted.Ability.", StringComparison.OrdinalIgnoreCase)) ?? default;
+            if (tagToAdd != default)
+                namedItemData.GrantedTag ??= tagToAdd.ToString();
         }
     }
 }
