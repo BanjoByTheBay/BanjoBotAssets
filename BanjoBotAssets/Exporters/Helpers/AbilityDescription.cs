@@ -55,7 +55,7 @@ namespace BanjoBotAssets.Exporters.Helpers
         {
             if(tooltipCdo is null)
             {
-                var tooltip = gameplayAbilityCdo.GetOrDefault<UBlueprintGeneratedClass?>("ToolTip");
+                var tooltip = gameplayAbilityCdo.GetOrDefault<UBlueprintGeneratedClass?>("Tooltip");
 
                 if (tooltip == null)
                 {
