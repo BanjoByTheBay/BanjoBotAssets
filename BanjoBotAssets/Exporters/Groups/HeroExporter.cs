@@ -196,7 +196,7 @@ namespace BanjoBotAssets.Exporters.Groups
             foreach (var entry in itemToQuestTable.RowMap.Values)
             {
                 var hero = entry.Get<string>("ItemTemplateID");     // "ID" in uppercase
-                var quest = entry.Get<string>("QuestTemplateId");   // "Id" in title case
+                var quest = entry.Get<string>("QuestTemplateID");   // "ID" in uppercase
                 heroToTeamPerk.Add(hero, questToTeamPerk[quest]);
             }
         }

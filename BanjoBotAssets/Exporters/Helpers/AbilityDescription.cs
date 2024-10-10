@@ -124,10 +124,10 @@ namespace BanjoBotAssets.Exporters.Helpers
             var tooltipDescription = grantedAbilityKit?.GetOrDefault<FText>("TooltipDescription");
             if (tooltipDescription != null)
             {
-                // hi, Chaos Agent
+                // hi, Chaos Agent and/or Fennix
                 return (tooltipDescription.Text, null);
             }
-            var tooltip = grantedAbilityKit?.GetOrDefault<UBlueprintGeneratedClass>("ToolTip");
+            var tooltip = grantedAbilityKit?.GetOrDefault<UBlueprintGeneratedClass>("Tooltip");
             if (tooltip == null)
             {
                 return (null, null);
