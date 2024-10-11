@@ -16,6 +16,7 @@
  * along with BanjoBotAssets.  If not, see <http://www.gnu.org/licenses/>.
  */
 using CUE4Parse.UE4.Assets.Utils;
+using CUE4Parse.UE4.Objects.GameplayTags;
 
 namespace BanjoBotAssets.UExports
 {
@@ -27,7 +28,7 @@ namespace BanjoBotAssets.UExports
         public bool bIsConsumed { get; set; }
 #pragma warning restore IDE1006 // Naming Styles
         public FFortItemQuantityPair[] RecipeCosts { get; set; }
-        public FFortItemQuantityPair[] RequiredCatalysts { get; set; }
+        public FGameplayTagContainer RequiredCatalysts { get; set; }
         public int Score { get; set; }
 
         public FRecipe(FStructFallback fallback)
@@ -35,7 +36,7 @@ namespace BanjoBotAssets.UExports
             RecipeResults = fallback.GetOrDefault<FFortItemQuantityPair[]>(nameof(RecipeResults));
             bIsConsumed = fallback.GetOrDefault<bool>(nameof(bIsConsumed));
             RecipeCosts = fallback.GetOrDefault<FFortItemQuantityPair[]>(nameof(RecipeCosts));
-            RequiredCatalysts = fallback.GetOrDefault<FFortItemQuantityPair[]>(nameof(RequiredCatalysts));
+            RequiredCatalysts = fallback.GetOrDefault<FGameplayTagContainer>(nameof(RequiredCatalysts));
             Score = fallback.GetOrDefault<int>(nameof(Score));
         }
     }
