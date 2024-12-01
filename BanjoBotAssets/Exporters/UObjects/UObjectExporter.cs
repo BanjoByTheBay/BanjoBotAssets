@@ -41,6 +41,7 @@ namespace BanjoBotAssets.Exporters.UObjects
         protected abstract string Type { get; }
 
         protected virtual bool IgnoreLoadFailures => false;
+        protected virtual bool RequireRarity => false;
 
         protected virtual Task<bool> ExportAssetAsync(TAsset asset, TItemData itemData, Dictionary<ImageType, string> imagePaths)
         {
@@ -150,7 +151,7 @@ namespace BanjoBotAssets.Exporters.UObjects
                         itemData.Tier = (int)tier;
                     }
 
-                    if (uobject.GetOrDefault("Rarity", EFortRarity.Uncommon) is EFortRarity rarity && rarity != EFortRarity.Uncommon)
+                    if (uobject.GetOrDefault("Rarity", EFortRarity.Uncommon) is EFortRarity rarity && (RequireRarity || rarity != EFortRarity.Uncommon))
                     {
                         itemData.Rarity = rarity.GetNameText().Text;
                     }
