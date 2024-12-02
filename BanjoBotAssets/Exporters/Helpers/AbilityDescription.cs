@@ -53,7 +53,7 @@ namespace BanjoBotAssets.Exporters.Helpers
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "TODO")]
         public static async Task<string?> GetForActiveAbilityAsync(UBlueprintGeneratedClass gameplayAbilityClass, UObject gameplayAbilityCdo, IAssetCounter assetCounter, UObject? tooltipCdo = null, AbilityStats? abilityStats = null)
         {
-            if(tooltipCdo is null)
+            if (tooltipCdo is null)
             {
                 var tooltip = gameplayAbilityCdo.GetOrDefault<UBlueprintGeneratedClass?>("Tooltip");
 
@@ -67,12 +67,13 @@ namespace BanjoBotAssets.Exporters.Helpers
                 tooltipCdo = await tooltip.ClassDefaultObject.LoadAsync();
                 assetCounter.CountAssetLoaded();
             }
+
             if (tooltipCdo is null)
                 return null;
 
             string tooltipText = tooltipCdo.GetOrDefault<FText>("Description").Text;
 
-            if(abilityStats is not null)
+            if (abilityStats is not null)
             {
                 tooltipText = tooltipText
                     .Replace("+[Damage]", "+" + FormatAsPercent(abilityStats.Damage) + "%")
@@ -91,7 +92,7 @@ namespace BanjoBotAssets.Exporters.Helpers
 
                     .Replace("[Ability.Distance]", FormatAsDistance(abilityStats.Distance))
 
-                    .Replace("[Radius]", FormatAsDistance(abilityStats.Radius)+" tile")
+                    .Replace("[Radius]", FormatAsDistance(abilityStats.Radius) + " tile")
 
                     .Replace("[Duration]", FormatAsRegular(abilityStats.Duration))
                     .Replace("[Ability.Duration]", FormatAsRegular(abilityStats.Duration));
@@ -104,6 +105,7 @@ namespace BanjoBotAssets.Exporters.Helpers
         {
             return value?.ToString(CultureInfo.InvariantCulture) ?? "?";
         }
+
         private static string FormatAsPercent(float? value)
         {
             if (value is null)
@@ -111,6 +113,7 @@ namespace BanjoBotAssets.Exporters.Helpers
             int primaryDigits = ((int)((value - 1) * 2000));
             return (primaryDigits * 0.05f).ToString(CultureInfo.InvariantCulture);
         }
+
         private static string FormatAsDistance(float? value)
         {
             if (value is null)
