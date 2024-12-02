@@ -28,7 +28,7 @@ namespace BanjoBotAssets.Exporters.Blueprints
         protected override string? DescriptionProperty => "MissionDescription";
 
         protected override bool InterestedInAsset(string name) =>
-            name.Contains("/MissionGens/", StringComparison.OrdinalIgnoreCase) && name.Contains("/World/", StringComparison.OrdinalIgnoreCase);
+            name.Contains("/MissionGen_HTM.uasset", StringComparison.OrdinalIgnoreCase) || (name.Contains("/MissionGens/", StringComparison.OrdinalIgnoreCase) && name.Contains("/World/", StringComparison.OrdinalIgnoreCase));
 
         protected override async Task<bool> ExportAssetAsync(UBlueprintGeneratedClass bpClass, UObject classDefaultObject, NamedItemData namedItemData,
             Dictionary<ImageType, string> imagePaths)
