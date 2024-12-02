@@ -51,22 +51,75 @@ namespace BanjoBotAssets.Exporters.Helpers
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Roslynator", "RCS1163:Unused parameter", Justification = "TODO")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "TODO")]
-        public static async Task<string?> GetForActiveAbilityAsync(UBlueprintGeneratedClass gameplayAbilityClass, UObject gameplayAbilityCdo, IAssetCounter assetCounter)
+        public static async Task<string?> GetForActiveAbilityAsync(UBlueprintGeneratedClass gameplayAbilityClass, UObject gameplayAbilityCdo, IAssetCounter assetCounter, UObject? tooltipCdo = null, AbilityStats? abilityStats = null)
         {
-            // TODO: use gameplayAbilityClass to substitute the correct token values
-            var tooltip = gameplayAbilityCdo.GetOrDefault<UBlueprintGeneratedClass?>("ToolTip");
-
-            if (tooltip == null)
+            if (tooltipCdo is null)
             {
-                return null;
+                var tooltip = gameplayAbilityCdo.GetOrDefault<UBlueprintGeneratedClass?>("Tooltip");
+
+                if (tooltip == null)
+                {
+                    return null;
+                }
+
+                assetCounter.CountAssetLoaded();
+
+                tooltipCdo = await tooltip.ClassDefaultObject.LoadAsync();
+                assetCounter.CountAssetLoaded();
             }
 
-            assetCounter.CountAssetLoaded();
+            if (tooltipCdo is null)
+                return null;
 
-            var tooltipCdo = await tooltip.ClassDefaultObject.LoadAsync();
-            assetCounter.CountAssetLoaded();
+            string tooltipText = tooltipCdo.GetOrDefault<FText>("Description").Text;
 
-            return tooltipCdo?.GetOrDefault<FText>("Description").Text;
+            if (abilityStats is not null)
+            {
+                tooltipText = tooltipText
+                    .Replace("+[Damage]", "+" + FormatAsPercent(abilityStats.Damage) + "%")
+                    .Replace("+[Ability.Line4]", "+" + FormatAsPercent(abilityStats.AbilityLine4) + "%")
+                    .Replace("+[Ability.Line5]", "+" + FormatAsPercent(abilityStats.AbilityLine5) + "%")
+
+                    .Replace("[Damage]", FormatAsRegular(abilityStats.Damage))
+                    .Replace("[Damage.Value]", FormatAsRegular(abilityStats.Damage))
+                    .Replace("[AbilityWeaponDamage.Value]", FormatAsRegular(abilityStats.Damage))
+
+                    .Replace("[Ability.Line2]", FormatAsRegular(abilityStats.AbilityLine2))
+                    .Replace("[Ability.Line3]", FormatAsRegular(abilityStats.AbilityLine3))
+
+                    .Replace("[FireRate.Value]", FormatAsRegular(abilityStats.FireRate))
+                    .Replace("[Ability.RateOfFire]", FormatAsRegular(abilityStats.FireRate))
+
+                    .Replace("[Ability.Distance]", FormatAsDistance(abilityStats.Distance))
+
+                    .Replace("[Radius]", FormatAsDistance(abilityStats.Radius) + " tile")
+
+                    .Replace("[Duration]", FormatAsRegular(abilityStats.Duration))
+                    .Replace("[Ability.Duration]", FormatAsRegular(abilityStats.Duration));
+            }
+
+            return tooltipText;
+        }
+
+        private static string FormatAsRegular(float? value)
+        {
+            return value?.ToString(CultureInfo.InvariantCulture) ?? "?";
+        }
+
+        private static string FormatAsPercent(float? value)
+        {
+            if (value is null)
+                return "?";
+            int primaryDigits = ((int)((value - 1) * 2000));
+            return (primaryDigits * 0.05f).ToString(CultureInfo.InvariantCulture);
+        }
+
+        private static string FormatAsDistance(float? value)
+        {
+            if (value is null)
+                return "?";
+            //bull rush allegedly travels 1 tile more than it's distance parameter
+            return ((float)(value / 512)).ToString(CultureInfo.InvariantCulture);
         }
 
         private static async Task<(string? markup, UObject? tooltip)> GetMarkupAsync(UObject grantedAbilityKit, IAssetCounter assetCounter)
