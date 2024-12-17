@@ -110,7 +110,7 @@ namespace BanjoBotAssets.Exporters.Helpers
         {
             if (value is null)
                 return "?";
-            int primaryDigits = ((int)((value - 1) * 2000));
+            int primaryDigits = (int)((value - 1) * 2000);
             return (primaryDigits * 0.05f).ToString(CultureInfo.InvariantCulture);
         }
 
@@ -172,13 +172,13 @@ namespace BanjoBotAssets.Exporters.Helpers
 
                 const string prefix = "Tooltip.Token.";
 
-                var tagName = (p.Key.GetValue(typeof(FStructFallback)) as FStructFallback)?.GetOrDefault<FName>("TagName");
+                var tagName = (p.Key.GetValue<FStructFallback>() as FStructFallback)?.GetOrDefault<FName>("TagName");
                 if (tagName?.Text.StartsWith(prefix, StringComparison.InvariantCultureIgnoreCase) != true)
                     continue;
 
                 var tokenName = tagName.Value.Text[prefix.Length..];
 
-                if (p.Value.GetValue(typeof(FStructFallback)) is not FStructFallback tokenDef)
+                if (p.Value.GetValue<FStructFallback>() is not FStructFallback tokenDef)
                     continue;
 
                 // get the value from the curve table

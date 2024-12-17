@@ -15,11 +15,8 @@
  * You should have received a copy of the GNU General Public License
  * along with BanjoBotAssets.  If not, see <http://www.gnu.org/licenses/>.
  */
-using BanjoBotAssets.Exporters.Helpers;
-using BanjoBotAssets.Json;
 using BanjoBotAssets.UExports;
 using CUE4Parse.FN.Structs.GA;
-using CUE4Parse.UE4.Assets.Objects.Properties;
 using CUE4Parse.UE4.Objects.Engine;
 using System.Data;
 
@@ -215,7 +212,6 @@ namespace BanjoBotAssets.Exporters.UObjects
             namedItemData.AbilityStats.Duration ??= gaCdo.GetOrDefault<FScalableFloat>("AbilityDuration")?.GetScaledValue(logger);
             namedItemData.AbilityStats.Duration ??= gaCdo.GetOrDefault<FScalableFloat>("SF_AbilityDuration")?.GetScaledValue(logger);
 
-
             // load extra ability stats from Tooltip
             Interlocked.Increment(ref assetsLoaded);
             var tooltip = gaCdo.GetOrDefault<UBlueprintGeneratedClass?>("ToolTip");
@@ -246,11 +242,9 @@ namespace BanjoBotAssets.Exporters.UObjects
             // generic duration
             namedItemData.AbilityStats.Duration ??= GetStatFromTooltip(tooltipCdo, "SF_Duration");
 
-
             // generate tooltip text
             namedItemData.Description ??= await AbilityDescription.GetForActiveAbilityAsync(ga, gaCdo, this, tooltipCdo, namedItemData.AbilityStats);
         }
-
 
         private Dictionary<string, float>? GetStatDictionaryFromGameplayEffectCdo(UObject? modifierGeCdo)
         {
@@ -266,7 +260,7 @@ namespace BanjoBotAssets.Exporters.UObjects
                 .ToDictionary();
         }
 
-        bool tooltipStatLastSuccess;
+        private bool tooltipStatLastSuccess;
 
         /// <summary>
         /// 
@@ -285,7 +279,7 @@ namespace BanjoBotAssets.Exporters.UObjects
             return result;
         }
 
-        bool gameplayAbilityStatLastSuccess;
+        private bool gameplayAbilityStatLastSuccess;
 
         /// <summary>
         /// 

@@ -306,7 +306,7 @@ namespace BanjoBotAssets
             {
                 logger.LogError(Resources.Error_FinishedWithFailedAssets, failedAssets.Count);
 
-                foreach (var i in failedAssets.Keys.OrderBy(i => i))
+                foreach (var i in failedAssets.Keys.Order())
                 {
                     logger.LogError(Resources.Error_FailedAsset, i);
                 }

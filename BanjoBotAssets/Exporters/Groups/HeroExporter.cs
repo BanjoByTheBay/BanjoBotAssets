@@ -88,7 +88,7 @@ namespace BanjoBotAssets.Exporters.Groups
 
             // abilities
             var tierAbilityKits = hgd?.GetOrDefault<FStructFallback[]>("TierAbilityKits");
-            var heroAbilities = tierAbilityKits != null ? Array.ConvertAll(tierAbilityKits, GetHeroAbilityID) : Array.Empty<string>();
+            var heroAbilities = tierAbilityKits != null ? Array.ConvertAll(tierAbilityKits, GetHeroAbilityID) : [];
 
             return result with
             {
