@@ -16,7 +16,6 @@
  * along with BanjoBotAssets.  If not, see <http://www.gnu.org/licenses/>.
  */
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 
 namespace BanjoBotAssets.Exporters.Helpers
 {
