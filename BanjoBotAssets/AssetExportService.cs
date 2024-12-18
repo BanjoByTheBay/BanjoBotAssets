@@ -20,6 +20,7 @@ using BanjoBotAssets.Artifacts;
 using BanjoBotAssets.Config;
 using BanjoBotAssets.Exporters;
 using BanjoBotAssets.PostExporters;
+using CUE4Parse.Compression;
 using CUE4Parse.Encryption.Aes;
 using CUE4Parse.UE4.Objects.Core.Misc;
 using Microsoft.Extensions.Options;
@@ -92,6 +93,9 @@ namespace BanjoBotAssets
             // and the game files have been located but not decrypted. we need to supply the AES keys,
             // from cache or from an external API.
             await DecryptGameFilesAsync(cancellationToken);
+
+            // download the oodle library if needed, and initialize it
+            await InitializeOodleAsync();
 
             // load virtual paths
             LoadVirtualPaths();
@@ -171,6 +175,17 @@ namespace BanjoBotAssets
                 logger.LogDebug(Resources.Status_SubmittingDynamicKey, dk.PakFilename);
                 provider.SubmitKey(new FGuid(dk.PakGuid), new FAesKey(dk.Key));
             }
+        }
+
+        private async Task InitializeOodleAsync()
+        {
+            logger.LogInformation(Resources.Status_LocatingOodle);
+
+            await OodleHelper.DownloadOodleDllAsync(OodleHelper.OODLE_DLL_NAME);
+
+            logger.LogInformation(Resources.Status_InitializingOodle);
+
+            OodleHelper.Initialize(OodleHelper.OODLE_DLL_NAME);
         }
 
         private void LoadVirtualPaths()
@@ -306,7 +321,7 @@ namespace BanjoBotAssets
             {
                 logger.LogError(Resources.Error_FinishedWithFailedAssets, failedAssets.Count);
 
-                foreach (var i in failedAssets.Keys.OrderBy(i => i))
+                foreach (var i in failedAssets.Keys.Order())
                 {
                     logger.LogError(Resources.Error_FailedAsset, i);
                 }

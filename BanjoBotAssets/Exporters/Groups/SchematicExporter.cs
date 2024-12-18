@@ -59,7 +59,7 @@ namespace BanjoBotAssets.Exporters.Groups
             //   WeaponDurabilityRarity
 
             if (CraftingResultNameRegex().IsMatch(name))
-                craftingResultPaths.Add(Path.GetFileNameWithoutExtension(name), name);
+                craftingResultPaths.TryAdd(Path.GetFileNameWithoutExtension(name), name);
 
             switch (Path.GetFileName(name))
             {
@@ -510,7 +510,7 @@ namespace BanjoBotAssets.Exporters.Groups
             foreach (var (k, v) in mapping.Properties)
             {
                 if (k?.GetValue(typeof(EFortRarity)) is EFortRarity rarity &&
-                    v?.GenericValue is UScriptStruct { StructType: FStructFallback weightedAlts })
+                    v?.GenericValue is FScriptStruct { StructType: FStructFallback weightedAlts })
                 {
                     var alts = weightedAlts.GetOrDefault<FStructFallback[]>("WeightData")
                         .Where(wd => !namedExclusions.Overlaps(wd.GetOrDefault<string[]>("ExclusionNames")))
