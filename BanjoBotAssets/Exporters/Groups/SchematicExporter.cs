@@ -59,7 +59,7 @@ namespace BanjoBotAssets.Exporters.Groups
             //   WeaponDurabilityRarity
 
             if (CraftingResultNameRegex().IsMatch(name))
-                craftingResultPaths.Add(Path.GetFileNameWithoutExtension(name), name);
+                craftingResultPaths.TryAdd(Path.GetFileNameWithoutExtension(name), name);
 
             switch (Path.GetFileName(name))
             {
