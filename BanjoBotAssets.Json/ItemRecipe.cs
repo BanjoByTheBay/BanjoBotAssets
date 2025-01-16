@@ -25,8 +25,6 @@ namespace BanjoBotAssets.Json
         [DisallowNull]
         public Dictionary<string, int>? Cost { get; set; }
         [DisallowNull]
-        public string? Result { get; set; }
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public int? Amount { get; set; }
+        public Dictionary<string, int>? Result { get; set; }
     }
 }
