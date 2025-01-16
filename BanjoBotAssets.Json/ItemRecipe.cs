@@ -20,12 +20,13 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace BanjoBotAssets.Json
 {
-    public sealed class AlterationSlot
+    public sealed class ItemRecipe
     {
-        public int RequiredLevel { get; set; }
         [DisallowNull]
-        public string[][]? Alterations { get; set; }
+        public Dictionary<string, int>? Cost { get; set; }
+        [DisallowNull]
+        public string? Result { get; set; }
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public Dictionary<string, int>? BaseRespecCost { get; set; }
+        public int? Amount { get; set; }
     }
 }

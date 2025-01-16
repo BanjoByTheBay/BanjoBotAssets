@@ -31,7 +31,7 @@ namespace BanjoBotAssets.Exporters.UObjects
     internal sealed partial class SchematicExporter(IExporterContext services) : UObjectExporter<UObject, SchematicItemData>(services)
     {
         private readonly Dictionary<string, string> craftingResultPaths = new(StringComparer.OrdinalIgnoreCase);
-        private string? craftingPath, alterationGroupPath, slotDefsPath, slotLoadoutsPath, meleeWeaponsPath, rangedWeaponsPath, trapsPath, durabilityPath, namedExclusionsPath;
+        private string? craftingPath, alterationGroupPath, slotDefsPath, slotLoadoutsPath, meleeWeaponsPath, rangedWeaponsPath, trapsPath, durabilityPath, namedExclusionsPath, metaPath;
         private Dictionary<string, FRecipe>? craftingTable;
         private Dictionary<string, FStructFallback>? alterationGroupTable, slotDefsTable, slotLoadoutsTable, meleeWeaponsTable, rangedWeaponsTable, trapsTable, durabilityTable, namedExclusionsTable;
 
@@ -87,6 +87,9 @@ namespace BanjoBotAssets.Exporters.UObjects
                 case string s when s.Equals("WeaponDurabilityRarity.uasset", StringComparison.OrdinalIgnoreCase):
                     durabilityPath = name;
                     break;
+                case string s when s.Equals("MetaRecipes.uasset", StringComparison.OrdinalIgnoreCase):
+                    metaPath = name;
+                    break;
             }
 
             if (name.Contains("/songs/", StringComparison.OrdinalIgnoreCase))
@@ -112,6 +115,7 @@ namespace BanjoBotAssets.Exporters.UObjects
             var trapsTask = TryLoadTableAsync(trapsPath);
             var durabilityTask = TryLoadTableAsync(durabilityPath);
             var namedExclusionsTask = TryLoadTableAsync(namedExclusionsPath);
+            var metaTask = TryLoadTableAsync(metaPath);
 
             craftingTable = (await craftingTask)?.ToDictionary<FRecipe>();
             alterationGroupTable = (await alterationGroupTask)?.ToDictionary();
@@ -122,6 +126,7 @@ namespace BanjoBotAssets.Exporters.UObjects
             trapsTable = (await trapsTask)?.ToDictionary();
             durabilityTable = (await durabilityTask)?.ToDictionary();
             namedExclusionsTable = (await namedExclusionsTask)?.ToDictionary();
+            metaRecipeTable = (await metaTask)?.ToDictionary<FRecipe>();
 
             await base.ExportAssetsAsync(progress, output, cancellationToken);
         }
@@ -209,9 +214,22 @@ namespace BanjoBotAssets.Exporters.UObjects
                 logger.LogWarning(Resources.Warning_NoStatsLocatedForSchematicUsingPrefix, asset.Name, "<>");
             }
 
-            if (craftingTable?.TryGetValue(craftingRowHandle.RowName.Text, out var recipe) ?? false)
+            var evoHandles = asset.GetOrDefault<FDataTableRowHandle[]>("ConversionRecipes", []);
+            var altEvoHandle = evoHandles.Length > 1 ? evoHandles[1] : null;
+
+            if (!(altEvoHandle is null or { RowName.IsNone: true } or { DataTable: null }))
             {
-                itemData.CraftingCost = ConvertCraftingCost(recipe);
+                var recipe = metaRecipeTable?[altEvoHandle.RowName.Text];
+                if (recipe is not null)
+                    itemData.AlternateTierUpRecipe = ConvertRecipe(recipe);
+            }
+
+            if (craftingTable?.TryGetValue(craftingRowHandle.RowName.Text, out var craftingRecipe) ?? false)
+            {
+                var craftingRecipeData = ConvertRecipe(craftingRecipe);
+                itemData.CraftingResult = craftingRecipeData.Result!;
+                itemData.CraftingAmount = craftingRecipeData.Amount;
+                itemData.CraftingCost = craftingRecipeData.Cost!;
             }
 
             var alterationSlotsLoadoutRow = craftingResultItem.GetOrDefault<FName>("AlterationSlotsLoadoutRow").Text;
@@ -448,13 +466,6 @@ namespace BanjoBotAssets.Exporters.UObjects
             return result;
         }
 
-        private static Dictionary<string, int> ConvertCraftingCost(FRecipe recipe)
-        {
-            return recipe.RecipeCosts.ToDictionary(
-                p => $"{p.ItemPrimaryAssetId.PrimaryAssetType.Name.Text}:{p.ItemPrimaryAssetId.PrimaryAssetName.Text}",
-                p => p.Quantity,
-                StringComparer.OrdinalIgnoreCase);
-        }
         private AlterationSlot? ConvertAlterationSlot(FStructFallback slot, ISet<string> namedExclusions)
         {
             if (slotDefsTable == null || alterationGroupTable == null)
@@ -468,6 +479,12 @@ namespace BanjoBotAssets.Exporters.UObjects
                 return null;
 
             var altGroupRow = slotDef.GetOrDefault<FName>("InitTierGroup").Text;
+
+            var respecCost = slotDef.GetOrDefault<FFortItemQuantityPair[]>("BaseRespecCosts")?.ToDictionary(
+                    p => $"{p.ItemPrimaryAssetId.PrimaryAssetType.Name.Text}:{p.ItemPrimaryAssetId.PrimaryAssetName.Text}",
+                    p => p.Quantity,
+                    StringComparer.OrdinalIgnoreCase
+                );
 
             if (!alterationGroupTable.TryGetValue(altGroupRow, out var altGroup))
                 return null;
@@ -491,6 +508,7 @@ namespace BanjoBotAssets.Exporters.UObjects
             {
                 RequiredLevel = slot.GetOrDefault<int>("UnlockLevel"),
                 Alterations = alterationsByRarity.OrderBy(abr => abr.rarity).Select(abr => abr.alts).ToArray(),
+                BaseRespecCost = respecCost?.Count == 0 ? null : respecCost
             };
         }
     }

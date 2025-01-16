@@ -34,7 +34,14 @@ namespace BanjoBotAssets.Json
         public MeleeWeaponStats? MeleeWeaponStats { get; set; }
         public TrapStats? TrapStats { get; set; }
 
+        [DisallowNull]
         public Dictionary<string, int>? CraftingCost { get; set; }
+        [DisallowNull]
+        public string? CraftingResult { get; set; }
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public int? CraftingAmount { get; set; }
+
+        public ItemRecipe? AlternateTierUpRecipe { get; set; }
     }
 
     /// <summary>

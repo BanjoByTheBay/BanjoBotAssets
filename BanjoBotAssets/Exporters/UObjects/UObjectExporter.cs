@@ -15,6 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with BanjoBotAssets.  If not, see <http://www.gnu.org/licenses/>.
  */
+using BanjoBotAssets.UExports;
 using CUE4Parse.FN.Enums.FortniteGame;
 using Microsoft.Extensions.Logging;
 using System.Collections.Concurrent;
@@ -37,6 +38,7 @@ namespace BanjoBotAssets.Exporters.UObjects
     {
         private int numToProcess, processedSoFar;
         private readonly ConcurrentDictionary<string, byte> failedAssets = new();
+        protected Dictionary<string, FRecipe>? metaRecipeTable;
 
         protected abstract string Type { get; }
 
@@ -59,6 +61,23 @@ namespace BanjoBotAssets.Exporters.UObjects
                 CurrentItem = current,
                 FailedAssets = failedAssets.Keys,
             });
+        }
+
+        protected static ItemRecipe ConvertRecipe(FRecipe recipe)
+        {
+            var result = recipe.RecipeResults[0];
+            ItemRecipe itemRecipe = new()
+            {
+                Result = $"{result.ItemPrimaryAssetId.PrimaryAssetType.Name}:{result.ItemPrimaryAssetId.PrimaryAssetName}",
+                Cost = recipe.RecipeCosts.ToDictionary(
+                    p => $"{p.ItemPrimaryAssetId.PrimaryAssetType.Name.Text}:{p.ItemPrimaryAssetId.PrimaryAssetName.Text}",
+                    p => p.Quantity,
+                    StringComparer.OrdinalIgnoreCase
+                )
+            };
+            if (result.Quantity != 1)
+                itemRecipe.Amount = result.Quantity;
+            return itemRecipe;
         }
 
         public override async Task ExportAssetsAsync(IProgress<ExportProgress> progress, IAssetOutput output, CancellationToken cancellationToken)
@@ -154,6 +173,56 @@ namespace BanjoBotAssets.Exporters.UObjects
                     if (uobject.GetOrDefault("Rarity", EFortRarity.Uncommon) is EFortRarity rarity && (RequireRarity || rarity != EFortRarity.Uncommon))
                     {
                         itemData.Rarity = rarity.GetNameText().Text;
+                    }
+
+
+                    var evoHandle = uobject.GetOrDefault<FDataTableRowHandle[]>("ConversionRecipes", []).FirstOrDefault();
+
+                    if (!(evoHandle is null or { RowName.IsNone: true } or { DataTable: null }))
+                    {
+                        if (metaRecipeTable is null)
+                        {
+                            metaRecipeTable = evoHandle.DataTable?.ToDictionary<FRecipe>();
+                            if (metaRecipeTable is not null)
+                                CountAssetLoaded();
+                        }
+                        var recipe = metaRecipeTable?[evoHandle.RowName.Text];
+                        if (recipe is not null)
+                            itemData.TierUpRecipe = ConvertRecipe(recipe);
+                    }
+
+                    var rarityEvoHandle = uobject.GetOrDefault<FDataTableRowHandle>("UpgradeRarityRecipeHandle");
+                    if (!(rarityEvoHandle is null or { RowName.IsNone: true } or { DataTable: null }))
+                    {
+                        if (metaRecipeTable is null)
+                        {
+                            metaRecipeTable = rarityEvoHandle.DataTable?.ToDictionary<FRecipe>();
+                            if (metaRecipeTable is not null)
+                                CountAssetLoaded();
+                        }
+                        var recipe = metaRecipeTable?[rarityEvoHandle.RowName.Text];
+                        if (recipe is not null)
+                            itemData.RarityUpRecipe = ConvertRecipe(recipe);
+                    }
+
+                    var recycleHandle = uobject.GetOrDefault<FDataTableRowHandle>("SacrificeRecipe");
+                    if (!(recycleHandle is null or { RowName.IsNone: true } or { DataTable: null }))
+                    {
+                        if (metaRecipeTable is null)
+                        {
+                            metaRecipeTable = recycleHandle.DataTable?.ToDictionary<FRecipe>();
+                            if (metaRecipeTable is not null)
+                                CountAssetLoaded();
+                        }
+                        var recipe = metaRecipeTable?[recycleHandle.RowName.Text];
+                        if (recipe is not null)
+                            itemData.RecycleRecipe = ConvertRecipe(recipe);
+                    }
+
+                    var levelToXPHandle = uobject.GetOrDefault<FCurveTableRowHandle>("LevelToSacrificeXpHandle");
+                    if (!(levelToXPHandle is null or { RowName.IsNone: true } or { CurveTable: null }))
+                    {
+                        itemData.LevelToXPRow = levelToXPHandle.RowName.Text;
                     }
 
                     cancellationToken.ThrowIfCancellationRequested();

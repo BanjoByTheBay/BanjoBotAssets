@@ -29,6 +29,8 @@ namespace BanjoBotAssets.Json
 
         public ItemRatingTables ItemRatings { get; } = new();
 
+        public SortedDictionary<string, int[]> ItemLevelsToXP { get; } = new();
+
         public SortedDictionary<string, DifficultyInfo> DifficultyInfo { get; } = new(StringComparer.OrdinalIgnoreCase);
 
         public SortedDictionary<string, string[][]> MainQuestLines { get; } = [];
@@ -63,6 +65,14 @@ namespace BanjoBotAssets.Json
 
                 if (other.ItemRatings.LeadSurvivor != null)
                     ItemRatings.LeadSurvivor = other.ItemRatings.LeadSurvivor;
+            }
+
+            if(other.ItemLevelsToXP != null)
+            {
+                foreach (var (k, v) in other.ItemLevelsToXP)
+                {
+                    ItemLevelsToXP[k] = v;
+                }
             }
 
             if (other.DifficultyInfo != null)
