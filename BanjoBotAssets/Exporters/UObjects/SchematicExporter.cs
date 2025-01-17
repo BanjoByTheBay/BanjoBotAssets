@@ -150,23 +150,52 @@ namespace BanjoBotAssets.Exporters.UObjects
 
             itemData.DisplayName = craftingResultItem.ItemName?.Text ?? $"<{asset.Name}>";
             itemData.Description = craftingResultItem.ItemDescription?.Text;
-            var (category, subType) = CategoryAndSubTypeFromTags(craftingResultItem.GameplayTags);
-            itemData.Category = category;
-            itemData.SubType = subType;
-            if (subType is not null)
+
+            itemData.Tier = (int?)asset.GetOrDefaultFromDataList<EFortItemTier?>("Tier");
+
+            if (craftingResultItem.Name?.StartsWith("WID_", StringComparison.OrdinalIgnoreCase) ?? false)
             {
-                itemData.Tier = (int)craftingResultItem.GetOrDefaultFromDataList<EFortItemTier>("Tier");
-                itemData.DisplayTier = craftingResultItem.GetOrDefault<EFortDisplayTier>("DisplayTier").ToString();
-                if (itemData.DisplayTier == "Handmade")
-                    itemData.Tier = 0;
-                if (itemData.DisplayName=="Primal Stink Bow" && itemData.DisplayTier == "Shadowshard")
-                    itemData.Tier = 4; // damn you epic with your typos and misclicks
-                itemData.TriggerType = craftingResultItem.GetOrDefault<EFortWeaponTriggerType>("TriggerType").ToString();
+                var (category, subType) = WeaponExporter.CategoryAndSubTypeFromTags(craftingResultItem.GameplayTags);
+                itemData.Category = category;
+                itemData.SubType = subType;
+                if (subType is not null)
+                {
+                    itemData.Tier = (int)craftingResultItem.GetOrDefaultFromDataList<EFortItemTier>("Tier");
+                    itemData.DisplayTier = craftingResultItem.GetOrDefault<EFortDisplayTier>("DisplayTier").ToString();
+                    if (itemData.DisplayTier == "Handmade")
+                        itemData.Tier = 0;
+                    if (itemData.DisplayName == "Primal Stink Bow" && itemData.DisplayTier == "Shadowshard")
+                        itemData.Tier = 4; // damn you epic with your typos and misclicks
+                    itemData.TriggerType = craftingResultItem.GetOrDefault<EFortWeaponTriggerType>("TriggerType").ToString();
+                }
+                if (asset.Name.Contains("_ore_", StringComparison.OrdinalIgnoreCase))
+                    itemData.EvoType = "ore";
+                if (asset.Name.Contains("_crystal_", StringComparison.OrdinalIgnoreCase))
+                    itemData.EvoType = "crystal";
+
+                var evoHandles = asset.GetOrDefault<FDataTableRowHandle[]>("ConversionRecipes", []);
+                var altEvoHandle = evoHandles.Length > 1 ? evoHandles[1] : null;
+
+                if (!(altEvoHandle is null or { RowName.IsNone: true } or { DataTable: null }))
+                {
+                    var recipe = metaRecipeTable?[altEvoHandle.RowName.Text];
+                    if (recipe is not null)
+                        itemData.AlternateTierUpRecipe = ConvertRecipe(recipe);
+                }
             }
-            if (itemData.Name?.StartsWith("Ammo_", StringComparison.OrdinalIgnoreCase) ?? false)
+            else if (craftingResultItem.Name?.StartsWith("TID_", StringComparison.OrdinalIgnoreCase) ?? false)
+            {
+                itemData.SubType = TrapExporter.SubTypeFromTags(craftingResultItem.GameplayTags);
+                itemData.Category = Resources.Field_Recipe_Trap;
+            }
+            else if (itemData.Name?.StartsWith("Ammo_", StringComparison.OrdinalIgnoreCase) ?? false)
+            {
                 itemData.Category = "Ammo";
-            else if(itemData.Name?.StartsWith("Ingredient_", StringComparison.OrdinalIgnoreCase) ?? false)
+            }
+            else if (itemData.Name?.StartsWith("Ingredient_", StringComparison.OrdinalIgnoreCase) ?? false)
+            {
                 itemData.Category = "Ingredient";
+            }
 
             EFortRarity rarity = craftingResultItem.GetOrDefault("Rarity", EFortRarity.Uncommon);
             itemData.Rarity = rarity.GetNameText().Text;
@@ -177,51 +206,31 @@ namespace BanjoBotAssets.Exporters.UObjects
             if (craftingResultItem.GetSoftAssetPathFromDataList("LargeIcon") is string largePreviewPath)
                 imagePaths.Add(ImageType.LargePreview, largePreviewPath);
 
-            if (asset.Name.Contains("_ore_", StringComparison.OrdinalIgnoreCase))
-                itemData.EvoType = "ore";
-            if (asset.Name.Contains("_crystal_", StringComparison.OrdinalIgnoreCase))
-                itemData.EvoType = "crystal";
-
-
             var statRow = craftingResultItem.GetOrDefault<FDataTableRowHandle?>("WeaponStatHandle")?.RowName.Text;
             string? namedWeightRow = null;
-            var ammoType = await AmmoTypeFromPathAsync(craftingResultItem.GetOrDefault<FSoftObjectPath>("AmmoData"));
             if(statRow is null)
             {
                 logger.LogWarning(Resources.Warning_NoStatsLocatedForSchematicUsingPrefix, asset.Name, "<>");
             }
             else if (rangedWeaponsTable?.TryGetValue(statRow, out var rangedStats) ?? false)
             {
-                itemData.RangedWeaponStats = ConvertRangedWeaponStats(rangedStats, ammoType, rarity);
+                var ammoType = await AmmoTypeFromPathAsync(craftingResultItem.GetOrDefault<FSoftObjectPath>("AmmoData"));
+                itemData.RangedWeaponStats = WeaponExporter.ConvertRangedWeaponStats(rangedStats, ammoType, rarity, durabilityTable);
                 namedWeightRow ??= rangedStats.GetOrDefault<FName>("NamedWeightRow").Text;
             }
             else if (meleeWeaponsTable?.TryGetValue(statRow, out var meleeStats) ?? false)
             {
-                itemData.MeleeWeaponStats = ConvertMeleeWeaponStats(meleeStats, rarity);
+                itemData.MeleeWeaponStats = WeaponExporter.ConvertMeleeWeaponStats(meleeStats, rarity, durabilityTable);
                 namedWeightRow ??= meleeStats.GetOrDefault<FName>("NamedWeightRow").Text;
             }
             else if (trapsTable?.TryGetValue(statRow, out var trapStats) ?? false)
             {
-                itemData.TrapStats = ConvertTrapStats(trapStats, rarity);
+                itemData.TrapStats = TrapExporter.ConvertTrapStats(trapStats, rarity, durabilityTable);
                 namedWeightRow ??= trapStats.GetOrDefault<FName>("NamedWeightRow").Text;
-
-                // DisplayTier and TriggerType are meaningless for traps, and always the same
-                itemData.DisplayTier = null;
-                itemData.TriggerType = null;
             }
             else
             {
                 logger.LogWarning(Resources.Warning_NoStatsLocatedForSchematicUsingPrefix, asset.Name, "<>");
-            }
-
-            var evoHandles = asset.GetOrDefault<FDataTableRowHandle[]>("ConversionRecipes", []);
-            var altEvoHandle = evoHandles.Length > 1 ? evoHandles[1] : null;
-
-            if (!(altEvoHandle is null or { RowName.IsNone: true } or { DataTable: null }))
-            {
-                var recipe = metaRecipeTable?[altEvoHandle.RowName.Text];
-                if (recipe is not null)
-                    itemData.AlternateTierUpRecipe = ConvertRecipe(recipe);
             }
 
             if (craftingTable?.TryGetValue(craftingRowHandle.RowName.Text, out var craftingRecipe) ?? false)
@@ -307,164 +316,6 @@ namespace BanjoBotAssets.Exporters.UObjects
                 }
                 return null;
             }, provider);
-        }
-
-        private static (string? category, string? subType) CategoryAndSubTypeFromTags(FGameplayTagContainer tags)
-        {
-            foreach (var tag in tags.GameplayTags)
-            {
-                var match = SchematicSubTypeRegex().Match(tag.ToString());
-
-                if (match.Success)
-                {
-                    return match.Groups[1].Value.ToLower(CultureInfo.InvariantCulture) switch
-                    {
-                        "hammer" => (Resources.Field_Recipe_Melee, Resources.Field_Schematic_Hardware),
-                        "heavy" => (Resources.Field_Recipe_Ranged, Resources.Field_Schematic_Explosive),
-                        "improvised" => (Resources.Field_Recipe_Melee, Resources.Field_Schematic_Club),
-                        "smg" => (Resources.Field_Recipe_Ranged, Resources.Field_Schematic_SMG),
-                        "assault" => (Resources.Field_Recipe_Ranged, Resources.Field_Schematic_Assault),
-                        "axe" => (Resources.Field_Recipe_Melee, Resources.Field_Schematic_Axe),
-                        "ceiling" => (Resources.Field_Recipe_Trap, Resources.Field_Schematic_Ceiling),
-                        "floor" => (Resources.Field_Recipe_Trap, Resources.Field_Schematic_Floor),
-                        "pistol" => (Resources.Field_Recipe_Ranged, Resources.Field_Schematic_Pistol),
-                        "scythe" => (Resources.Field_Recipe_Melee, Resources.Field_Schematic_Scythe),
-                        "shotgun" => (Resources.Field_Recipe_Ranged, Resources.Field_Schematic_Shotgun),
-                        "sniper" => (Resources.Field_Recipe_Ranged, Resources.Field_Schematic_Sniper),
-                        "spear" => (Resources.Field_Recipe_Melee, Resources.Field_Schematic_Spear),
-                        "sword" => (Resources.Field_Recipe_Melee, Resources.Field_Schematic_Sword),
-                        "wall" => (Resources.Field_Recipe_Trap, Resources.Field_Schematic_Wall),
-                        _ => (null, null),
-                    };
-                }
-            }
-
-            return (null, null);
-        }
-        [GeneratedRegex(@"^(?:Weapon\.(?:Ranged|Melee\.(?:Edged|Blunt|Piercing))|Trap(?=\.(?:Ceiling|Floor|Wall)))\.([^.]+)", RegexOptions.Singleline | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase)]
-        private static partial Regex SchematicSubTypeRegex();
-
-        private RangedWeaponStats ConvertRangedWeaponStats(FStructFallback row, string? ammoType, EFortRarity rarity)
-        {
-            var result = new RangedWeaponStats
-            {
-                AmmoType = ammoType,
-                BulletsPerCartridge = row.GetOrDefault<int>("BulletsPerCartridge"),
-                FiringRate = row.GetOrDefault<float>("FiringRate"),
-                PointBlank = MakeDamageRange(row, "DmgPB", "EnvDmgPB", "ImpactDmgPB", "KnockbackMagnitude", "RngPB"),
-                MidRange = MakeDamageRange(row, "DmgMid", "EnvDmgMid", "ImpactDmgMid", "MidRangeKnockbackMagnitude", "RngMid"),
-                LongRange = MakeDamageRange(row, "DmgLong", "EnvDmgLong", "ImpactDmgLong", "LongRangeKnockbackMagnitude", "RngLong"),
-                MaxRange = MakeDamageRange(row, "DmgMaxRange", "EnvDmgMaxRange", "ImpactDmgMaxRange", null, "RngMax"),
-                DurabilityPerUse = row.GetOrDefault<float>("DurabilityPerUse"),
-                BaseCritChance = row.GetOrDefault<float>("DiceCritChance"),
-                BaseCritDamage = row.GetOrDefault<float>("DiceCritDamageMultiplier"),
-                AmmoCostPerFire = row.GetOrDefault<int>("AmmoCostPerFire"),
-                KnockbackZAngle = row.GetOrDefault<float>("KnockbackZAngle"),
-                StunTime = row.GetOrDefault<float>("StunTime")
-            };
-
-            var durabilityRow = row.GetOrDefault<FName>("DurabilityRowName").Text;
-            result.Durability = durabilityTable?[durabilityRow].GetOrDefault<int>(rarity.GetNameText().Text);
-
-            var heatCapacity = row.GetOrDefault<float>("OverheatingMaxValue");
-            if (heatCapacity != 0)
-            {
-                result.Overheat = new OverheatingInfo
-                {
-                    HeatCapacity = heatCapacity,
-                    HeatingRate = row.GetOrDefault<float>("OverheatHeatingValue"),
-                    FullChargeHeatingRate = row.GetOrDefault<float>("FullChargeOverheatHeatingValue"),
-                    CoolingRate = row.GetOrDefault<float>("OverheatCoolingValue"),
-                    OverheatedCoolingRate = row.GetOrDefault<float>("FullyOverheatedCoolingValue"),
-                    CooldownDelay = row.GetOrDefault<float>("HeatingCooldownDelay"),
-                    OverheatedCooldownDelay = row.GetOrDefault<float>("OverheatedCooldownDelay"),
-                };
-            }
-
-            var reloadTime = row.GetOrDefault<float>("ReloadTime");
-            if (reloadTime != 0)
-            {
-                result.Reload = new ReloadInfo
-                {
-                    ReloadTime = reloadTime,
-                    ReloadType = row.GetOrDefault<FName>("ReloadType").Text.Replace("EFortWeaponReloadType::", ""),
-                    ClipSize = row.GetOrDefault<int>("ClipSize"),
-                    InitialClips = row.GetOrDefault<int>("InitialClips"),
-                    CartridgePerFire = row.GetOrDefault<int>("CartridgePerFire"),
-                };
-            }
-
-            var maxChargeTime = row.GetOrDefault<float>("MaxChargeTime");
-            if (maxChargeTime != 0)
-            {
-                result.Charge = new ChargeInfo
-                {
-                    FullChargeDurabilityPerUse = row.GetOrDefault<float>("FullChargeDurabilityPerUse"),
-                    MaxAmmoCostPerFire = row.GetOrDefault<int>("MaxAmmoCostPerFire"),
-                    MinChargeTime = row.GetOrDefault<float>("MinChargeTime"),
-                    MaxChargeTime = maxChargeTime,
-                    ChargeDownTime = row.GetOrDefault<float>("ChargeDownTime"),
-                    AutoDischarge = row.GetOrDefault<bool>("bAutoDischarge"),
-                    MaxChargeTimeUntilDischarge = row.GetOrDefault<float>("MaxChargeTimeUntilDischarge"),
-                    MinChargeDamageMultiplier = row.GetOrDefault<float>("MinChargeDamageMultiplier"),
-                    MaxChargeDamageMultiplier = row.GetOrDefault<float>("MaxChargeDamageMultiplier"),
-                };
-            }
-
-            return result;
-        }
-        private static DamageRange MakeDamageRange(FStructFallback row, string dmg, string envDmg, string impactDmg, string? knockback, string range)
-        {
-            return new DamageRange
-            {
-                Damage = row.GetOrDefault<float>(dmg),
-                EnvDamage = row.GetOrDefault<float>(envDmg),
-                ImpactDamage = row.GetOrDefault<float>(impactDmg),
-                KnockbackMagnitude = knockback == null ? 0 : row.GetOrDefault<float>(knockback),
-                Range = row.GetOrDefault<float>(range),
-            };
-        }
-        private MeleeWeaponStats ConvertMeleeWeaponStats(FStructFallback row, EFortRarity rarity)
-        {
-            var result = new MeleeWeaponStats
-            {
-                RangeVsEnemies = row.GetOrDefault<float>("RangeVSEnemies"),
-                SwingTime = row.GetOrDefault<float>("SwingTime"),
-                Damage = row.GetOrDefault<float>("DmgPB"),
-                EnvDamage = row.GetOrDefault<float>("EnvDmgPB"),
-                ImpactDamage = row.GetOrDefault<float>("ImpactDmgPB"),
-                KnockbackMagnitude = row.GetOrDefault<float>("KnockbackMagnitude"),
-                KnockbackZAngle = row.GetOrDefault<float>("KnockbackZAngle"),
-                DurabilityPerUse = row.GetOrDefault<float>("DurabilityPerUse"),
-                BaseCritChance = row.GetOrDefault<float>("DiceCritChance"),
-                BaseCritDamage = row.GetOrDefault<float>("DiceCritDamageMultiplier"),
-                StunTime = row.GetOrDefault<float>("StunTime"),
-            };
-
-            var durabilityRow = row.GetOrDefault<FName>("DurabilityRowName").Text;
-            result.Durability = durabilityTable?[durabilityRow].GetOrDefault<int>(rarity.GetNameText().Text);
-
-            return result;
-        }
-        private TrapStats ConvertTrapStats(FStructFallback row, EFortRarity rarity)
-        {
-            var result = new TrapStats
-            {
-                ArmTime = row.GetOrDefault<float>("ArmTime"),
-                FireDelay = row.GetOrDefault<float>("FireDelay"),
-                ReloadTime = row.GetOrDefault<float>("ReloadTime"),
-                Damage = row.GetOrDefault<float>("DmgPB"),
-                ImpactDamage = row.GetOrDefault<float>("ImpactDmgPB"),
-                KnockbackMagnitude = row.GetOrDefault<float>("KnockbackMagnitude"),
-                KnockbackZAngle = row.GetOrDefault<float>("KnockbackZAngle"),
-                StunTime = row.GetOrDefault<float>("StunTime"),
-                BaseCritChance = row.GetOrDefault<float>("DiceCritChance"),
-                BaseCritDamage = row.GetOrDefault<float>("DiceCritDamageMultiplier")
-            };
-            var durabilityRow = row.GetOrDefault<FName>("DurabilityRowName").Text;
-            result.Durability = durabilityTable?[durabilityRow].GetOrDefault<int>(rarity.GetNameText().Text);
-
-            return result;
         }
 
         private AlterationSlot? ConvertAlterationSlot(FStructFallback slot, ISet<string> namedExclusions)
