@@ -16,11 +16,15 @@
  * along with BanjoBotAssets.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+using Newtonsoft.Json;
+
 namespace BanjoBotAssets.Json
 {
     [NamedItemData("Trap")]
     public sealed class TrapItemData : NamedItemData
     {
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public Dictionary<string, int>? DismantleResults { get; set; }
         public TrapStats? TrapStats { get; set; }
     }
 

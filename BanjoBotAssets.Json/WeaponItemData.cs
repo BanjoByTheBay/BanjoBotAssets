@@ -27,6 +27,8 @@ namespace BanjoBotAssets.Json
         public string? TriggerType { get; set; }
         public string? DisplayTier { get; set; }
 
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public Dictionary<string, int>? DismantleResults { get; set; }
         public RangedWeaponStats? RangedWeaponStats { get; set; }
         public MeleeWeaponStats? MeleeWeaponStats { get; set; }
     }

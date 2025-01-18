@@ -18,6 +18,7 @@
 using BanjoBotAssets.UExports;
 using CUE4Parse.FN.Enums.FortniteGame;
 using CUE4Parse.UE4.Objects.GameplayTags;
+using Microsoft.Extensions.Hosting;
 
 namespace BanjoBotAssets.Exporters.UObjects
 {
@@ -85,7 +86,11 @@ namespace BanjoBotAssets.Exporters.UObjects
             {
                 var recipe = disassembleTable?[disassembleHandle.RowName.Text];
                 if (recipe is not null)
-                    itemData.RecycleRecipe = ConvertRecipe(recipe);
+                    itemData.DismantleResults = recipe.RecipeResults.ToDictionary(
+                            p => $"{p.ItemPrimaryAssetId.PrimaryAssetType.Name.Text}:{p.ItemPrimaryAssetId.PrimaryAssetName.Text}",
+                            p => p.Quantity,
+                            StringComparer.OrdinalIgnoreCase
+                        );
             }
 
             var statRow = asset.GetOrDefault<FDataTableRowHandle?>("WeaponStatHandle")?.RowName.Text;
