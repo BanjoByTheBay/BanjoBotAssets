@@ -23,8 +23,6 @@ namespace BanjoBotAssets.Json
     public sealed class AlterationItemData : NamedItemData
     {
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public Dictionary<string, int>? RarityUpCost { get; set; }
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public Dictionary<string, int>? AdditionalRespecCost { get; set; }
     }
 }

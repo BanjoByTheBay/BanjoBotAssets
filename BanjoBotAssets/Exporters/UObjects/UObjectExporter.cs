@@ -66,19 +66,18 @@ namespace BanjoBotAssets.Exporters.UObjects
         protected static ItemRecipe ConvertRecipe(FRecipe recipe)
         {
             var result = recipe.RecipeResults[0];
-            return new()
+            ItemRecipe itemRecipe = new()
             {
-                Result = recipe.RecipeResults.ToDictionary(
-                    p => $"{p.ItemPrimaryAssetId.PrimaryAssetType.Name.Text}:{p.ItemPrimaryAssetId.PrimaryAssetName.Text}",
-                    p => p.Quantity,
-                    StringComparer.OrdinalIgnoreCase
-                ),
+                Result = $"{result.ItemPrimaryAssetId.PrimaryAssetType.Name}:{result.ItemPrimaryAssetId.PrimaryAssetName}",
                 Cost = recipe.RecipeCosts.ToDictionary(
                     p => $"{p.ItemPrimaryAssetId.PrimaryAssetType.Name.Text}:{p.ItemPrimaryAssetId.PrimaryAssetName.Text}",
                     p => p.Quantity,
                     StringComparer.OrdinalIgnoreCase
                 )
             };
+            if (result.Quantity != 1)
+                itemRecipe.Amount = result.Quantity;
+            return itemRecipe;
         }
 
         public override async Task ExportAssetsAsync(IProgress<ExportProgress> progress, IAssetOutput output, CancellationToken cancellationToken)

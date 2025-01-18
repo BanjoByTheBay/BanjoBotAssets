@@ -236,10 +236,9 @@ namespace BanjoBotAssets.Exporters.UObjects
             if (craftingTable?.TryGetValue(craftingRowHandle.RowName.Text, out var craftingRecipe) ?? false)
             {
                 var craftingRecipeData = ConvertRecipe(craftingRecipe);
+                itemData.CraftingResult = craftingRecipeData.Result!;
+                itemData.CraftingAmount = craftingRecipeData.Amount;
                 itemData.CraftingCost = craftingRecipeData.Cost!;
-                var firstResult = craftingRecipeData.Result!.First();
-                itemData.CraftingResult = firstResult.Key;
-                itemData.CraftingAmount = firstResult.Value == 1 ? null : firstResult.Value;
             }
 
             var alterationSlotsLoadoutRow = craftingResultItem.GetOrDefault<FName>("AlterationSlotsLoadoutRow").Text;

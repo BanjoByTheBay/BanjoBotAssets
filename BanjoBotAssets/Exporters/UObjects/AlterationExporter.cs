@@ -45,12 +45,6 @@ namespace BanjoBotAssets.Exporters.UObjects
             itemData.DisplayName = asset.ItemDescription?.Text ?? $"<Alteration:{asset.Name}>";
             itemData.Description = null;
 
-            if(itemData.RarityUpRecipe is ItemRecipe rarityUp)
-            {
-                itemData.RarityUpCost = rarityUp.Cost;
-                itemData.RarityUpRecipe = null;
-            }
-
             var extraRespecCost = asset.GetOrDefault<FFortItemQuantityPair[]>("AdditionalRespecCosts")?.ToDictionary(
                     p => $"{p.ItemPrimaryAssetId.PrimaryAssetType.Name.Text}:{p.ItemPrimaryAssetId.PrimaryAssetName.Text}",
                     p => p.Quantity,
