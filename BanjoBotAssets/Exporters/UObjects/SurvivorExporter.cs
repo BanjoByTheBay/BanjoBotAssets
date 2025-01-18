@@ -28,7 +28,7 @@ namespace BanjoBotAssets.Exporters.UObjects
         protected override Task<bool> ExportAssetAsync(UFortWorkerType asset, SurvivorItemData itemData, Dictionary<ImageType, string> imagePaths)
         {
             if (asset.GetOrDefault("Rarity", EFortRarity.Uncommon) is EFortRarity rarity)
-                itemData.Rarity = (asset.bIsManager ? rarity + 1 : rarity).GetNameText().Text;
+                itemData.Rarity = rarity.GetNameText().Text;
             itemData.SubType = asset.bIsManager ? GetManagerJob(asset) : null;
             itemData.DisplayName = asset.ItemName?.Text ?? MakeSurvivorDisplayName(asset);
             itemData.Personality = asset.FixedPersonalityTag.GameplayTags is { Length: 1 }
