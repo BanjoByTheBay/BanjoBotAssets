@@ -151,8 +151,6 @@ namespace BanjoBotAssets.Exporters.UObjects
             itemData.DisplayName = craftingResultItem.ItemName?.Text ?? $"<{asset.Name}>";
             itemData.Description = craftingResultItem.ItemDescription?.Text;
 
-            itemData.Tier = (int?)asset.GetOrDefaultFromDataList<EFortItemTier?>("Tier");
-
             if (craftingResultItem.Name?.StartsWith("WID_", StringComparison.OrdinalIgnoreCase) ?? false)
             {
                 var (category, subType) = WeaponExporter.CategoryAndSubTypeFromTags(craftingResultItem.GameplayTags);
@@ -185,6 +183,7 @@ namespace BanjoBotAssets.Exporters.UObjects
             }
             else if (craftingResultItem.Name?.StartsWith("TID_", StringComparison.OrdinalIgnoreCase) ?? false)
             {
+                itemData.Tier = (int)craftingResultItem.GetOrDefaultFromDataList<EFortItemTier>("Tier");
                 itemData.SubType = TrapExporter.SubTypeFromTags(craftingResultItem.GameplayTags);
                 itemData.Category = Resources.Field_Recipe_Trap;
             }
