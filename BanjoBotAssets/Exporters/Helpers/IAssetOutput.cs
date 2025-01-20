@@ -36,6 +36,8 @@ namespace BanjoBotAssets.Exporters.Helpers
         void AddSurvivorItemRatings(ItemRatingTable itemRatings);
         void AddLeadSurvivorItemRatings(ItemRatingTable itemRatings);
 
+        public void AddLevelToXPTable(Dictionary<string, int[]> levelToXPTable);
+
         void AddCraftingRecipe(string name, IReadOnlyDictionary<string, int> ingredients);
         void AddDisplayNameCorrection(string schematicTemplateId, string v);
 

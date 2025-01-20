@@ -32,7 +32,7 @@ namespace BanjoBotAssets.Exporters.Groups
         public SchematicItemGroupFields() : this("", null, null, "", "", "", "", "", "") { }
     }
 
-    internal sealed partial class SchematicExporter(IExporterContext services) : GroupExporter<UObject, ParsedSchematicName, SchematicItemGroupFields, SchematicItemData>(services)
+    internal sealed partial class SchematicExporterOld(IExporterContext services) : GroupExporter<UObject, ParsedSchematicName, SchematicItemGroupFields, SchematicItemData>(services)
     {
         private readonly Dictionary<string, string> craftingResultPaths = new(StringComparer.OrdinalIgnoreCase);
         private string? craftingPath, alterationGroupPath, slotDefsPath, slotLoadoutsPath, meleeWeaponsPath, rangedWeaponsPath, trapsPath, durabilityPath, namedExclusionsPath;
@@ -46,6 +46,7 @@ namespace BanjoBotAssets.Exporters.Groups
 
         protected override bool InterestedInAsset(string name)
         {
+            return false;
             // we only export SID_ assets directly, but we also want to keep track of:
             //   Assets that might be crafting results: WID_*, TID_*, G_*, Ingredient_*, AmmoData*
             //   AlterationGroups
@@ -249,7 +250,7 @@ namespace BanjoBotAssets.Exporters.Groups
          *
          * Instead, we rely on the knowledge that mythic items don't occur in any other rarities.
          *
-         * We use a similar technique here and in <see cref="HeroExporter"/>: ensuring the primary asset has
+         * We use a similar technique here and in <see cref="HeroExporterOld"/>: ensuring the primary asset has
          * "sr" parsed rarity in <see cref="SelectPrimaryAsset"/>, and checking the primary asset's
          * display rarity in <see cref="GetRarity"/>.
          */

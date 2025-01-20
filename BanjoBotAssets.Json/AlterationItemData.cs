@@ -16,31 +16,13 @@
  * along with BanjoBotAssets.  If not, see <http://www.gnu.org/licenses/>.
  */
 using Newtonsoft.Json;
-using System.Diagnostics.CodeAnalysis;
 
 namespace BanjoBotAssets.Json
 {
-    [NamedItemData("Schematic")]
-    public sealed class SchematicItemData : NamedItemData
+    [NamedItemData("Alteration")]
+    public sealed class AlterationItemData : NamedItemData
     {
-        public string? Category { get; set; }
-        public string? EvoType { get; set; }
-        [DisallowNull]
-        public AlterationSlot[]? AlterationSlots { get; set; }
-        public string? TriggerType { get; set; }
-        public string? DisplayTier { get; set; }
-
-        public RangedWeaponStats? RangedWeaponStats { get; set; }
-        public MeleeWeaponStats? MeleeWeaponStats { get; set; }
-        public TrapStats? TrapStats { get; set; }
-
-        [DisallowNull]
-        public Dictionary<string, int>? CraftingCost { get; set; }
-        [DisallowNull]
-        public string? CraftingResult { get; set; }
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public int? CraftingAmount { get; set; }
-
-        public ItemRecipe? AlternateTierUpRecipe { get; set; }
+        public Dictionary<string, int>? AdditionalRespecCost { get; set; }
     }
 }

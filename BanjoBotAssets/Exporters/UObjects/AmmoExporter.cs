@@ -15,17 +15,23 @@
  * You should have received a copy of the GNU General Public License
  * along with BanjoBotAssets.  If not, see <http://www.gnu.org/licenses/>.
  */
-using Newtonsoft.Json;
-using System.Diagnostics.CodeAnalysis;
 
-namespace BanjoBotAssets.Json
+using CUE4Parse.FN.Structs.GA;
+
+namespace BanjoBotAssets.Exporters.UObjects
 {
-    public sealed class AlterationSlot
+    internal sealed class AmmoExporter(IExporterContext services) : UObjectExporter<UObject, NamedItemData>(services)
     {
-        public int RequiredLevel { get; set; }
-        [DisallowNull]
-        public string[][]? Alterations { get; set; }
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public Dictionary<string, int>? BaseRespecCost { get; set; }
+        protected override string Type => "Ammo";
+
+        protected override bool InterestedInAsset(string name)
+        {
+            if (name.Contains("/Athena/", StringComparison.OrdinalIgnoreCase))
+                return false;
+            if (name.Contains("/PrimalGameplay/", StringComparison.OrdinalIgnoreCase))
+                return false;
+
+            return name.Contains("/Items/Ammo/AmmoData", StringComparison.OrdinalIgnoreCase);
+        }
     }
 }
