@@ -28,7 +28,7 @@ namespace BanjoBotAssets.Exporters.UObjects
 
         protected override Task<bool> ExportAssetAsync(UObject asset, AccoladeItemData itemData, Dictionary<ImageType, string> imagePaths)
         {
-            if(asset.GetOrDefault<FScalableFloat>("XpRewardAmount") is FScalableFloat xpAmount)
+            if (asset.GetOrDefault<FScalableFloat>("XpRewardAmount") is FScalableFloat xpAmount)
             {
                 itemData.AccoladeXP = (int)xpAmount.GetScaledValue(logger);
             }

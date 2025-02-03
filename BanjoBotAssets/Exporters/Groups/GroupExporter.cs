@@ -275,7 +275,7 @@ namespace BanjoBotAssets.Exporters.Groups
                 SmallPreviewImagePath = asset.GetSoftAssetPathFromDataList("Icon"),
                 LargePreviewImagePath = asset.GetSoftAssetPathFromDataList("LargeIcon"),
                 IsInventoryLimitExempt = !asset.GetOrDefault("bInventorySizeLimited", true),
-        });
+            });
         }
 
         /// <summary>

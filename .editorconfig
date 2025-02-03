@@ -9,9 +9,9 @@ dotnet_diagnostic.CA1848.severity = silent
 csharp_indent_labels = one_less_than_current
 csharp_using_directive_placement = outside_namespace:silent
 csharp_prefer_simple_using_statement = true:suggestion
-csharp_prefer_braces = true:silent
+csharp_prefer_braces = when_multiline:silent
 csharp_style_namespace_declarations = block_scoped:silent
-csharp_style_expression_bodied_methods = false:silent
+csharp_style_expression_bodied_methods = true:none
 csharp_style_expression_bodied_constructors = false:silent
 csharp_style_expression_bodied_operators = false:silent
 csharp_style_expression_bodied_properties = true:silent
@@ -23,6 +23,18 @@ csharp_space_around_binary_operators = before_and_after
 
 # IDE0005: Using directive is unnecessary.
 dotnet_diagnostic.IDE0005.severity = suggestion
+
+# IDE0008: Use explicit type
+csharp_style_var_elsewhere = true:none
+
+# IDE0008: Use explicit type
+csharp_style_var_for_built_in_types = true:none
+
+# IDE0022: Use expression body for method
+dotnet_diagnostic.IDE0022.severity = none
+
+# IDE0008: Use explicit type
+csharp_style_var_when_type_is_apparent = true
 
 [*.{cs,vb}]
 dotnet_style_operator_placement_when_wrapping = beginning_of_line
@@ -83,4 +95,10 @@ dotnet_naming_style.pascal_case.capitalization = pascal_case
 dotnet_style_object_initializer = true:suggestion
 dotnet_style_collection_initializer = true:suggestion
 dotnet_style_prefer_simplified_boolean_expressions = true:suggestion
-dotnet_style_prefer_conditional_expression_over_assignment = true:silent
+dotnet_style_prefer_conditional_expression_over_assignment = true:none
+
+# IDE0046: Convert to conditional expression
+dotnet_style_prefer_conditional_expression_over_return = false
+
+# IDE0045: Convert to conditional expression
+dotnet_diagnostic.IDE0045.severity = none

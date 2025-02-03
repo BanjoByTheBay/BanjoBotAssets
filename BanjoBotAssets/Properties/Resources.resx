@@ -408,6 +408,9 @@
     <value>Fetching AES keys from external API: {URL}</value>
     <comment>0=URL</comment>
   </data>
+  <data name="Status_InitializingOodle" xml:space="preserve">
+    <value>Initializing Oodle</value>
+  </data>
   <data name="Status_LoadedAssets" xml:space="preserve">
     <value>Loaded {Count} assets in {TotalDuration} ({AverageDuration} ms per asset)</value>
     <comment>0=number loaded, 1=formatted time duration, 2=number of milliseconds</comment>
@@ -504,6 +507,9 @@
   </data>
   <data name="Status_SubmittingMainKey" xml:space="preserve">
     <value>Submitting main key</value>
+  </data>
+  <data name="Status_LocatingOodle" xml:space="preserve">
+    <value>Locating Oodle library</value>
   </data>
   <data name="Status_WritingFreshArtifact" xml:space="preserve">
     <value>Writing artifact: {File}</value>
