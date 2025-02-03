@@ -28,6 +28,7 @@ namespace BanjoBotAssets.Exporters.Groups
         public string? SmallPreviewImagePath { get; set; }
         public string? LargePreviewImagePath { get; set; }
 
+        public bool IsPermanent { get; set; }
         public bool IsInventoryLimitExempt { get; set; }
     }
 
@@ -166,6 +167,7 @@ namespace BanjoBotAssets.Exporters.Groups
                             Type = Type,
                             Rarity = GetRarity(parsed, asset, fields).GetNameText().Text,
                             Tier = parsed.Tier,
+                            IsPermanent = fields.IsPermanent,
                             IsInventoryLimitExempt = fields.IsInventoryLimitExempt,
                         };
 
@@ -274,6 +276,7 @@ namespace BanjoBotAssets.Exporters.Groups
                 SubType = null,
                 SmallPreviewImagePath = asset.GetSoftAssetPathFromDataList("Icon"),
                 LargePreviewImagePath = asset.GetSoftAssetPathFromDataList("LargeIcon"),
+                IsPermanent = asset.GetOrDefault<FDataTableRowHandle>("SacrificeRecipe") is null or { RowName.IsNone: true } or { DataTable: null },
                 IsInventoryLimitExempt = !asset.GetOrDefault("bInventorySizeLimited", true),
             });
         }

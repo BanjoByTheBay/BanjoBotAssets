@@ -38,6 +38,8 @@ namespace BanjoBotAssets.Json
         public string? SubType { get; set; }
         public string? Rarity { get; set; }
         [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
+        public bool IsPermanent { get; set; }
+        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
         public bool IsInventoryLimitExempt { get; set; }
         public int? Tier { get; set; }
         [JsonProperty(Order = OrderedPropertiesContractResolver.DefaultOrder + 2)]
