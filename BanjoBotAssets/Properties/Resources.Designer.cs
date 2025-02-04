@@ -871,6 +871,15 @@ namespace BanjoBotAssets.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Initializing Oodle.
+        /// </summary>
+        internal static string Status_InitializingOodle {
+            get {
+                return ResourceManager.GetString("Status_InitializingOodle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Loaded {Count} assets in {TotalDuration} ({AverageDuration} ms per asset).
         /// </summary>
         internal static string Status_LoadedAssets {
@@ -921,6 +930,15 @@ namespace BanjoBotAssets.Properties {
         internal static string Status_LoadingMappings {
             get {
                 return ResourceManager.GetString("Status_LoadingMappings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Locating Oodle library.
+        /// </summary>
+        internal static string Status_LocatingOodle {
+            get {
+                return ResourceManager.GetString("Status_LocatingOodle", resourceCulture);
             }
         }
         

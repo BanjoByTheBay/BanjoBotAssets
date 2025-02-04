@@ -278,7 +278,7 @@ namespace BanjoBotAssets.Exporters.Groups
                 LargePreviewImagePath = asset.GetSoftAssetPathFromDataList("LargeIcon"),
                 IsPermanent = asset.GetOrDefault<FDataTableRowHandle>("SacrificeRecipe") is null or { RowName.IsNone: true } or { DataTable: null },
                 IsInventoryLimitExempt = !asset.GetOrDefault("bInventorySizeLimited", true),
-        });
+            });
         }
 
         /// <summary>

@@ -17,7 +17,6 @@
  */
 using BanjoBotAssets.UExports;
 using CUE4Parse.FN.Enums.FortniteGame;
-using Microsoft.Extensions.Logging;
 using System.Collections.Concurrent;
 
 namespace BanjoBotAssets.Exporters.UObjects
@@ -30,7 +29,6 @@ namespace BanjoBotAssets.Exporters.UObjects
         where TAsset : UObject
     {
     }
-
 
     internal abstract class UObjectExporter<TAsset, TItemData>(IExporterContext services) : BaseExporter(services)
         where TAsset : UObject
@@ -131,7 +129,7 @@ namespace BanjoBotAssets.Exporters.UObjects
                         {
                             var pkg = await provider.LoadPackageAsync(file);
                             cancellationToken.ThrowIfCancellationRequested();
-                            
+
                             uobject = pkg.GetExportOrNull(file.NameWithoutExtension, StringComparison.OrdinalIgnoreCase) as TAsset ??
                                 pkg.GetExport(file.NameWithoutExtension + "_C", StringComparison.OrdinalIgnoreCase) as TAsset;
                         }
@@ -164,7 +162,7 @@ namespace BanjoBotAssets.Exporters.UObjects
                         Description = description,
                         IsInventoryLimitExempt = isInventoryLimitExempt,
                     };
-                    
+
                     if (uobject.GetOrDefaultFromDataList<EFortItemTier>("Tier") is EFortItemTier tier && tier != default)
                     {
                         itemData.Tier = (int)tier;

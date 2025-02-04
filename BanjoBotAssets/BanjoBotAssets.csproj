@@ -51,15 +51,16 @@
 
 	<ItemGroup>
 		<PackageReference Include="LazyCache" Version="2.4.0" />
-		<PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="8.0.0" />
-		<PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
-		<PackageReference Include="Microsoft.Extensions.Http" Version="8.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="9.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Http" Version="9.0.0" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-		<PackageReference Include="Roslynator.Analyzers" Version="4.10.0">
+		<PackageReference Include="Roslynator.Analyzers" Version="4.12.10">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 		<PackageReference Include="Serilog.Sinks.ILogger" Version="1.0.3" />
+		<PackageReference Include="System.Drawing.Common" Version="4.7.3" />
 	</ItemGroup>
 
 	<ItemGroup>
