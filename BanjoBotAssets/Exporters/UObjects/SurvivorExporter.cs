@@ -16,6 +16,8 @@
  * along with BanjoBotAssets.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+using CUE4Parse.UE4.Assets.Exports;
+
 namespace BanjoBotAssets.Exporters.UObjects
 {
     internal sealed class SurvivorExporter(IExporterContext services) : UObjectExporter<UFortWorkerType, SurvivorItemData>(services)
@@ -25,7 +27,7 @@ namespace BanjoBotAssets.Exporters.UObjects
         protected override bool InterestedInAsset(string name) =>
             name.Contains("Workers/Worker", StringComparison.OrdinalIgnoreCase) || name.Contains("Managers/Manager", StringComparison.OrdinalIgnoreCase);
 
-        protected override Task<bool> ExportAssetAsync(UFortWorkerType asset, SurvivorItemData itemData, Dictionary<ImageType, string> imagePaths)
+        protected override async Task<bool> ExportAssetAsync(UFortWorkerType asset, SurvivorItemData itemData, Dictionary<ImageType, string> imagePaths)
         {
             if (asset.GetOrDefault("Rarity", EFortRarity.Uncommon) is EFortRarity rarity)
                 itemData.Rarity = rarity.GetNameText().Text;
@@ -34,8 +36,24 @@ namespace BanjoBotAssets.Exporters.UObjects
             itemData.Personality = asset.FixedPersonalityTag.GameplayTags is { Length: 1 }
                 ? asset.FixedPersonalityTag.GameplayTags[0].ToString().Split('.')[^1]
                 : null;
+            if(asset.GetSoftAssetPath("FixedPortrait") is string portraitPath)
+            {
+                Interlocked.Increment(ref assetsLoaded);
+                var portrait = await provider.LoadObjectAsync<UObject>(portraitPath);
+                if (portrait.GetSoftAssetPath("SmallImage") is string smallPreviewPath)
+                {
+                    imagePaths.Remove(ImageType.SmallPreview);
+                    imagePaths.Add(ImageType.SmallPreview, smallPreviewPath);
+                }
 
-            return Task.FromResult(true);
+                if (portrait.GetSoftAssetPath("LargeImage") is string largePreviewPath)
+                {
+                    imagePaths.Remove(ImageType.LargePreview);
+                    imagePaths.Add(ImageType.LargePreview, largePreviewPath);
+                }
+            }
+
+            return true;
         }
 
         private static readonly Dictionary<string, string> managerSynergyToJob = new(StringComparer.OrdinalIgnoreCase)
