@@ -28,7 +28,7 @@ namespace BanjoBotAssets.Exporters.Groups
         public HeroItemGroupFields() : this("", null, null, null, "", "", null, "", "", null, []) { }
     }
 
-    internal sealed partial class HeroExporter(IExporterContext services) : GroupExporter<UFortHeroType, BaseParsedItemName, HeroItemGroupFields, HeroItemData>(services)
+    internal sealed partial class HeroExporterOld(IExporterContext services) : GroupExporter<UFortHeroType, BaseParsedItemName, HeroItemGroupFields, HeroItemData>(services)
     {
         private string? itemToQuestPath, questRewardsPath;
         private readonly Dictionary<string, string> heroToTeamPerk = new(StringComparer.OrdinalIgnoreCase);
@@ -37,6 +37,7 @@ namespace BanjoBotAssets.Exporters.Groups
 
         protected override bool InterestedInAsset(string name)
         {
+            return false;
             if (name.EndsWith("/ItemToQuestTable.uasset", StringComparison.OrdinalIgnoreCase))
             {
                 itemToQuestPath = name;
@@ -203,10 +204,10 @@ namespace BanjoBotAssets.Exporters.Groups
 
         protected override Task<bool> ExportAssetAsync(BaseParsedItemName parsed, UFortHeroType primaryAsset, HeroItemGroupFields fields, string path, HeroItemData itemData)
         {
-            itemData.HeroPerkName = fields.HeroPerkName;
+            itemData.HeroPerkTemplate = fields.HeroPerkName;
             itemData.HeroPerk = fields.HeroPerk;
             itemData.HeroPerkDescription = fields.HeroPerkDescription;
-            itemData.CommanderPerkName = fields.CommanderPerkName;
+            itemData.CommanderPerkTemplate = fields.CommanderPerkName;
             itemData.CommanderPerk = fields.CommanderPerk;
             itemData.CommanderPerkDescription = fields.CommanderPerkDescription;
             itemData.HeroAbilities = fields.HeroAbilities;

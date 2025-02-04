@@ -42,6 +42,12 @@ namespace BanjoBotAssets.Json
         [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
         public bool IsInventoryLimitExempt { get; set; }
         public int? Tier { get; set; }
+
+        public ItemRecipe? TierUpRecipe { get; set; }
+        public ItemRecipe? RarityUpRecipe { get; set; }
+        public ItemRecipe? RecycleRecipe { get; set; }
+        public string? LevelToXPRow { get; set; }
+
         [JsonProperty(Order = OrderedPropertiesContractResolver.DefaultOrder + 2)]
         public SortedDictionary<ImageType, string>? ImagePaths { get; set; }
 

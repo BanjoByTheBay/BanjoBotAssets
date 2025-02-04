@@ -16,6 +16,7 @@
  * along with BanjoBotAssets.  If not, see <http://www.gnu.org/licenses/>.
  */
 using Newtonsoft.Json;
+using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 
 namespace BanjoBotAssets.Json
@@ -34,7 +35,15 @@ namespace BanjoBotAssets.Json
         public MeleeWeaponStats? MeleeWeaponStats { get; set; }
         public TrapStats? TrapStats { get; set; }
 
+        [DisallowNull]
         public Dictionary<string, int>? CraftingCost { get; set; }
+        [DisallowNull]
+        public string? CraftingResult { get; set; }
+        [DefaultValue(1)]
+        [JsonProperty(DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate)]
+        public int? CraftingAmount { get; set; }
+
+        public ItemRecipe? AlternateTierUpRecipe { get; set; }
     }
 
     /// <summary>

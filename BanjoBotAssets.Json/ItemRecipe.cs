@@ -16,16 +16,19 @@
  * along with BanjoBotAssets.  If not, see <http://www.gnu.org/licenses/>.
  */
 using Newtonsoft.Json;
+using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 
 namespace BanjoBotAssets.Json
 {
-    public sealed class AlterationSlot
+    public sealed class ItemRecipe
     {
-        public int RequiredLevel { get; set; }
         [DisallowNull]
-        public string[][]? Alterations { get; set; }
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public Dictionary<string, int>? BaseRespecCost { get; set; }
+        public Dictionary<string, int>? Cost { get; set; }
+        [DisallowNull]
+        public string? Result { get; set; }
+        [DefaultValue(1)]
+        [JsonProperty(DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate)]
+        public int? Amount { get; set; }
     }
 }
