@@ -17,12 +17,12 @@
  */
 namespace BanjoBotAssets.Exporters.Groups
 {
-    internal sealed partial class DefenderExporter(IExporterContext services) : GroupExporter<UFortHeroType>(services)
+    internal sealed partial class DefenderExporterOld(IExporterContext services) : GroupExporter<UFortHeroType>(services)
     {
         protected override string Type => "Defender";
 
-        protected override bool InterestedInAsset(string name) =>
-            name.Contains("Defenders/DID_", StringComparison.OrdinalIgnoreCase);
+        protected override bool InterestedInAsset(string name) => false;
+            //name.Contains("Defenders/DID_", StringComparison.OrdinalIgnoreCase);
 
         private static readonly Regex defenderAssetNameRegex = DefenderAssetNameRegex();
 

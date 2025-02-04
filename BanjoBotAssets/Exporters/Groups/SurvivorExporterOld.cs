@@ -25,12 +25,12 @@ namespace BanjoBotAssets.Exporters.Groups
         public SurvivorItemGroupFields() : this("", null, null, null) { }
     }
 
-    internal sealed partial class SurvivorExporter(IExporterContext services) : GroupExporter<UFortWorkerType, BaseParsedItemName, SurvivorItemGroupFields, SurvivorItemData>(services)
+    internal sealed partial class SurvivorExporterOld(IExporterContext services) : GroupExporter<UFortWorkerType, BaseParsedItemName, SurvivorItemGroupFields, SurvivorItemData>(services)
     {
         protected override string Type => "Worker";
 
-        protected override bool InterestedInAsset(string name) =>
-            name.Contains("Workers/Worker", StringComparison.OrdinalIgnoreCase) || name.Contains("Managers/Manager", StringComparison.OrdinalIgnoreCase);
+        protected override bool InterestedInAsset(string name) => false;
+            //name.Contains("Workers/Worker", StringComparison.OrdinalIgnoreCase) || name.Contains("Managers/Manager", StringComparison.OrdinalIgnoreCase);
 
         // regular survivor:    WorkerBasic_SR_T02
         // special survivor:    Worker_Leprechaun_VR_T01, WorkerHalloween_VR_T04

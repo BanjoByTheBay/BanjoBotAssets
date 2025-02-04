@@ -39,6 +39,7 @@ namespace BanjoBotAssets.Exporters.UObjects
         protected abstract string Type { get; }
 
         protected virtual bool IgnoreLoadFailures => false;
+        protected virtual bool RequireRarity => false;
 
         protected virtual Task<bool> ExportAssetAsync(TAsset asset, TItemData itemData, Dictionary<ImageType, string> imagePaths)
         {
@@ -132,6 +133,7 @@ namespace BanjoBotAssets.Exporters.UObjects
                     var displayName = uobject.GetOrDefault<FText>("ItemName")?.Text ?? uobject.GetOrDefault<FText>("DisplayName")?.Text ?? $"<{uobject.Name}>";
                     var description = uobject.GetOrDefault<FText>("ItemDescription")?.Text ?? uobject.GetOrDefault<FText>("Description")?.Text;
                     var isInventoryLimitExempt = !uobject.GetOrDefault("bInventorySizeLimited", true);
+                    var isPermenant = uobject.GetOrDefault<FDataTableRowHandle>("SacrificeRecipe") is null or { RowName.IsNone: true } or { DataTable: null };
 
                     var itemData = new TItemData
                     {
@@ -141,6 +143,7 @@ namespace BanjoBotAssets.Exporters.UObjects
                         DisplayName = displayName.Trim(),
                         Description = description,
                         IsInventoryLimitExempt = isInventoryLimitExempt,
+                        IsPermanent = isPermenant,
                     };
 
                     if (uobject.GetOrDefaultFromDataList<EFortItemTier>("Tier") is EFortItemTier tier && tier != default)
@@ -148,7 +151,7 @@ namespace BanjoBotAssets.Exporters.UObjects
                         itemData.Tier = (int)tier;
                     }
 
-                    if (uobject.GetOrDefault("Rarity", EFortRarity.Uncommon) is EFortRarity rarity && rarity != EFortRarity.Uncommon)
+                    if (uobject.GetOrDefault("Rarity", EFortRarity.Uncommon) is EFortRarity rarity && (RequireRarity || rarity != EFortRarity.Uncommon))
                     {
                         itemData.Rarity = rarity.GetNameText().Text;
                     }
