@@ -477,7 +477,7 @@ namespace BanjoBotAssets.Exporters.UObjects
             foreach (var (k, v) in mapping.Properties)
             {
                 if (k?.GetValue(typeof(EFortRarity)) is EFortRarity rarity &&
-                    v?.GenericValue is UScriptStruct { StructType: FStructFallback weightedAlts })
+                    v?.GenericValue is FScriptStruct { StructType: FStructFallback weightedAlts })
                 {
                     var alts = weightedAlts.GetOrDefault<FStructFallback[]>("WeightData")
                         .Where(wd => !namedExclusions.Overlaps(wd.GetOrDefault<string[]>("ExclusionNames")))
