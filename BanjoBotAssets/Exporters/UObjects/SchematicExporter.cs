@@ -55,9 +55,6 @@ namespace BanjoBotAssets.Exporters.UObjects
             //   Traps
             //   WeaponDurabilityRarity
 
-            if (CraftingResultNameRegex().IsMatch(name))
-                craftingResultPaths.Add(Path.GetFileNameWithoutExtension(name), name);
-
             switch (Path.GetFileName(name))
             {
                 case string s when s.Equals("CraftingRecipes_New.uasset", StringComparison.OrdinalIgnoreCase):
@@ -92,11 +89,11 @@ namespace BanjoBotAssets.Exporters.UObjects
                     break;
             }
 
-            if (name.Contains("/songs/", StringComparison.OrdinalIgnoreCase))
-                return false;
-
             if (!name.Contains("/SaveTheWorld/", StringComparison.OrdinalIgnoreCase))
                 return false;
+
+            if (CraftingResultNameRegex().IsMatch(name))
+                craftingResultPaths.Add(Path.GetFileNameWithoutExtension(name), name);
 
             return 
                 name.Contains("/SID_", StringComparison.OrdinalIgnoreCase) ||
@@ -494,7 +491,7 @@ namespace BanjoBotAssets.Exporters.UObjects
             foreach (var (k, v) in mapping.Properties)
             {
                 if (k?.GetValue(typeof(EFortRarity)) is EFortRarity rarity &&
-                    v?.GenericValue is UScriptStruct { StructType: FStructFallback weightedAlts })
+                    v?.GenericValue is FScriptStruct { StructType: FStructFallback weightedAlts })
                 {
                     var alts = weightedAlts.GetOrDefault<FStructFallback[]>("WeightData")
                         .Where(wd => !namedExclusions.Overlaps(wd.GetOrDefault<string[]>("ExclusionNames")))
