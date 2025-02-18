@@ -25,6 +25,7 @@ namespace BanjoBotAssets.Exporters.Helpers
         private readonly ConcurrentDictionary<string, NamedItemData> namedItems = new(StringComparer.OrdinalIgnoreCase);
         private readonly ConcurrentDictionary<ImageType, ConcurrentDictionary<string, string>> namedItemImages = new();
         private readonly ConcurrentDictionary<string, DifficultyInfo> difficultyInfo = new(StringComparer.OrdinalIgnoreCase);
+        private readonly ConcurrentDictionary<string, ExpeditionCriteria> expeditionCriteria = new(StringComparer.OrdinalIgnoreCase);
 
         private readonly ConcurrentDictionary<string, IReadOnlyDictionary<string, int>> craftingRecipes = new(StringComparer.OrdinalIgnoreCase);
 
@@ -45,6 +46,11 @@ namespace BanjoBotAssets.Exporters.Helpers
         public void AddDefaultItemRatings(ItemRatingTable itemRatings)
         {
             defaultItemRatings = itemRatings;
+        }
+
+        public void AddExpeditionCriteria(string name, ExpeditionCriteria expeditionCriteria)
+        {
+            this.expeditionCriteria.TryAdd(name, expeditionCriteria);
         }
 
         public void AddDifficultyInfo(string name, DifficultyInfo difficultyInfo)
@@ -92,6 +98,13 @@ namespace BanjoBotAssets.Exporters.Helpers
                     ni.ImagePaths ??= [];
                     ni.ImagePaths.TryAdd(imageType, v);
                 }
+            }
+
+            cancellationToken.ThrowIfCancellationRequested();
+
+            foreach (var (k, v) in expeditionCriteria)
+            {
+                exportedAssets.ExpeditionCriteria.TryAdd(k, v);
             }
 
             cancellationToken.ThrowIfCancellationRequested();

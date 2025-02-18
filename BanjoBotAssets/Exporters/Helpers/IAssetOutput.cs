@@ -30,6 +30,8 @@ namespace BanjoBotAssets.Exporters.Helpers
         /// <param name="assetPath">The path of the image asset.</param>
         void AddImageForNamedItem(string name, ImageType type, string assetPath);
 
+        void AddExpeditionCriteria(string name, ExpeditionCriteria expeditionCriteria);
+
         void AddDifficultyInfo(string name, DifficultyInfo difficultyInfo);
 
         void AddDefaultItemRatings(ItemRatingTable itemRatings);
