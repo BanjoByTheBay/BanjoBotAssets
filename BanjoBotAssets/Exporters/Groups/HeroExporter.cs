@@ -165,8 +165,8 @@ namespace BanjoBotAssets.Exporters.Groups
         {
             if (itemToQuestPath != null && questRewardsPath != null)
             {
-                var itemToQuestTask = provider.LoadObjectAsync<UDataTable>(provider.Files[itemToQuestPath].PathWithoutExtension);
-                var questRewardsTask = provider.LoadObjectAsync<UDataTable>(provider.Files[questRewardsPath].PathWithoutExtension);
+                var itemToQuestTask = provider.SafeLoadPackageObjectAsync<UDataTable>(provider.Files[itemToQuestPath].PathWithoutExtension);
+                var questRewardsTask = provider.SafeLoadPackageObjectAsync<UDataTable>(provider.Files[questRewardsPath].PathWithoutExtension);
 
                 var itemToQuestTable = await itemToQuestTask;
                 var questRewardsTable = await questRewardsTask;
@@ -179,6 +179,9 @@ namespace BanjoBotAssets.Exporters.Groups
 
         private void InitHeroToTeamPerkMapping(UDataTable itemToQuestTable, UDataTable questRewardsTable)
         {
+            if (questRewardsTable is null)
+                return;
+
             var questToTeamPerk = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
             foreach (var entry in questRewardsTable.RowMap.Values)

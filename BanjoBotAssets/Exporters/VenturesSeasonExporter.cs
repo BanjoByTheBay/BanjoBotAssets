@@ -47,9 +47,9 @@ namespace BanjoBotAssets.Exporters
                 return;
             }
 
-            var levelRewardsTask = provider.LoadObjectAsync<UDataTable>(provider[levelRewardsPath].PathWithoutExtension);
-            var pastLevelRewardsTask = provider.LoadObjectAsync<UDataTable>(provider[pastLevelRewardsPath].PathWithoutExtension);
-            var defaultGameDataTask = provider.LoadObjectAsync<UObject>(provider[defaultGameDataPath].PathWithoutExtension);
+            var levelRewardsTask = provider.SafeLoadPackageObjectAsync<UDataTable>(provider[levelRewardsPath].PathWithoutExtension);
+            var pastLevelRewardsTask = provider.SafeLoadPackageObjectAsync<UDataTable>(provider[pastLevelRewardsPath].PathWithoutExtension);
+            var defaultGameDataTask = provider.SafeLoadPackageObjectAsync<UObject>(provider[defaultGameDataPath].PathWithoutExtension);
 
             ExportLevelRewards(await levelRewardsTask, output, cancellationToken);
             ExportPastLevelRewards(await pastLevelRewardsTask, output, cancellationToken);

@@ -26,6 +26,7 @@ using CUE4Parse.UE4.Objects.Core.Misc;
 using Microsoft.Extensions.Options;
 using System.Collections.Concurrent;
 using System.Diagnostics;
+using System.Text.RegularExpressions;
 
 namespace BanjoBotAssets
 {
@@ -198,7 +199,7 @@ namespace BanjoBotAssets
         {
             logger.LogInformation(Resources.Status_LoadingMappings);
 
-            if (provider.InternalGameName.Equals("FortniteGame", StringComparison.OrdinalIgnoreCase))
+            if (provider.ProjectName.Equals("FortniteGame", StringComparison.OrdinalIgnoreCase))
             {
                 provider.MappingsContainer = typeMappingsProviderFactory.Create();
             }
@@ -351,6 +352,9 @@ namespace BanjoBotAssets
 
         private void LoadLocalization(CancellationToken cancellationToken)
         {
+            //intended to be used to validate encryption keys, but now also prepares localisation dictionary (???)
+            provider.PostMount();
+
             logger.LogInformation(Resources.Status_LoadingLocalization, languageProvider.Language.ToString());
             provider.LoadLocalization(languageProvider.Language, cancellationToken);
         }

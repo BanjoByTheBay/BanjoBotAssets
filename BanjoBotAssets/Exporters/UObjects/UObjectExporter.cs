@@ -85,7 +85,16 @@ namespace BanjoBotAssets.Exporters.UObjects
                     TAsset? uobject;
                     if (IgnoreLoadFailures)
                     {
-                        var pkg = await provider.TryLoadPackageAsync(file);
+                        IPackage? pkg = null;
+
+                        try
+                        {
+                            pkg = await provider.LoadPackageAsync(file);
+                        }
+                        catch
+                        {
+                            return;
+                        }
 
                         cancellationToken.ThrowIfCancellationRequested();
 

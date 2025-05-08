@@ -152,7 +152,7 @@ namespace BanjoBotAssets.Extensions
                          directory: gameDirectory,
                          searchOption: SearchOption.TopDirectoryOnly,
                          isCaseInsensitive: true,
-                         versions: new VersionContainer(EGame.GAME_UE5_4),
+                         versions: new VersionContainer(EGame.GAME_UE5_6),
                          assetLogPath: perfOptions.Value.AssetLogPath);
 
                      provider.Initialize();

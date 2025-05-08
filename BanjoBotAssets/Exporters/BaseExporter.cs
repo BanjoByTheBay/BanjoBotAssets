@@ -56,7 +56,7 @@ namespace BanjoBotAssets.Exporters
 
             var file = provider[path];
             CountAssetLoaded();
-            return await provider.LoadObjectAsync<UDataTable>(file.PathWithoutExtension);
+            return await provider.SafeLoadPackageObjectAsync<UDataTable>(file.PathWithoutExtension);
         }
 
         public abstract Task ExportAssetsAsync(IProgress<ExportProgress> progress, IAssetOutput output, CancellationToken cancellationToken);
