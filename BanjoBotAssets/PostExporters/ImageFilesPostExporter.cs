@@ -45,7 +45,7 @@ namespace BanjoBotAssets.PostExporters
 
             Directory.CreateDirectory(options.Value.OutputDirectory);
 
-            DetexHelper.Initialize(DetexHelper.DLL_NAME);
+            DetexHelper.Initialize("../external/CUE4Parse/CUE4Parse-Conversion/Resources/Detex.dll");
 
             foreach (var (imageType, wantExport) in options.Value.Type)
             {
