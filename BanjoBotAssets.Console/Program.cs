@@ -1,4 +1,4 @@
-﻿/* Copyright 2023 Tara "Dino" Cassatt
+﻿/* Copyright 2026 Tara "Dino" Cassatt
  * 
  * This file is part of BanjoBotAssets.
  * 
@@ -15,22 +15,13 @@
  * You should have received a copy of the GNU General Public License
  * along with BanjoBotAssets.  If not, see <http://www.gnu.org/licenses/>.
  */
-#pragma warning disable CA1852 // https://github.com/dotnet/roslyn-analyzers/issues/6141
 
+
+using BanjoBotAssets;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using System.Reflection;
-using System.Runtime.CompilerServices;
-using BanjoBotAssets.Config;
 
-[assembly: InternalsVisibleTo("BanjoBotAssets.SourceGenerators.Tests")]
-
-namespace BanjoBotAssets;
-
-internal class OldProgram
-{
-    internal async Task<int> Main(string[] args)
-    {
-// TODO: export per-difficulty stat clamp tables (GameDifficultyGrowthBounds, CombatStatClampsPerTheater)
-// TODO: export collection book categories and recruitment/research/voucher options (CollectionBookSlots)
 
 await Host.CreateDefaultBuilder(args)
 #if DEBUG
@@ -45,20 +36,8 @@ await Host.CreateDefaultBuilder(args)
     })
     .ConfigureServices(services =>
     {
-        services
-            .AddHostedService<AssetExportService>()
-            .AddHttpClient()
-            .AddAesProviders()
-            .AddMappingsProviders()
-            .AddGameFileProvider()
-            .AddAssetExporters();
-
-        services
-            .AddOptions<ScopeOptions>()
-            .Configure<IConfiguration>((scope, config) => config.Bind(scope));
+        services.AddBanjoServices();
     })
     .RunConsoleAsync(o => o.SuppressStatusMessages = true);
 
 return Environment.ExitCode;
-    }
-}

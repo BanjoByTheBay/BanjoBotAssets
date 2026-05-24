@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.0.31919.166
+# Visual Studio Version 18
+VisualStudioVersion = 18.5.11801.241 oobstable
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BanjoBotAssets", "BanjoBotAssets\BanjoBotAssets.csproj", "{BE443DAB-C3C2-4505-8DE0-0FBAD609481A}"
 EndProject
@@ -22,6 +22,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BanjoBotAssets.SourceGenerators", "BanjoBotAssets.SourceGenerators\BanjoBotAssets.SourceGenerators.csproj", "{7D76698D-A16B-4D67-ADC6-87D97FF1400C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BanjoBotAssets.SourceGenerators.Tests", "BanjoBotAssets.SourceGenerators.Tests\BanjoBotAssets.SourceGenerators.Tests.csproj", "{A786A866-CE3F-49D4-A54A-CC6488B732E3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BanjoBotAssets.Console", "BanjoBotAssets.Console\BanjoBotAssets.Console.csproj", "{7E3756BA-9BBF-461D-8ED9-3A0D43251039}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -57,6 +59,10 @@ Global
 		{A786A866-CE3F-49D4-A54A-CC6488B732E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A786A866-CE3F-49D4-A54A-CC6488B732E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A786A866-CE3F-49D4-A54A-CC6488B732E3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7E3756BA-9BBF-461D-8ED9-3A0D43251039}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7E3756BA-9BBF-461D-8ED9-3A0D43251039}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7E3756BA-9BBF-461D-8ED9-3A0D43251039}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7E3756BA-9BBF-461D-8ED9-3A0D43251039}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
