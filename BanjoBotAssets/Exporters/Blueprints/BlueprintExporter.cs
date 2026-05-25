@@ -38,6 +38,7 @@ namespace BanjoBotAssets.Exporters.Blueprints
         {
             progress.Report(new ExportProgress
             {
+                ExportType = $"Blueprint.{Type}",
                 TotalSteps = numToProcess,
                 CompletedSteps = processedSoFar,
                 AssetsLoaded = assetsLoaded,

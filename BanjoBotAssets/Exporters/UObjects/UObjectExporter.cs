@@ -51,6 +51,7 @@ namespace BanjoBotAssets.Exporters.UObjects
         {
             progress.Report(new ExportProgress
             {
+                ExportType = $"UObject.{Type}",
                 TotalSteps = numToProcess,
                 CompletedSteps = processedSoFar,
                 AssetsLoaded = assetsLoaded,

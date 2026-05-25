@@ -18,6 +18,8 @@
 
 
 using BanjoBotAssets;
+using BanjoBotAssets.Exporters;
+using BanjoBotAssets.Reporters;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System.Reflection;
@@ -36,8 +38,29 @@ await Host.CreateDefaultBuilder(args)
     })
     .ConfigureServices(services =>
     {
-        services.AddBanjoServices();
+        services
+            .AddBanjoServices();
+
+        services.AddSingleton<IExportStageReporter, ExampleStageReporter>();
+        services.AddSingleton<IExportProgressReporter, ExampleProgressReporter>();
     })
     .RunConsoleAsync(o => o.SuppressStatusMessages = true);
 
 return Environment.ExitCode;
+
+class ExampleStageReporter : IExportStageReporter
+{
+    public void Report(ExportStage stage)
+    {
+        Console.WriteLine($"Reporting Stage: {stage}");
+    }
+}
+
+class ExampleProgressReporter : IExportProgressReporter
+{
+    public void Report(ExportProgress progress)
+    {
+        if (progress.ExportType is not null)
+            Console.WriteLine($"Reporting Progress for {progress.ExportType}: {progress.CompletedSteps}/{progress.TotalSteps}");
+    }
+}
