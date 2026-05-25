@@ -41,8 +41,8 @@ await Host.CreateDefaultBuilder(args)
         services
             .AddBanjoServices();
 
-        services.AddSingleton<IExportStageReporter, ExampleStageReporter>();
-        services.AddSingleton<IExportProgressReporter, ExampleProgressReporter>();
+        //services.AddSingleton<IExportStageReporter, ExampleStageReporter>();
+        //services.AddSingleton<IExportProgressReporter, ExampleProgressReporter>();
     })
     .RunConsoleAsync(o => o.SuppressStatusMessages = true);
 
