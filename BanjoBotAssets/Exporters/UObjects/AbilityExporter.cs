@@ -18,6 +18,7 @@
 using BanjoBotAssets.UExports;
 using CUE4Parse.FN.Structs.GA;
 using CUE4Parse.UE4.Objects.Engine;
+using CUE4Parse.Utilities;
 using System.Data;
 
 namespace BanjoBotAssets.Exporters.UObjects

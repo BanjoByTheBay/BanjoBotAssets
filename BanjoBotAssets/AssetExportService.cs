@@ -181,11 +181,11 @@ namespace BanjoBotAssets
         {
             logger.LogInformation(Resources.Status_LocatingOodle);
 
-            await OodleHelper.DownloadOodleDllAsync(OodleHelper.OODLE_DLL_NAME);
+            await OodleHelper.DownloadOodleDllAsync();
 
             logger.LogInformation(Resources.Status_InitializingOodle);
 
-            OodleHelper.Initialize(OodleHelper.OODLE_DLL_NAME);
+            OodleHelper.Initialize();
         }
 
         private void LoadVirtualPaths()
@@ -198,7 +198,7 @@ namespace BanjoBotAssets
         {
             logger.LogInformation(Resources.Status_LoadingMappings);
 
-            if (provider.InternalGameName.Equals("FortniteGame", StringComparison.OrdinalIgnoreCase))
+            if (provider.ProjectName.Equals("FortniteGame", StringComparison.OrdinalIgnoreCase))
             {
                 provider.MappingsContainer = typeMappingsProviderFactory.Create();
             }
@@ -351,8 +351,12 @@ namespace BanjoBotAssets
 
         private void LoadLocalization(CancellationToken cancellationToken)
         {
+            //PostMount is intended to be used to validate encryption keys, but it now also prepares localization dictionary (for some reason)
+            //might be better off at the end of DecryptGameFilesAsync
+            provider.PostMount();
+
             logger.LogInformation(Resources.Status_LoadingLocalization, languageProvider.Language.ToString());
-            provider.LoadLocalization(languageProvider.Language, cancellationToken);
+            provider.ChangeCulture(provider.GetLanguageCode(languageProvider.Language));
         }
     }
 }

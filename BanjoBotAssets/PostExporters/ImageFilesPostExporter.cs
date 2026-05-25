@@ -70,19 +70,21 @@ namespace BanjoBotAssets.PostExporters
                                 continue;
                             }
 
-                            var asset = await provider.LoadObjectAsync<UTexture2D>(imagePath);
-                            using var bitmap = asset.Decode();
+                            var asset = await provider.SafeLoadPackageObjectAsync<UTexture2D>(imagePath);
+                            var bitmap = asset?.Decode();
                             if (bitmap == null)
                             {
                                 logger.LogError(Resources.Error_CannotDecodeTexture, imagePath);
                                 continue;
                             }
 
-                            await using var stream = new FileStream(exportedPath, FileMode.Create, FileAccess.Write);
-                            if (!bitmap.Encode(stream, SkiaSharp.SKEncodedImageFormat.Png, 100))
+                            var bytes = bitmap.Encode(ETextureFormat.Png, false, out var ext);
+                            if (ext != "png")
                             {
                                 logger.LogError(Resources.Error_CannotEncodeTexture, imagePath);
                             }
+                            await using var stream = new FileStream(exportedPath, FileMode.Create, FileAccess.Write);
+                            stream.Write(bytes, 0, bytes.Length);
                             filesWritten++;
                         }
                     }

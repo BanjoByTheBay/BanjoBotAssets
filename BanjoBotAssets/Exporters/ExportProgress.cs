@@ -19,6 +19,7 @@ namespace BanjoBotAssets.Exporters
 {
     internal sealed record ExportProgress
     {
+        public string? ExportType { get; init; }
         public int TotalSteps { get; init; }
         public int CompletedSteps { get; init; }
         public required string CurrentItem { get; init; }

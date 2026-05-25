@@ -128,7 +128,7 @@ namespace BanjoBotAssets.Exporters.Groups
 
                     Report(progress, file.PathWithoutExtension);
 
-                    var asset = await provider.LoadObjectAsync<TAsset>(file.PathWithoutExtension);
+                    var asset = await provider.SafeLoadPackageObjectAsync<TAsset>(file.PathWithoutExtension);
 
                     if (asset == null)
                     {

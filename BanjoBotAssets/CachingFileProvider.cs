@@ -98,6 +98,25 @@ namespace BanjoBotAssets
             }
         }
 
+        public override IPackage LoadPackage(GameFile file)
+        {
+            Interlocked.Increment(ref cacheRequests);
+
+            return cache.Cache.GetOrAdd(
+                file.Path,
+                _ =>
+                {
+                    Interlocked.Increment(ref cacheMisses);
+
+                    cacheMissesByPath.AddOrUpdate(file.Path, 1, (_, i) => i + 1);
+                    logger.LogDebug(Resources.Status_CacheMiss, file.Path, file.Size);
+
+                    WriteToAssetLog(file.Path);
+                    return base.LoadPackage(file);
+                },
+                new MemoryCacheEntryOptions { Size = file.Size });
+        }
+
         public override Task<IPackage> LoadPackageAsync(GameFile file)
         {
             Interlocked.Increment(ref cacheRequests);
@@ -113,25 +132,6 @@ namespace BanjoBotAssets
 
                     WriteToAssetLog(file.Path);
                     return await base.LoadPackageAsync(file);
-                },
-                new MemoryCacheEntryOptions { Size = file.Size });
-        }
-
-        public override Task<IPackage?> TryLoadPackageAsync(GameFile file)
-        {
-            Interlocked.Increment(ref cacheRequests);
-
-            return cache.Cache.GetOrAddAsync(
-                file.Path,
-                async _ =>
-                {
-                    Interlocked.Increment(ref cacheMisses);
-
-                    cacheMissesByPath.AddOrUpdate(file.Path, 1, (_, i) => i + 1);
-                    logger.LogDebug(Resources.Status_CacheMiss, file.Path, file.Size);
-
-                    WriteToAssetLog(file.Path);
-                    return await base.TryLoadPackageAsync(file);
                 },
                 new MemoryCacheEntryOptions { Size = file.Size });
         }
