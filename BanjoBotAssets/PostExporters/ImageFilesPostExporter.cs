@@ -18,6 +18,7 @@
 using BanjoBotAssets.Config;
 using CUE4Parse.UE4.Assets.Exports.Texture;
 using CUE4Parse_Conversion.Textures;
+using CUE4Parse_Conversion.Textures.BC;
 using Microsoft.Extensions.Options;
 
 namespace BanjoBotAssets.PostExporters
@@ -43,6 +44,8 @@ namespace BanjoBotAssets.PostExporters
             int filesWritten = 0, pathsUpdated = 0;
 
             Directory.CreateDirectory(options.Value.OutputDirectory);
+
+            DetexHelper.Initialize("../external/CUE4Parse/CUE4Parse-Conversion/Resources/Detex.dll");
 
             foreach (var (imageType, wantExport) in options.Value.Type)
             {
