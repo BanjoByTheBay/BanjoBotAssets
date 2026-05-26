@@ -47,7 +47,7 @@ namespace BanjoBotAssets.Exporters
             var file = provider[baseItemRatingPath];
 
             Interlocked.Increment(ref assetsLoaded);
-            var curveTable = await provider.LoadObjectAsync<UCurveTable>(file.PathWithoutExtension);
+            var curveTable = await provider.SafeLoadPackageObjectAsync<UCurveTable>(file.PathWithoutExtension);
 
             if (curveTable == null)
             {
@@ -71,7 +71,7 @@ namespace BanjoBotAssets.Exporters
             var file = provider[survivorItemRatingPath];
 
             Interlocked.Increment(ref assetsLoaded);
-            var curveTable = await provider.LoadObjectAsync<UCurveTable>(file.PathWithoutExtension);
+            var curveTable = await provider.SafeLoadPackageObjectAsync<UCurveTable>(file.PathWithoutExtension);
 
             if (curveTable == null)
             {

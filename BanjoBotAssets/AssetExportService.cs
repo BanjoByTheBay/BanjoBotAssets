@@ -20,6 +20,7 @@ using BanjoBotAssets.Artifacts;
 using BanjoBotAssets.Config;
 using BanjoBotAssets.Exporters;
 using BanjoBotAssets.PostExporters;
+using BanjoBotAssets.Reporters;
 using CUE4Parse.Compression;
 using CUE4Parse.Encryption.Aes;
 using CUE4Parse.UE4.Objects.Core.Misc;
@@ -29,6 +30,19 @@ using System.Diagnostics;
 
 namespace BanjoBotAssets
 {
+    public enum ExportStage
+    {
+        DecryptingGameFiles,
+        InitialisingOodle,
+        LoadingVirtualPaths,
+        LoadingMappings,
+        LoadingLocalisation,
+        PreparingInterestingAssets,
+        RunningExporters,
+        RunningPostExporters,
+        GeneratingArtifacts,
+    }
+
     internal sealed partial class AssetExportService(
         ILogger<AssetExportService> logger,
             IHostApplicationLifetime lifetime,
@@ -40,7 +54,9 @@ namespace BanjoBotAssets
             ITypeMappingsProviderFactory typeMappingsProviderFactory,
             IOptions<ScopeOptions> scopeOptions,
             IEnumerable<IPostExporter> allPostExporters,
-            LanguageProvider languageProvider) : BackgroundService
+            LanguageProvider languageProvider,
+            IExportProgressReporter? progressReporter = null,
+            IExportStageReporter? stageReporter = null) : BackgroundService
     {
         private readonly List<IExporter> exportersToRun = MakeExportersToRun(allExporters, scopeOptions);
         private readonly ConcurrentDictionary<string, byte> failedAssets = new();
@@ -92,36 +108,46 @@ namespace BanjoBotAssets
             // by the time this method is called, the CUE4Parse file provider has already been created,
             // and the game files have been located but not decrypted. we need to supply the AES keys,
             // from cache or from an external API.
+            stageReporter?.Report(ExportStage.DecryptingGameFiles);
             await DecryptGameFilesAsync(cancellationToken);
 
             // download the oodle library if needed, and initialize it
+            stageReporter?.Report(ExportStage.InitialisingOodle);
             await InitializeOodleAsync();
 
             // load virtual paths
+            stageReporter?.Report(ExportStage.LoadingVirtualPaths);
             LoadVirtualPaths();
 
             // load the type mappings CUE4Parse uses to parse UE structures
+            stageReporter?.Report(ExportStage.LoadingMappings);
             await LoadMappingsAsync(cancellationToken);
 
             // load localized resources
+            stageReporter?.Report(ExportStage.LoadingLocalisation);
             LoadLocalization(cancellationToken);
 
             // register the export classes used to expose UE structures as strongly-typed C# objects
             RegisterExportTypes();
 
             // feed the file list to each exporter so they can record the paths they're interested in
+            // todo: make this async? would otherwise cause hanging in a GUI app
+            stageReporter?.Report(ExportStage.PreparingInterestingAssets);
             OfferFileListToExporters();
 
             // run exporters and collect their intermediate results
+            stageReporter?.Report(ExportStage.RunningExporters);
             var (exportedAssets, exportedRecipes, stats1) = await RunSelectedExportersAsync(cancellationToken);
 
             // run post-exporters to refine the intermediate results
+            stageReporter?.Report(ExportStage.RunningPostExporters);
             var stats2 = await RunSelectedPostExportersAsync(exportedAssets, exportedRecipes, cancellationToken);
 
             // report assets loaded and time elapsed
             ReportAssetLoadingStats(stats1 + stats2);
 
             // generate output artifacts
+            stageReporter?.Report(ExportStage.GeneratingArtifacts);
             await GenerateSelectedArtifactsAsync(exportedAssets, exportedRecipes, cancellationToken);
 
             // report cache stats
@@ -181,11 +207,11 @@ namespace BanjoBotAssets
         {
             logger.LogInformation(Resources.Status_LocatingOodle);
 
-            await OodleHelper.DownloadOodleDllAsync(OodleHelper.OODLE_DLL_NAME);
+            await OodleHelper.DownloadOodleDllAsync();
 
             logger.LogInformation(Resources.Status_InitializingOodle);
 
-            OodleHelper.Initialize(OodleHelper.OODLE_DLL_NAME);
+            OodleHelper.Initialize();
         }
 
         private void LoadVirtualPaths()
@@ -198,7 +224,7 @@ namespace BanjoBotAssets
         {
             logger.LogInformation(Resources.Status_LoadingMappings);
 
-            if (provider.InternalGameName.Equals("FortniteGame", StringComparison.OrdinalIgnoreCase))
+            if (provider.ProjectName.Equals("FortniteGame", StringComparison.OrdinalIgnoreCase))
             {
                 provider.MappingsContainer = typeMappingsProviderFactory.Create();
             }
@@ -312,7 +338,7 @@ namespace BanjoBotAssets
                 }
             }
 
-            // TODO: do something more with progress reports
+            progressReporter?.Report(progress);
         }
 
         private void ReportFailedAssets()
@@ -351,8 +377,12 @@ namespace BanjoBotAssets
 
         private void LoadLocalization(CancellationToken cancellationToken)
         {
+            //PostMount is intended to be used to validate encryption keys, but it now also prepares localization dictionary (for some reason)
+            //might be better off at the end of DecryptGameFilesAsync
+            provider.PostMount();
+
             logger.LogInformation(Resources.Status_LoadingLocalization, languageProvider.Language.ToString());
-            provider.LoadLocalization(languageProvider.Language, cancellationToken);
+            provider.ChangeCulture(provider.GetLanguageCode(languageProvider.Language));
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿/* Copyright 2023 Tara "Dino" Cassatt
+﻿/* Copyright 2026 Tara "Dino" Cassatt
  * 
  * This file is part of BanjoBotAssets.
  * 
@@ -15,15 +15,17 @@
  * You should have received a copy of the GNU General Public License
  * along with BanjoBotAssets.  If not, see <http://www.gnu.org/licenses/>.
  */
-namespace BanjoBotAssets.Exporters
+using BanjoBotAssets.Exporters;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace BanjoBotAssets.Reporters
 {
-    public sealed record ExportProgress
+    public interface IExportProgressReporter
     {
-        public string? ExportType { get; init; }
-        public int TotalSteps { get; init; }
-        public int CompletedSteps { get; init; }
-        public required string CurrentItem { get; init; }
-        public int AssetsLoaded { get; init; }
-        public IEnumerable<string>? FailedAssets { get; init; }
+        public void Report(ExportProgress progress);
     }
 }

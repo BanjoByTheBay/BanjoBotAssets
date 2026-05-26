@@ -32,7 +32,7 @@ namespace BanjoBotAssets.Exporters
             var file = provider[growthBoundsPath];
 
             Interlocked.Increment(ref assetsLoaded);
-            var dataTable = await provider.LoadObjectAsync<UDataTable>(file.PathWithoutExtension);
+            var dataTable = await provider.SafeLoadPackageObjectAsync<UDataTable>(file.PathWithoutExtension);
 
             if (dataTable == null)
             {

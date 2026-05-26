@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Worker">
 
 	<PropertyGroup>
-		<OutputType>Exe</OutputType>
+		<OutputType>Library</OutputType>
 		<TargetFramework>net8.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
@@ -54,7 +54,7 @@
 		<PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="9.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Http" Version="9.0.0" />
-		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
 		<PackageReference Include="Roslynator.Analyzers" Version="4.12.10">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

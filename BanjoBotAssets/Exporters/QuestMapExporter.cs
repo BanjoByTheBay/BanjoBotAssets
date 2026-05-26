@@ -29,7 +29,7 @@ namespace BanjoBotAssets.Exporters
 
             var file = provider[assetPaths[0]];
             Interlocked.Increment(ref assetsLoaded);
-            var mapData = await provider.LoadObjectAsync(file.PathWithoutExtension);
+            var mapData = await provider.SafeLoadPackageObjectAsync(file.PathWithoutExtension);
 
             cancellationToken.ThrowIfCancellationRequested();
 

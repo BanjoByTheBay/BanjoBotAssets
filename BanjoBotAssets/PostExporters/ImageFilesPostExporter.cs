@@ -18,6 +18,7 @@
 using BanjoBotAssets.Config;
 using CUE4Parse.UE4.Assets.Exports.Texture;
 using CUE4Parse_Conversion.Textures;
+using CUE4Parse_Conversion.Textures.BC;
 using Microsoft.Extensions.Options;
 
 namespace BanjoBotAssets.PostExporters
@@ -43,6 +44,8 @@ namespace BanjoBotAssets.PostExporters
             int filesWritten = 0, pathsUpdated = 0;
 
             Directory.CreateDirectory(options.Value.OutputDirectory);
+
+            DetexHelper.Initialize("../external/CUE4Parse/CUE4Parse-Conversion/Resources/Detex.dll");
 
             foreach (var (imageType, wantExport) in options.Value.Type)
             {
@@ -70,19 +73,21 @@ namespace BanjoBotAssets.PostExporters
                                 continue;
                             }
 
-                            var asset = await provider.LoadObjectAsync<UTexture2D>(imagePath);
-                            using var bitmap = asset.Decode();
+                            var asset = await provider.SafeLoadPackageObjectAsync<UTexture2D>(imagePath);
+                            var bitmap = asset?.Decode();
                             if (bitmap == null)
                             {
                                 logger.LogError(Resources.Error_CannotDecodeTexture, imagePath);
                                 continue;
                             }
 
-                            await using var stream = new FileStream(exportedPath, FileMode.Create, FileAccess.Write);
-                            if (!bitmap.Encode(stream, SkiaSharp.SKEncodedImageFormat.Png, 100))
+                            var bytes = bitmap.Encode(ETextureFormat.Png, false, out var ext);
+                            if (ext != "png")
                             {
                                 logger.LogError(Resources.Error_CannotEncodeTexture, imagePath);
                             }
+                            await using var stream = new FileStream(exportedPath, FileMode.Create, FileAccess.Write);
+                            stream.Write(bytes, 0, bytes.Length);
                             filesWritten++;
                         }
                     }

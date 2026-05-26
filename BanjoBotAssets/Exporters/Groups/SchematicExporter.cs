@@ -195,7 +195,7 @@ namespace BanjoBotAssets.Exporters.Groups
             }
             var widOrTidFile = provider[widOrTidPath];
             Interlocked.Increment(ref assetsLoaded);
-            return await provider.LoadObjectAsync<UFortItemDefinition>(widOrTidFile.PathWithoutExtension);
+            return await provider.SafeLoadPackageObjectAsync<UFortItemDefinition>(widOrTidFile.PathWithoutExtension);
         }
 
         protected override async Task<SchematicItemGroupFields> ExtractCommonFieldsAsync(UObject asset, IGrouping<string?, string> grouping)
@@ -347,7 +347,7 @@ namespace BanjoBotAssets.Exporters.Groups
 
             return await cachedAmmoTypesFromPaths.GetOrAdd(ammoDataPath.AssetPathName.Text, static async (path, provider) =>
             {
-                var asset = await provider.LoadObjectAsync<UFortAmmoItemDefinition>(path);
+                var asset = await provider.SafeLoadPackageObjectAsync<UFortAmmoItemDefinition>(path);
                 if (asset.ItemName?.Text is string str)
                 {
                     var i = str.IndexOf(':');

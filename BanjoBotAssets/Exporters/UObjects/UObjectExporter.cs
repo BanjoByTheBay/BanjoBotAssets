@@ -17,6 +17,7 @@
  */
 using CUE4Parse.FN.Enums.FortniteGame;
 using System.Collections.Concurrent;
+using CUE4Parse.Utilities;
 
 namespace BanjoBotAssets.Exporters.UObjects
 {
@@ -50,6 +51,7 @@ namespace BanjoBotAssets.Exporters.UObjects
         {
             progress.Report(new ExportProgress
             {
+                ExportType = $"UObject.{Type}",
                 TotalSteps = numToProcess,
                 CompletedSteps = processedSoFar,
                 AssetsLoaded = assetsLoaded,
@@ -85,15 +87,23 @@ namespace BanjoBotAssets.Exporters.UObjects
                     TAsset? uobject;
                     if (IgnoreLoadFailures)
                     {
-                        var pkg = await provider.TryLoadPackageAsync(file);
+                        IPackage pkg;
+                        try
+                        {
+                            pkg = await provider.LoadPackageAsync(file);
+                        }
+                        catch
+                        {
+                            return;
+                        }
 
                         cancellationToken.ThrowIfCancellationRequested();
 
-                        if (pkg?.GetExportOrNull(file.NameWithoutExtension, StringComparison.OrdinalIgnoreCase) is TAsset asset)
+                        if (pkg.GetExportOrNull(file.NameWithoutExtension, StringComparison.OrdinalIgnoreCase) is TAsset asset)
                         {
                             uobject = asset;
                         }
-                        else if (pkg?.GetExportOrNull(file.NameWithoutExtension + "_C", StringComparison.OrdinalIgnoreCase) is TAsset assetC)
+                        else if (pkg.GetExportOrNull(file.NameWithoutExtension + "_C", StringComparison.OrdinalIgnoreCase) is TAsset assetC)
                         {
                             uobject = assetC;
                         }
